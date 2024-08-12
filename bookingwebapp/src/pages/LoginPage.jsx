@@ -1,28 +1,52 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import {Link, Navigate} from "react-router-dom"
 import axios from "axios";
+import { UserContext } from "../UserContext.jsx";
 
 export default function LoginPage(){
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [redirect, setRedirect] = useState(false);
+    const {setUser} = useContext(UserContext);
 
     async function handleLoginSubmit(ev) {
-        
+
         ev.preventDefault();
-        
-        try{
 
-            await axios.post('/login', {email, password} );
-            alert('Login Successful');
+        try {
+            const response = await axios.post('/login', { email, password });
+    
+            if (response.status === 200) {
 
-            setRedirect(true);
+                const userDocument = response.data;
+                setUser(userDocument);
+                alert('Login successful');
+                setRedirect(true);
 
-        }catch(loginFailedError){
+            } else {
 
-            alert('Login Failed');
+                alert(response.data);
 
+            }
+
+        } catch (error) {
+
+            if (error.response) {
+              
+                if (error.response.status === 401) {
+                    alert('Incorrect password. Please try again.');
+                } else if (error.response.status === 404) {
+                    alert('Email not registered. Please check your email or sign up.');
+                } else {
+                    alert('Login failed. Please try again later.');
+                }
+
+            } else {
+
+                alert('Login failed. Please try again later.');
+                
+            }
         }
     }
 
@@ -56,7 +80,7 @@ export default function LoginPage(){
                         value={password} 
                         onChange={ev => setPassword(ev.target.value)}/>
 
-                    <button className="primary">login</button>
+                    <button className="primary">Login</button>
 
                     <div className="text-right py-2 text-gray-500">
                         Don't have an account yet? <Link className="underline text-black" to={'/register'}>Register</Link>
