@@ -4,6 +4,10 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import Layout from "./layout";
 import axios from "axios";
+import { UserContextProvider } from "./UserContext";
+import AccountPage from "./pages/AccountPage";
+import MoviesPage from "./pages/MoviesPage";
+import MoviesFormPage from "./pages/MoviesFormPage";
 
 export default function App() {
 
@@ -11,16 +15,25 @@ export default function App() {
   axios.defaults.withCredentials = true;
 
   return (
-    <Router>
-      <Routes>
-        <Route path = "/" element ={<Layout/>}>
-        
-          <Route path = "/" element={<IndexPage />} />
-          <Route path = "/login" element = {<LoginPage />} />
-          <Route path = "/register" element = {<RegisterPage />} />
+    
+    <UserContextProvider>
+
+      <Router>
+        <Routes>
+          <Route path = "/" element ={<Layout/>}>
           
-        </Route>
-      </Routes>
-    </Router>
+            <Route path = "/" element={<IndexPage />} />
+            <Route path = "/login" element = {<LoginPage />} />
+            <Route path = "/register" element = {<RegisterPage />} />
+            <Route path = "/account" element = {<AccountPage />} />
+            <Route path = "/account/adminMovies" element = {<MoviesPage />} />
+            <Route path = "/account/adminMovies/new" element = {<MoviesFormPage />} />
+      
+          </Route>
+        </Routes>
+      </Router>
+
+    </UserContextProvider>
+    
   );
 }
