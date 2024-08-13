@@ -12,6 +12,11 @@ const imageDownloader = require('image-downloader');
 const multer = require('multer');
 const fs = require('fs');
 
+//use router for theater as app size increase
+const theatreRouter = require("./router1.js");
+//const showtimeRouter = require("./router2.js");
+//const reservationRouter = require("./router3.js");
+
 require('dotenv').config()
 const app = express();
 
@@ -33,6 +38,10 @@ app.use(cors({
 
 // console.log(process.env.MONGO_URL) // remove this after you've confirmed it is working
 mongoose.connect(process.env.MONGO_URL);
+
+app.use("/theatre", theatreRouter);
+//app.use("/showtime",showtimeRouter);
+//app.use("/reservation",showtimeRouter);
 
 app.get('/test', (req, res) =>{
     res.json('test ok');
