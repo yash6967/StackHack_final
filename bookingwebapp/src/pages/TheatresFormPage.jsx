@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import AccountNavigation from "./AccountNavigation";
 import axios from "axios";
 import {Navigate, useParams} from "react-router-dom";
@@ -6,6 +6,7 @@ import {Navigate, useParams} from "react-router-dom";
 
 export default function TheatresFormPage() {
 
+    const {id} = useParams();
     const [theatreName, setName] = useState('');
     // const [ticketPrice, setTicketPrice] = useState('');
     // const [rows, setRows] = useState('');
@@ -16,45 +17,81 @@ export default function TheatresFormPage() {
 
     const [redirect,setRedirect] = useState(false);
 
-    
-    
-    
+    useEffect(() => {
+
+        if(!id){ 
+            return;
+        }
         
-    
+        axios.get('/adminTheatres/' + id).then(response => {
+
+            const {data} = response;
+            setName(data.theatreName);
+
+            /* AND EXTRA SETS */
+
+        });
+
+    }, [id]);
 
     
 
-    
-
-    async function addNewtheatre(ev){
+    async function savetheatre(ev){
 
         ev.preventDefault(); 
 
-        try{
+        const theatreData = {
 
-            await axios.post('/adminTheatres', {
+            id,
+            theatreName
 
-                theatreName
-                //,ticketPrice, rows, cols, city
+        };
+
+        if(id){
+
+            /* update */
+
+            try{
+                
+                console.log('theatre Successfully updated');
+
+                await axios.put('/adminTheatres', {
+                    id, ...theatreData
+                });
+                
+                setRedirect(true);
+                alert('theatre Successfully updated');
     
-            });
+            }catch(error){
+    
+                console.error('Error updating theatre:', error);
+                alert('Failed to upate this theatre');
+    
+            }
 
-            setRedirect(true);
-            alert('theatre Successfully added');
+        }else{
 
-        }catch(error){
+            /* new */
 
-            console.error('Error adding new theatre:', error);
-            alert('Failed to add new theatre');
+            try{
+
+                await axios.post('/adminTheatres', theatreData);
+    
+                setRedirect(true);
+                alert('theatre Successfully added');
+    
+            }catch(error){
+    
+                console.error('Error adding new theatre:', error);
+                alert('Failed to add new theatre');
+    
+            }
 
         }
 
     }
-
     if (redirect) {
-
-        return <Navigate to={'/admintheatres'} />
-
+        return <Navigate to='/account/adminTheatres' />;
     }
 
     return (
@@ -64,7 +101,7 @@ export default function TheatresFormPage() {
             <AccountNavigation/>
             
 
-            <form onSubmit={addNewtheatre}>
+            <form onSubmit={savetheatre}>
 
                 <h2 className="text-xl mt-2">Theatre Name</h2>
                 <input 

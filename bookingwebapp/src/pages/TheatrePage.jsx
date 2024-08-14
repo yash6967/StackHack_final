@@ -47,25 +47,18 @@ export default function TheatrePage() {
 
                 <div className="mt-4">
                     {theatres.length > 0 && theatres.map(it => (
-                        <div className="flex gap-4 bg-gray-200 p-4">
-
-                            <div className="w-32 h-32 bg-gray-300">
-
-                                {it.photos.length > 0 && (
-
-                                    <img src={it.photos[0]} alt="theatre Poster" />
-
-                                )}
-
-                            </div>
+                        <Link 
+                            key={it._id} 
+                            to = {'/account/adminTheatres/' + it._id} 
+                            className="flex cursor-pointer gap-4 bg-gray-200 p-4">
 
                             <h2 className="text-xl">
 
-                                {it.title}
+                                {it.theatreName}
                                 
                             </h2>
 
-                        </div>
+                        </Link>
                     ))}
                 </div>
                 

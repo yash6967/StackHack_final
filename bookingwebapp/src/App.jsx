@@ -8,6 +8,8 @@ import { UserContextProvider } from "./UserContext";
 import AccountPage from "./pages/AccountPage";
 import MoviesPage from "./pages/MoviesPage";
 import MoviesFormPage from "./pages/MoviesFormPage";
+import TheatrePage from "./pages/TheatrePage";
+import TheatresFormPage from "./pages/TheatresFormPage";
 
 export default function App() {
 
@@ -26,9 +28,14 @@ export default function App() {
             <Route path = "/login" element = {<LoginPage />} />
             <Route path = "/register" element = {<RegisterPage />} />
             <Route path = "/account" element = {<AccountPage />} />
+
             <Route path = "/account/adminMovies" element = {<MoviesPage />} />
             <Route path = "/account/adminMovies/new" element = {<MoviesFormPage />} />
             <Route path = "/account/adminMovies/:id" element = {<MoviesFormPage />} />
+
+            <Route path = "/account/adminTheatres" element = {<TheatrePage />} />
+            <Route path = "/account/adminTheatres/new" element = {<TheatresFormPage />} />
+            <Route path = "/account/adminTheatres/:id" element = {<TheatresFormPage />} />
       
           </Route>
         </Routes>

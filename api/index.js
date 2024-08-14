@@ -13,6 +13,7 @@ require('dotenv').config()
 
 const User = require('./models/user.js');
 const Movie = require('./models/movie.js');
+const Theatre = require('./models/theatre.js')
 
 const app = express();
 
@@ -288,5 +289,99 @@ app.get('/adminMovies', async (req, res) => {
     res.json(await Movie.find());
 
 });
+
+//create new theatre
+app.post('/adminTheatres',async (req,res)=>{
+    
+    const {token} = req.cookies;
+
+    if(!token){
+        res.status(401).json({error:'token not found'});
+    }
+    const {theatreName
+        //,city, ticketPrice,seats
+        } = req.body;
+
+
+
+        jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
+
+            if(error) throw error;
+        
+            const theatreDocument = await Theatre.create({
+                owner: userData.id,
+                theatreName
+                // city,
+                // ticketPrice,
+                // rows,
+                //cols
+            });
+            res.status(200).json({
+                message:"success",
+                theatreDocument:theatreDocument});
+                
+    
+        });
+    
+    
+});
+
+
+//get all theatres
+app.get('/adminTheatres', async (req, res) => {
+
+    res.json(await Theatre.find());
+
+});
+
+
+//update theatres
+/* For Update */
+app.put('/adminTheatres', async (req, res) => {
+
+    const {token} = req.cookies;
+
+    if (!token) {
+        return res.status(401).json({ error: 'No token provided' });
+    }
+
+    const {
+
+        id,
+        theatreName
+        //,city, ticketPrice,seats
+    } = req.body;
+    
+    jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
+        
+        if(error) throw error;
+
+        const theatreDoc = await Theatre.findById(id);
+    
+        if(userData.id === theatreDoc.owner.toString()){
+
+            theatreDoc.set({
+
+                theatreName
+                // ,languages, length, genre, certificate, releaseDate, director, description, cast, crew
+
+            });
+
+            await theatreDoc.save();
+            res.json('ok');
+
+        }
+
+    });
+
+});
+
+app.get('/adminTheatres/:id', async (req, res) => {
+
+    const {id} = req.params;
+    res.json(await Theatre.findById(id));
+
+});
+
 
 app.listen(4000);
