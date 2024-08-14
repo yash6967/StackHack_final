@@ -17,6 +17,19 @@ export default function MoviesPage() {
 
     }, []);
 
+    // const {id} = useParams();
+    // const [movies,setMovies] = useState(null);
+    // useEffect(() => {
+    //     if (!id) {
+    //     return;
+    //     }
+    //     axios.get(`/adminMovies/${id}`).then(response => {
+    //     setMovies(response.data);
+    //     });
+    // }, [id]);
+
+    // if (!place) return '';
+
     return (
         <div>
 
@@ -47,13 +60,16 @@ export default function MoviesPage() {
 
                 <div className="mt-4">
                     {movies.length > 0 && movies.map(it => (
-                        <div className="flex gap-4 bg-gray-200 p-4">
+                        <Link 
+                            key={it._id} 
+                            to = {'/account/adminMovies/' + it._id} 
+                            className="flex cursor-pointer gap-4 bg-gray-200 p-4">
 
-                            <div className="w-32 h-32 bg-gray-300">
+                            <div className="flex w-32 h-32 bg-gray-300">
 
                                 {it.photos.length > 0 && (
 
-                                    <img src={it.photos[0]} alt="Movie Poster" />
+                                    <img src={'http://localhost:4000/uploads/' + it.photos[0]} alt="Movie Poster" />
 
                                 )}
 
@@ -65,7 +81,7 @@ export default function MoviesPage() {
                                 
                             </h2>
 
-                        </div>
+                        </Link>
                     ))}
                 </div>
                 

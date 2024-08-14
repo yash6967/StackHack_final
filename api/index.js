@@ -2,19 +2,18 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-
-const User = require('./models/user.js');
-const Movie = require('./models/movie.js');
-
 const jsonwebtoken = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 const imageDownloader = require('image-downloader');
 const multer = require('multer');
 const fs = require('fs');
-
-
-
+// const movieModel = require('./models/movie.js');
 require('dotenv').config()
+
+
+const User = require('./models/user.js');
+const Movie = require('./models/movie.js');
+
 const app = express();
 
 const bcryptSalt = bcrypt.genSaltSync(8);
@@ -132,7 +131,7 @@ app.get('/profile', (req, res) => {
 
 app.post('/logout', (req, res) => {
 
-    res.cookie('token', '').json(true);
+    res.clearCookie('token').json({ message: 'Logged out successfully' });
 
 });
 
@@ -182,23 +181,15 @@ app.post('/upload', photosMiddleware.array('photos', 10), (req, res) => {
 
     res.json(uploadedFiles);
 
-    // for(let i = 0; i < req.files.length; i++){
-
-    //     const {path, originalname} = req.files[i];
-    //     const parts = originalname.split('.');
-    //     const ext = parts[parts.length - 1];
-    //     const newPath = path + '.' + ext;
-
-    //     fs.renameSync(path, newPath);
-    //     uploadedFiles.push(newPath.replace('uploads/', ''));
-
-    // }
-
 });
 
 app.post('/adminMovies', (req, res) => {
 
     const {token} = req.cookies;
+
+    if (!token) {
+        return res.status(401).json({ error: 'No token provided' });
+    }
 
     const {
 
@@ -228,6 +219,10 @@ app.get('/adminMovies', (req, res) => {
 
     const {token} = req.cookies;
 
+    if (!token) {
+        return res.status(401).json({ error: 'No token provided' });
+    }
+
     jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
 
         if(error) throw error;
@@ -240,45 +235,58 @@ app.get('/adminMovies', (req, res) => {
 
 });
 
-//create new theatre
-app.post('/adminTheatres',async (req,res)=>{
-    
-    const {token} = req.cookies;
+app.get('/adminMovies/:id', async (req, res) => {
 
-    if(!token){
-        res.status(401).json({error:'No token provided'})
-    }
+    const {id} = req.params;
+    res.json(await Movie.findById(id));
 
-
-    const {theatreName
-        //,city, ticketPrice,seats
-        } = req.body;
-
-
-
-        jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
-
-            if(error) throw error;
-        
-            const theatreDocument = await Theatre.create({
-                owner: userData.id,
-                theatreName
-                // city,
-                // ticketPrice,
-                // rows,
-                //cols
-            });
-            res.status(200).json({
-                message:"success",
-                theatreDocument:theatreDocument});
-                
-    
-        });
-    
-    
 });
 
+/* For Update */
+app.put('/adminMovies', async (req, res) => {
+
+    const {token} = req.cookies;
+
+    if (!token) {
+        return res.status(401).json({ error: 'No token provided' });
+    }
+
+    const {
+
+        id,
+        title, addedPhotos
+        // ,languages, length, genre, certificate, releaseDate, director, description, cast, crew
+
+    } = req.body;
+    
+    jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
+        
+        if(error) throw error;
+
+        const movieDoc = await Movie.findById(id);
+    
+        if(userData.id === movieDoc.owner.toString()){
+
+            movieDoc.set({
+
+                title, photos: addedPhotos,
+                // ,languages, length, genre, certificate, releaseDate, director, description, cast, crew
+
+            });
+
+            await movieDoc.save();
+            res.json('ok');
+
+        }
+
+    });
+
+});
+
+app.get('/adminMovies', async (req, res) => {
+
+    res.json(await Movie.find());
+
+});
 
 app.listen(4000);
-
-

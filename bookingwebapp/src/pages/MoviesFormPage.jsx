@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AccountNavigation from "./AccountNavigation";
 import axios from "axios";
 import {Navigate, useParams} from "react-router-dom";
 
 export default function MoviesFormPage() {
 
+    const {id} = useParams();
     const [title, setTitle] = useState('');
     const [addedPhotos, setAddedPhotos] = useState([]);
     const [photoLink, setPhotoLink] = useState('');
@@ -19,6 +20,24 @@ export default function MoviesFormPage() {
     // const [crew, setCrew] = useState([]);
 
     const [redirect,setRedirect] = useState(false);
+
+    useEffect(() => {
+
+        if(!id){ 
+            return;
+        }
+        
+        axios.get('/adminMovies/' + id).then(response => {
+
+            const {data} = response;
+            setTitle(data.title);
+            setAddedPhotos(data.photos);
+
+            /* AND EXTRA SETS */
+
+        });
+
+    }, [id]);
 
     function isValidURL(url) {
         try{
@@ -73,34 +92,69 @@ export default function MoviesFormPage() {
 
     }
 
-    async function addNewMovie(ev){
+    async function saveMovie(ev){
 
         ev.preventDefault(); 
 
-        try{
+        const movieData = {
 
-            await axios.post('/adminMovies', {
+            id,
+            title, addedPhotos
+            // ,languages, length, genre, certificate, releaseDate, director, description, cast, crew
 
-                title, addedPhotos
-                // ,languages, length, genre, certificate, releaseDate, director, description, cast, crew
+        };
+
+        if(id){
+
+            /* update */
+
+            try{
+                
+                console.log('Movie Successfully updated');
+
+                await axios.put('/adminMovies', {
+                    id, ...movieData
+                });
+                
+                setRedirect(true);
+                alert('Movie Successfully updated');
     
-            });
+            }catch(error){
+    
+                console.error('Error updating movie:', error);
+                alert('Failed to upate this movie');
+    
+            }
 
-            setRedirect(true);
-            alert('Movie Successfully added');
+        }else{
 
-        }catch(error){
+            /* new */
 
-            console.error('Error adding new movie:', error);
-            alert('Failed to add new movie');
+            try{
+
+                await axios.post('/adminMovies', movieData);
+    
+                setRedirect(true);
+                alert('Movie Successfully added');
+    
+            }catch(error){
+    
+                console.error('Error adding new movie:', error);
+                alert('Failed to add new movie');
+    
+            }
 
         }
 
     }
 
     if (redirect) {
+        return <Navigate to='/account/adminMovies' />;
+    }
 
-        return <Navigate to={'/account/adminMovies'} />
+    function removePhoto(photoName){
+
+        setAddedPhotos([...addedPhotos.filter(photo => photo != photoName)])
 
     }
 
@@ -110,7 +164,7 @@ export default function MoviesFormPage() {
 
             <AccountNavigation/>
 
-            <form onSubmit={addNewMovie}>
+            <form onSubmit={saveMovie}>
 
                 <h2 className="text-xl mt-2">Title</h2>
                 <input 
@@ -145,15 +199,28 @@ export default function MoviesFormPage() {
 
                 <div className="mt-2 grid gap-2 grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
                     {addedPhotos.length > 0 && addedPhotos.map(link => (
-                        <div key={link}>
+                        <div className = "flex relative" key={link}>
+
                             <img 
-                                className="w-full h-full max-w-100 max-h-100 object-cover rounded-2xl" 
+                                className="w-full h-full max-w-100 object-cover rounded-2xl" 
                                 // src={`http://localhost:4000/${link}`}
                                 src={`http://localhost:4000/uploads/${link}`}
                                 // src={`http://localhost:4000/` + link}
 
                                 alt={`Uploaded ${link}`}
                             />
+
+                            <button 
+                                
+                                onClick = {() => removePhoto(link)}
+                                className="absolute right-2 top-2 text-white bg bg-black bg-opacity-50 rounded-2xl cursor-pointer">
+
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                </svg>
+
+                            </button>
+
                         </div>
                     ))}
 

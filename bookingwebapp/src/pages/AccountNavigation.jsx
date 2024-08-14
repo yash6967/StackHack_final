@@ -20,7 +20,6 @@ export default function AccountNavigation(){
 
             <Link className={linkClasses('profile')} to={'/account'}>My Account</Link>
             <Link className={linkClasses('adminMovies')} to={'/account/adminMovies'}>Your Movies</Link>
-            <Link className={linkClasses('adminTheatres')} to={'/account/adminTheatres'}>Your Theatres</Link>
 
         </nav>
     );
