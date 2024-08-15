@@ -96,15 +96,13 @@ export default function ShowtimesFormPage() {
 
             try{
 
-                await axios.get('/adminMovies/'+movie).then(response => {
-                    const {data} = response;
-                    console.log(data);
-                    setmoviename(data.title);
-                    /* AND EXTRA SETS */
-                });
-
+                const response = await axios.get('/adminMovies/' + movie);
+                const { data } = response;
+                console.log(data);
+                setmoviename(data.title); 
+                showtimeData.movieName = data.title; 
+                    /* CALL ME DADDY :) */
                 await axios.post('/adminShowtimes', showtimeData);
-    
                 setRedirect(true);
                 alert('showtime Successfully added');
     

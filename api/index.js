@@ -463,9 +463,10 @@ app.post('/adminShowtimes',async (req,res)=>{
                 showdate,
                 daytime
             });
+            
             res.status(200).json({
                 message:"success",
-                ShowtimeDocument:showtimeDocument});
+                showtimeDocument:showtimeDocument});
                 
     
         });
