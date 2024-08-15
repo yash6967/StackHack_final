@@ -409,5 +409,26 @@ app.delete('/adminTheatres/:id',async (req,res)=>{
     res.json(await Theatre.findByIdAndDelete(id));
 })
 
+// Search endpoint
+app.get('/search', async (req, res) => {
+
+    const { query } = req.query;
+
+    if (!query) {
+        return res.json([]);
+    }
+
+    try {
+
+        const movies = await Movie.find({ title: new RegExp(query, 'i') }).limit(10);
+        res.json(movies);
+
+    } catch (err) {
+
+        res.status(500).json({ error: 'Something went wrong' });
+
+    }
+    
+});
 
 app.listen(4000);
