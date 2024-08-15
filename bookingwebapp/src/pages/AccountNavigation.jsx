@@ -19,9 +19,9 @@ export default function AccountNavigation(){
         <nav className="w-full flex justify-center mt-8 gap-2 mb-8">
 
             <Link className={linkClasses('profile')} to={'/account'}>My Account</Link>
-            <Link className={linkClasses('adminMovies')} to={'/account/adminMovies'}>Your Movies</Link>
+            <Link className={linkClasses('adminMovies')} to={'/account/adminMovies'}>My Movies</Link>
             
-            <Link className={linkClasses('adminTheatres')} to={'/account/adminTheatres'}>Your Theatres</Link>
+            <Link className={linkClasses('adminTheatres')} to={'/account/adminTheatres'}>My Theatres</Link>
 
         </nav>
     );

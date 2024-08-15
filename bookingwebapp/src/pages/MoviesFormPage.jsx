@@ -9,6 +9,7 @@ export default function MoviesFormPage() {
     const [title, setTitle] = useState('');
     const [addedPhotos, setAddedPhotos] = useState([]);
     const [photoLink, setPhotoLink] = useState('');
+    const [formFillError, setFormFillError] = useState('');
     // const [languages, setLanguages] = useState([]);
     // const [length, setLength] = useState('');
     // const [genre, setGenre] = useState('');
@@ -96,57 +97,69 @@ export default function MoviesFormPage() {
 
         ev.preventDefault(); 
 
-        const movieData = {
+        if (!title) {
 
-            id,
-            title, addedPhotos
-            // ,languages, length, genre, certificate, releaseDate, director, description, cast, crew
-
-        };
-
-        if(id){
-
-            /* update */
-
-            try{
-                
-                console.log('Movie Successfully updated');
-
-                await axios.put('/adminMovies', {
-                    id, ...movieData
-                });
-                
-                setRedirect(true);
-                alert('Movie Successfully updated');
-    
-            }catch(error){
-    
-                console.error('Error updating movie:', error);
-                alert('Failed to upate this movie');
-    
-            }
+            setFormFillError('Title is required');
+            return;
 
         }else{
 
-            /* new */
+            setFormFillError('');
 
-            try{
+            const movieData = {
 
-                await axios.post('/adminMovies', movieData);
+                id,
+                title, addedPhotos
+                // ,languages, length, genre, certificate, releaseDate, director, description, cast, crew
     
-                setRedirect(true);
-                alert('Movie Successfully added');
+            };
     
-            }catch(error){
+            if(id){
     
-                console.error('Error adding new movie:', error);
-                alert('Failed to add new movie');
+                /* update */
+    
+                try{
+                    
+                    console.log('Movie Successfully updated');
+    
+                    await axios.put('/adminMovies', {
+                        id, ...movieData
+                    });
+                    
+                    setRedirect(true);
+                    alert('Movie Successfully updated');
+        
+                }catch(error){
+        
+                    console.error('Error updating movie:', error);
+                    alert('Failed to upate this movie');
+        
+                }
+    
+            }else{
+    
+                /* new */
+    
+                try{
+    
+                    await axios.post('/adminMovies', movieData);
+        
+                    setRedirect(true);
+                    alert('Movie Successfully added');
+        
+                }catch(error){
+        
+                    console.error('Error adding new movie:', error);
+                    alert('Failed to add new movie');
+        
+                }
     
             }
 
         }
 
     }
+
     async function deleteMovie(){
         if (window.confirm("Are you sure you want to delete this movie?")) {
             try {
@@ -186,7 +199,8 @@ export default function MoviesFormPage() {
                     value={title} 
                     onChange={ev => setTitle(ev.target.value)} 
                     // required 
-                    />
+                />
+                {formFillError && <div style={{ color: 'red' }}>{formFillError}</div>}
 
                 <h2 className="text-xl mt-2">Photos</h2>
                 <div className="flex gap-2">

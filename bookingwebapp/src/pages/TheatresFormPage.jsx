@@ -12,6 +12,7 @@ export default function TheatresFormPage() {
     // const [rows, setRows] = useState('');
     // const [cols, setCols] = useState('');
     // const [city, setCity] = useState('');
+    const [formFillError, setFormFillError] = useState('');
 
 
 
@@ -40,55 +41,64 @@ export default function TheatresFormPage() {
 
         ev.preventDefault(); 
 
-        const theatreData = {
+        if (!theatreName) {
 
-            id,
-            theatreName
-
-        };
-
-        if(id){
-
-            /* update */
-
-            try{
-                
-                console.log('theatre Successfully updated');
-
-                await axios.put('/adminTheatres', {
-                    id, ...theatreData
-                });
-                
-                setRedirect(true);
-                alert('theatre Successfully updated');
-    
-            }catch(error){
-    
-                console.error('Error updating theatre:', error);
-                alert('Failed to upate this theatre');
-    
-            }
+            setFormFillError('Theatre name is required');
+            return;
 
         }else{
 
-            /* new */
+            setFormFillError('');
 
-            try{
+            const theatreData = {
 
-                await axios.post('/adminTheatres', theatreData);
-    
-                setRedirect(true);
-                alert('theatre Successfully added');
-    
-            }catch(error){
-    
-                console.error('Error adding new theatre:', error);
-                alert('Failed to add new theatre');
-    
+                id,
+                theatreName
+
+            };
+
+            if(id){
+
+                /* update */
+
+                try{
+                    
+                    console.log('theatre Successfully updated');
+
+                    await axios.put('/adminTheatres', {
+                        id, ...theatreData
+                    });
+                    
+                    setRedirect(true);
+                    alert('theatre Successfully updated');
+        
+                }catch(error){
+        
+                    console.error('Error updating theatre:', error);
+                    alert('Failed to upate this theatre');
+        
+                }
+
+            }else{
+
+                /* new */
+
+                try{
+
+                    await axios.post('/adminTheatres', theatreData);
+        
+                    setRedirect(true);
+                    alert('theatre Successfully added');
+        
+                }catch(error){
+        
+                    console.error('Error adding new theatre:', error);
+                    alert('Failed to add new theatre');
+        
+                }
+
             }
-
         }
-
     }
 
     async function deleteTheatre(){
@@ -129,28 +139,25 @@ export default function TheatresFormPage() {
                     value={theatreName} 
                     onChange={ev => setName(ev.target.value)} 
                     // required 
-                    />
-
+                />
+                {formFillError && <div style={{ color: 'red' }}>{formFillError}</div>}
                 
-                
+            
+                <div className="flex gap-4 mt-4">
+                    <button type="submit" className="bg-gray-100 py-2 px-4 rounded-lg">
+                        Submit
+                    </button>
 
-                
-
-<div className="flex gap-4 mt-4">
-          <button type="submit" className="bg-gray-100 py-2 px-4 rounded-lg">
-            Submit
-          </button>
-
-          {id && (
-            <button
-              type="button"
-              onClick={deleteTheatre}
-              className="bg-red-500 text-white py-2 px-4 rounded-lg"
-            >
-              Delete
-            </button>
-          )}
-        </div>
+                    {id && (
+                        <button
+                        type="button"
+                        onClick={deleteTheatre}
+                        className="bg-red-500 text-white py-2 px-4 rounded-lg"
+                        >
+                        Delete
+                        </button>
+                    )}
+                </div>
 
             </form>
 
