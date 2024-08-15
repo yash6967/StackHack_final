@@ -8,6 +8,7 @@ export default function ShowtimesFormPage() {
 
     const {id} = useParams();
     const [movie, setmovie] = useState('');
+    const [movieName,setmoviename] = useState('');
     const [theatre,settheatre] = useState('');
     const [showdate,setdate] = useState([]);
     const [daytime,settime] = useState([]);
@@ -25,6 +26,7 @@ export default function ShowtimesFormPage() {
 
             const {data} = response;
             setmovie(data.movie);
+            setmoviename(data.movieName);
             settheatre(data.theatre);
             setdate(data.showdate);
             settime(data.daytime);
@@ -59,9 +61,11 @@ export default function ShowtimesFormPage() {
 
             id,
             movie,
+            movieName,
             theatre,
             showdate,
             daytime
+
         };
 
         if(id){
@@ -91,6 +95,13 @@ export default function ShowtimesFormPage() {
             /* new */
 
             try{
+
+                await axios.get('/adminMovies/'+movie).then(response => {
+                    const {data} = response;
+                    console.log(data);
+                    setmoviename(data.title);
+                    /* AND EXTRA SETS */
+                });
 
                 await axios.post('/adminShowtimes', showtimeData);
     

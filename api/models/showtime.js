@@ -6,6 +6,7 @@ const { number } = require('zod');
 const showtimeSchema = new mongoose.Schema({
     owner: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
     movie: { type: mongoose.Schema.Types.ObjectId, ref: 'Movie', required: true },
+    movieName:{type:String, ref:'Movie',required:false},
     theatre: { type: mongoose.Schema.Types.ObjectId, ref: 'Theatre', required: true },
     //ticketPrice: { type: Number, required: true },
     showdate: { type: Date, required: true },
