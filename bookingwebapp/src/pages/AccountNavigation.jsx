@@ -22,6 +22,7 @@ export default function AccountNavigation(){
             <Link className={linkClasses('adminMovies')} to={'/account/adminMovies'}>My Movies</Link>
             
             <Link className={linkClasses('adminTheatres')} to={'/account/adminTheatres'}>My Theatres</Link>
+            <Link className={linkClasses('adminShowtimes')} to={'/account/adminShowtimes'}>My Showtimes</Link>
 
         </nav>
     );

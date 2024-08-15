@@ -10,6 +10,8 @@ import MoviesPage from "./pages/MoviesPage";
 import MoviesFormPage from "./pages/MoviesFormPage";
 import TheatrePage from "./pages/TheatrePage";
 import TheatresFormPage from "./pages/TheatresFormPage";
+import ShowtimesPage from "./pages/ShowtimesPage";
+import ShowtimesFormPage from "./pages/ShowtimeFormPage"
 
 export default function App() {
 
@@ -36,6 +38,10 @@ export default function App() {
             <Route path = "/account/adminTheatres" element = {<TheatrePage />} />
             <Route path = "/account/adminTheatres/new" element = {<TheatresFormPage />} />
             <Route path = "/account/adminTheatres/:id" element = {<TheatresFormPage />} />
+
+            <Route path = "/account/adminShowtimes" element = {<ShowtimesPage />} />
+            <Route path = "/account/adminShowtimes/new" element = {<ShowtimesFormPage />} />
+            <Route path = "/account/adminShowtimes/:id" element = {<ShowtimesFormPage />} />
       
           </Route>
         </Routes>

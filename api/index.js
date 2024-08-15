@@ -14,7 +14,8 @@ require('dotenv').config()
 
 const User = require('./models/user.js');
 const Movie = require('./models/movie.js');
-const Theatre = require('./models/theatre.js')
+const Theatre = require('./models/theatre.js');
+const Showtime = require('./models/showtime.js');
 
 const app = express();
 
@@ -344,11 +345,7 @@ app.get('/adminTheatres', async (req, res) => {
 
 
 //update theatres
-//zod verification
 
-const theatreSchema = zod.object({
-    theatreName:zod.string().min(1,'min length should be 1')
-})
 
 
 /* For Update */
@@ -360,11 +357,7 @@ app.put('/adminTheatres', async (req, res) => {
         return res.status(401).json({ error: 'No token provided' });
     }
 
-    const validation  = theatreSchema.safeParse(req.body);
-    if(!validation.success){
-        res.status(401).json({error: 'incorrect zod body sent'});
-        
-    }
+
 
     const {
 
@@ -409,6 +402,7 @@ app.delete('/adminTheatres/:id',async (req,res)=>{
     res.json(await Theatre.findByIdAndDelete(id));
 })
 
+<<<<<<< Updated upstream
 // Search endpoint
 app.get('/search', async (req, res) => {
 
@@ -430,5 +424,100 @@ app.get('/search', async (req, res) => {
     }
     
 });
+=======
+//showtime showtime showtime showtime showtime showtime showtime showtime showtime showtime showtime 
+
+//create new showtime
+app.post('/adminShowtimes',async (req,res)=>{
+    
+    const {token} = req.cookies;
+
+    if(!token){
+        res.status(401).json({error:'token not found'});
+    }
+    const {movie,theatre,date,
+        //time
+        } = req.body;
+
+
+
+        jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
+
+            if(error) throw error;
+        
+            const showtimeDocument = await Showtime.create({
+                owner: userData.id,
+                movie,
+                theatre,
+                date
+                //time
+            });
+            res.status(200).json({
+                message:"success",
+                ShowtimeDocument:showtimeDocument});
+                
+    
+        });
+    
+    
+});
+
+app.get('/adminShowtimes/:id', async (req, res) => {
+
+    const {id} = req.params;
+    const element = await Showtime.findById(id) 
+    res.json(element);
+
+});
+
+//get all showtimes
+app.get('/adminShowtimes', async (req, res) => {
+
+    res.json(await Showtime.find());
+
+});
+
+/* For Update */
+app.put('/adminShowtimes', async (req, res) => {
+
+    const {token} = req.cookies;
+
+    if (!token) {
+        return res.status(401).json({ error: 'No token provided' });
+    }
+
+
+
+    const {movie,theatre,date
+        //time
+        } = req.body;
+    
+    jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
+        
+        if(error) throw error;
+
+        const showtimeDoc = await Showtime.findById(id);
+    
+        if(userData.id === showtimeDoc.owner.toString()){
+
+            showtimeDoc.set({
+                movie,theatre,date
+                //,time
+            });
+
+            await showtimeDoc.save();
+            res.json('ok');
+
+        }
+
+    });
+
+});
+
+app.delete('/adminShowtimes/:id',async (req,res)=>{
+    const {id} = req.params;
+    res.json(await Showtime.findByIdAndDelete(id));
+})
+>>>>>>> Stashed changes
 
 app.listen(4000);
