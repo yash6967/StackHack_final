@@ -147,7 +147,18 @@ export default function MoviesFormPage() {
         }
 
     }
-
+    async function deleteMovie(){
+        if (window.confirm("Are you sure you want to delete this movie?")) {
+            try {
+              await axios.delete(`/adminMovies/${id}`);
+              setRedirect(true);
+              alert("movie successfully deleted");
+            } catch (error) {
+              console.error("Error deleting movie:", error);
+              alert("Failed to delete the movie");
+            }
+          }
+    }
     if (redirect) {
         return <Navigate to='/account/adminMovies' />;
     }
@@ -310,10 +321,21 @@ export default function MoviesFormPage() {
                     value={formData.crew} 
                     onChange={handleChange} /> */}
 
-                <button 
-                    className="bg-gray-100 py-2 px-4 rounded-lg mt-4">
-                Submit
-                </button>
+        <div className="flex gap-4 mt-4">
+          <button type="submit" className="bg-gray-100 py-2 px-4 rounded-lg">
+            Submit
+          </button>
+
+          {id && (
+            <button
+              type="button"
+              onClick={deleteMovie}
+              className="bg-red-500 text-white py-2 px-4 rounded-lg"
+            >
+              Delete
+            </button>
+          )}
+        </div>
 
             </form>
 

@@ -90,9 +90,26 @@ export default function TheatresFormPage() {
         }
 
     }
+
+    async function deleteTheatre(){
+        if (window.confirm("Are you sure you want to delete this theatre?")) {
+            try {
+              await axios.delete(`/adminTheatres/${id}`);
+              setRedirect(true);
+              alert("Theatre successfully deleted");
+            } catch (error) {
+              console.error("Error deleting theatre:", error);
+              alert("Failed to delete the theatre");
+            }
+          }
+    }
+    
     if (redirect) {
         return <Navigate to='/account/adminTheatres' />;
     }
+
+
+    
 
     return (
 
@@ -119,10 +136,21 @@ export default function TheatresFormPage() {
 
                 
 
-                <button 
-                    className="bg-gray-100 py-2 px-4 rounded-lg mt-4">
-                Submit
-                </button>
+<div className="flex gap-4 mt-4">
+          <button type="submit" className="bg-gray-100 py-2 px-4 rounded-lg">
+            Submit
+          </button>
+
+          {id && (
+            <button
+              type="button"
+              onClick={deleteTheatre}
+              className="bg-red-500 text-white py-2 px-4 rounded-lg"
+            >
+              Delete
+            </button>
+          )}
+        </div>
 
             </form>
 

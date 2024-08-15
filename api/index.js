@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser');
 const imageDownloader = require('image-downloader');
 const multer = require('multer');
 const fs = require('fs');
+const zod = require('zod');
 // const movieModel = require('./models/movie.js');
 require('dotenv').config()
 
@@ -290,6 +291,13 @@ app.get('/adminMovies', async (req, res) => {
 
 });
 
+/*delete movie */
+app.delete('/adminMovies/:id',async (req,res)=>{
+    const {id} = req.params;
+    res.json(await Movie.findByIdAndDelete(id));
+})
+
+
 //create new theatre
 app.post('/adminTheatres',async (req,res)=>{
     
@@ -336,6 +344,13 @@ app.get('/adminTheatres', async (req, res) => {
 
 
 //update theatres
+//zod verification
+
+const theatreSchema = zod.object({
+    theatreName:zod.string().min(1,'min length should be 1')
+})
+
+
 /* For Update */
 app.put('/adminTheatres', async (req, res) => {
 
@@ -343,6 +358,12 @@ app.put('/adminTheatres', async (req, res) => {
 
     if (!token) {
         return res.status(401).json({ error: 'No token provided' });
+    }
+
+    const validation  = theatreSchema.safeParse(req.body);
+    if(!validation.success){
+        res.status(401).json({error: 'incorrect zod body sent'});
+        
     }
 
     const {
@@ -382,6 +403,11 @@ app.get('/adminTheatres/:id', async (req, res) => {
     res.json(await Theatre.findById(id));
 
 });
+
+app.delete('/adminTheatres/:id',async (req,res)=>{
+    const {id} = req.params;
+    res.json(await Theatre.findByIdAndDelete(id));
+})
 
 
 app.listen(4000);
