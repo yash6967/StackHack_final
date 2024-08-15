@@ -1,16 +1,23 @@
 import { useState } from "react";
-import {Link} from "react-router-dom";
+import {Link, Navigate} from "react-router-dom";
 import axios from "axios";
 
 export default function RegisterPage(){
 
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [email, setEmail] = useState('');
+    const [redirectToLogin, setRedirectToLogin] = useState(false);
 
     async function registerUser (ev){
 
         ev.preventDefault();
+
+        if (password !== confirmPassword) {
+            alert('Passwords do not match');
+            return;
+        }
 
         try{
 
@@ -20,6 +27,7 @@ export default function RegisterPage(){
                 password,
             });
     
+            setRedirectToLogin(true);
             alert('You have been registered');
 
         }catch(duplicateMailError){
@@ -28,6 +36,10 @@ export default function RegisterPage(){
 
         }
 
+    }
+
+    if(redirectToLogin){
+        return <Navigate to='/login' />;
     }
 
     return(
@@ -40,20 +52,35 @@ export default function RegisterPage(){
 
                 <form className="max-w-md mx-auto" onSubmit={registerUser}>
 
-                    <input type="text" placeholder="name" 
-                        value={name} 
-                        onChange={ev => setName(ev.target.value)}/>
-
-                    <input type="email" placeholder="your@email.com" 
+                <input
+                        type="text"
+                        placeholder="Name"
+                        value={name}
+                        onChange={ev => setName(ev.target.value)}
+                        required
+                    />
+                    <input
+                        type="email"
+                        placeholder="Email"
                         value={email}
-                        onChange={ev => setEmail(ev.target.value)}/>
-
-                    <input type="password" placeholder="password" 
+                        onChange={ev => setEmail(ev.target.value)}
+                        required
+                    />
+                    <input
+                        type="password"
+                        placeholder="Password"
                         value={password}
-                        onChange={ev => setPassword(ev.target.value)}/>
-
+                        onChange={ev => setPassword(ev.target.value)}
+                        required
+                    />
+                    <input
+                        type="password"
+                        placeholder="Confirm Password"
+                        value={confirmPassword}
+                        onChange={ev => setConfirmPassword(ev.target.value)}
+                        required
+                    />
                     <button className="primary">Register</button>
-
                     <div className="text-right py-2 text-gray-500">
                         Already have an account? <Link className="underline text-black" to={'/login'}>Login</Link>
                     </div>

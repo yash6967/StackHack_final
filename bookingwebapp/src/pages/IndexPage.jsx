@@ -8,7 +8,7 @@ export default function IndexPage() {
 
     useEffect(() => {
         
-        axios.get('/adminMovies').then(response => {
+        axios.get('/').then(response => {
             
             // setMovies([...response.data, ...response.data, ...response.data]);
             setMovies(response.data);

@@ -186,6 +186,22 @@ app.post('/upload', photosMiddleware.array('photos', 10), (req, res) => {
 
 });
 
+/* FOR ALL MOVIES */
+app.get('/', async(req, res) => {
+
+    try {
+
+        const movies = await Movie.find(); 
+        res.json(movies);
+
+    } catch (error) {
+
+        res.status(500).json({ error: 'Internal server error' });
+
+    }
+
+});
+
 app.post('/adminMovies', (req, res) => {
 
     const {token} = req.cookies;
@@ -220,33 +236,33 @@ app.post('/adminMovies', (req, res) => {
 
 app.get('/adminMovies', async(req, res) => {
 
-    // const {token} = req.cookies;
+    const {token} = req.cookies;
 
-    // if (!token) {
-    //     return res.status(401).json({ error: 'No token provided' });
-    // }
+    if (!token) {
+        return res.status(401).json({ error: 'No token provided' });
+    }
 
-    // jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
+    jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
 
-    //     if(error) throw error;
+        if(error) throw error;
     
-    //     const {id} = userData;
+        const {id} = userData;
 
-    //     res.json(await Movie.find({owner:id}));
+        res.json(await Movie.find({owner:id}));
         
 
-    // });
+    });
 
-    try {
+    // try {
 
-        const movies = await Movie.find(); 
-        res.json(movies);
+    //     const movies = await Movie.find(); 
+    //     res.json(movies);
 
-    } catch (error) {
+    // } catch (error) {
 
-        res.status(500).json({ error: 'Internal server error' });
+    //     res.status(500).json({ error: 'Internal server error' });
 
-    }
+    // }
 
 });
 
@@ -298,11 +314,11 @@ app.put('/adminMovies', async (req, res) => {
 
 });
 
-app.get('/adminMovies', async (req, res) => {
+// app.get('/adminMovies', async (req, res) => {
 
-    res.json(await Movie.find());
+//     res.json(await Movie.find());
 
-});
+// });
 
 /*delete movie */
 app.delete('/adminMovies/:id',async (req,res)=>{
@@ -347,11 +363,27 @@ app.post('/adminTheatres',async (req,res)=>{
     
 });
 
-
 //get all theatres
 app.get('/adminTheatres', async (req, res) => {
 
-    res.json(await Theatre.find());
+    // res.json(await Theatre.find());
+
+    const {token} = req.cookies;
+
+    if (!token) {
+        return res.status(401).json({ error: 'No token provided' });
+    }
+
+    jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
+
+        if(error) throw error;
+    
+        const {id} = userData;
+
+        res.json(await Theatre.find({owner:id}));
+        
+
+    });
 
 });
 
@@ -463,7 +495,7 @@ app.post('/adminShowtimes',async (req,res)=>{
                 showdate,
                 daytime
             });
-            
+
             res.status(200).json({
                 message:"success",
                 showtimeDocument:showtimeDocument});
