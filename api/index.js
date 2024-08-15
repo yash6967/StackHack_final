@@ -218,23 +218,35 @@ app.post('/adminMovies', (req, res) => {
     });
 });
 
-app.get('/adminMovies', (req, res) => {
+app.get('/adminMovies', async(req, res) => {
 
-    const {token} = req.cookies;
+    // const {token} = req.cookies;
 
-    if (!token) {
-        return res.status(401).json({ error: 'No token provided' });
-    }
+    // if (!token) {
+    //     return res.status(401).json({ error: 'No token provided' });
+    // }
 
-    jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
+    // jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
 
-        if(error) throw error;
+    //     if(error) throw error;
     
-        const {id} = userData;
+    //     const {id} = userData;
 
-        res.json(await Movie.find({owner:id}))
+    //     res.json(await Movie.find({owner:id}));
+        
 
-    });
+    // });
+
+    try {
+
+        const movies = await Movie.find(); 
+        res.json(movies);
+
+    } catch (error) {
+
+        res.status(500).json({ error: 'Internal server error' });
+
+    }
 
 });
 

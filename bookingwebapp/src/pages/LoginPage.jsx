@@ -55,13 +55,13 @@ export default function LoginPage(){
         ev.preventDefault();
 
         try {
-            const response = await axios.post('/login', { email:'a@gmail.com', password:'a' });
+            const response = await axios.post('/login', { email:'guest@gmail.com', password:'guest' });
     
             if (response.status === 200) {
 
                 const userDocument = response.data;
                 setUser(userDocument);
-                alert('Login successful');
+                alert('Login Successful');
                 setRedirect(true);
 
             } else {
@@ -121,7 +121,7 @@ export default function LoginPage(){
                         onChange={ev => setPassword(ev.target.value)}/>
 
                     <button className="primary my-1">Login</button>
-                    <button className="primary" onClick={handleGuestLogin}>gueat user</button>
+                    <button className="primary" onClick={handleGuestLogin}>Guest User</button>
 
                     <div className="text-right py-2 text-gray-500">
                         Don't have an account yet? <Link className="underline text-black" to={'/register'}>Register</Link>
