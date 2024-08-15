@@ -402,7 +402,6 @@ app.delete('/adminTheatres/:id',async (req,res)=>{
     res.json(await Theatre.findByIdAndDelete(id));
 })
 
-<<<<<<< Updated upstream
 // Search endpoint
 app.get('/search', async (req, res) => {
 
@@ -424,7 +423,6 @@ app.get('/search', async (req, res) => {
     }
     
 });
-=======
 //showtime showtime showtime showtime showtime showtime showtime showtime showtime showtime showtime 
 
 //create new showtime
@@ -435,8 +433,7 @@ app.post('/adminShowtimes',async (req,res)=>{
     if(!token){
         res.status(401).json({error:'token not found'});
     }
-    const {movie,theatre,date,
-        //time
+    const {movie,theatre,showdate,daytime
         } = req.body;
 
 
@@ -449,8 +446,8 @@ app.post('/adminShowtimes',async (req,res)=>{
                 owner: userData.id,
                 movie,
                 theatre,
-                date
-                //time
+                showdate,
+                daytime
             });
             res.status(200).json({
                 message:"success",
@@ -488,8 +485,7 @@ app.put('/adminShowtimes', async (req, res) => {
 
 
 
-    const {movie,theatre,date
-        //time
+    const {id,movie,theatre,showdate,daytime
         } = req.body;
     
     jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
@@ -501,8 +497,7 @@ app.put('/adminShowtimes', async (req, res) => {
         if(userData.id === showtimeDoc.owner.toString()){
 
             showtimeDoc.set({
-                movie,theatre,date
-                //,time
+                movie,theatre,showdate,daytime
             });
 
             await showtimeDoc.save();
@@ -518,6 +513,5 @@ app.delete('/adminShowtimes/:id',async (req,res)=>{
     const {id} = req.params;
     res.json(await Showtime.findByIdAndDelete(id));
 })
->>>>>>> Stashed changes
 
 app.listen(4000);

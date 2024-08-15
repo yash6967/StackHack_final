@@ -9,7 +9,7 @@ export default function ShowtimesFormPage() {
     const {id} = useParams();
     const [movie, setmovie] = useState('');
     const [theatre,settheatre] = useState('');
-    const [date,setdate] = useState([]);
+    const [showdate,setdate] = useState([]);
     const [daytime,settime] = useState([]);
     const [errors, setErrors] = useState({});
 
@@ -26,7 +26,7 @@ export default function ShowtimesFormPage() {
             const {data} = response;
             setmovie(data.movie);
             settheatre(data.theatre);
-            setdate(data.date);
+            setdate(data.showdate);
             settime(data.daytime);
 
             /* AND EXTRA SETS */
@@ -35,18 +35,32 @@ export default function ShowtimesFormPage() {
 
     }, [id]);
 
+    function validateForm() {
+        const newErrors = {};
+        if (!movie) newErrors.movie = 'Movie name is required';
+        if (!theatre) newErrors.theatre = 'Theatre name is required';
+        if (!showdate || showdate === '') newErrors.showdate = 'showDate is required';
+        if (!daytime || daytime === '') newErrors.daytime = 'Time is required';
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    }
+
     
 
     async function saveshowtime(ev){
 
         ev.preventDefault(); 
 
+        if (!validateForm()) {
+            return;
+        }
+
         const showtimeData = {
 
             id,
             movie,
             theatre,
-            date,
+            showdate,
             daytime
         };
 
@@ -130,9 +144,12 @@ export default function ShowtimesFormPage() {
                     // name="name" 
                     placeholder="Name of moviee" 
                     value={movie} 
-                    onChange={ev => setmovie(ev.target.value)} 
+                    onChange={ev => setmovie(ev.target.value)}
+                    className={`border ${errors.movie ? 'border-red-500' : 'border-gray-300'} rounded-lg py-2 px-4 w-full`} 
                     // required 
                     />
+                    {errors.movie && <div className="text-red-500 text-sm mt-1">{errors.movie}</div>}
+
                 <h2 className="text-xl mt-2">theatre Name</h2>
                 <input 
                     type="text" 
@@ -140,19 +157,25 @@ export default function ShowtimesFormPage() {
                     // name="name" 
                     placeholder="Name of showtime" 
                     value={theatre} 
-                    onChange={ev => settheatre(ev.target.value)} 
+                    onChange={ev => settheatre(ev.target.value)}
+                    className={`border ${errors.theatre ? 'border-red-500' : 'border-gray-300'} rounded-lg py-2 px-4 w-full`} 
                     // required 
-                    /> 
-                <h2 className="text-xl mt-2">date</h2>
+                    />
+                    {errors.theatre && <div className="text-red-500 text-sm mt-1">{errors.theatre}</div>}
+
+                <h2 className="text-xl mt-2">showdate</h2>
                 <input 
                     type="date" 
                     // id="showtime-name"
                     // name="name" 
                     placeholder="Name of showtime" 
-                    value={date} 
-                    onChange={ev => setdate(ev.target.value)} 
+                    value={showdate} 
+                    onChange={ev => setdate(ev.target.value)}
+                    className={`border ${errors.date ? 'border-red-500' : 'border-gray-300'} rounded-lg py-2 px-4 w-full`} 
                     // required 
                     />  
+                    {errors.showdate && <div className="text-red-500 text-sm mt-1">{errors.showdate}</div>}
+
                 <h2 className="text-xl mt-2">time</h2>
                 <input 
                     type="time" 
@@ -161,8 +184,10 @@ export default function ShowtimesFormPage() {
                     placeholder="time" 
                     value={daytime} 
                     onChange={ev => settime(ev.target.value)} 
+                    className={`border ${errors.daytime ? 'border-red-500' : 'border-gray-300'} rounded-lg py-2 px-4 w-full`}
                     // required 
-                    /> 
+                    />
+                    {errors.daytime && <div className="text-red-500 text-sm mt-1">{errors.daytime}</div>} 
                 
                 
 

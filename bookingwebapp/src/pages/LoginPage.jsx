@@ -50,6 +50,46 @@ export default function LoginPage(){
         }
     }
 
+    async function handleGuestLogin(ev) {
+
+        ev.preventDefault();
+
+        try {
+            const response = await axios.post('/login', { email:'a@gmail.com', password:'a' });
+    
+            if (response.status === 200) {
+
+                const userDocument = response.data;
+                setUser(userDocument);
+                alert('Login successful');
+                setRedirect(true);
+
+            } else {
+
+                alert(response.data);
+
+            }
+
+        } catch (error) {
+
+            if (error.response) {
+              
+                if (error.response.status === 401) {
+                    alert('Incorrect password. Please try again.');
+                } else if (error.response.status === 404) {
+                    alert('Email not registered. Please check your email or sign up.');
+                } else {
+                    alert('Login failed. Please try again later.');
+                }
+
+            } else {
+
+                alert('Login failed. Please try again later.');
+                
+            }
+        }
+    }
+
     if(redirect){
 
         return <Navigate to={'/'}/>
@@ -80,7 +120,8 @@ export default function LoginPage(){
                         value={password} 
                         onChange={ev => setPassword(ev.target.value)}/>
 
-                    <button className="primary">Login</button>
+                    <button className="primary my-1">Login</button>
+                    <button className="primary" onClick={handleGuestLogin}>gueat user</button>
 
                     <div className="text-right py-2 text-gray-500">
                         Don't have an account yet? <Link className="underline text-black" to={'/register'}>Register</Link>
