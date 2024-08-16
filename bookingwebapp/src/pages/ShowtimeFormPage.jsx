@@ -2,18 +2,22 @@ import { useState,useEffect } from "react";
 import AccountNavigation from "./AccountNavigation";
 import axios from "axios";
 import {Navigate, useParams} from "react-router-dom";
-
+import ErrorBoundary from "../components/ErrorBoundary";
 
 export default function ShowtimesFormPage() {
 
     const {id} = useParams();
-    const [movie, setmovie] = useState('');
+    const [movieid, setmovieid] = useState('');
     const [movieName,setmoviename] = useState('');
-    const [theatre,settheatre] = useState('');
+    const [theatreid,settheatreid] = useState('');
+    const [theatreName,settheatrename] = useState('');
     const [showdate,setdate] = useState([]);
     const [daytime,settime] = useState([]);
     const [errors, setErrors] = useState({});
-
+    const [movies, setMovies] = useState([]);
+    const [theatres, setTheatres] = useState([]);
+    const [selectedMovie, setSelectedMovie] = useState([null]);
+    const [selectedTheatre, setSelectedTheatre] = useState([null]);
     const [redirect,setRedirect] = useState(false);
 
     useEffect(() => {
@@ -25,9 +29,10 @@ export default function ShowtimesFormPage() {
         axios.get('/adminShowtimes/' + id).then(response => {
 
             const {data} = response;
-            setmovie(data.movie);
+            setmovieid(data.movieid);
             setmoviename(data.movieName);
-            settheatre(data.theatre);
+            settheatreid(data.theatreid);
+            settheatrename(data.theatreName);
             setdate(data.showdate);
             settime(data.daytime);
 
@@ -37,10 +42,35 @@ export default function ShowtimesFormPage() {
 
     }, [id]);
 
+    useEffect(() => {
+        const fetchMovies = async () => {
+            try {
+                const response = await axios.get('/adminMovies');  //gives whole movie object
+                setMovies(response.data);
+            } catch (error) {
+                console.error('Error fetching movies:', error);
+            }
+        };
+        fetchMovies();
+    }, []);
+
+    useEffect(() => {
+        const fetchTheatres = async () => {
+            try {
+                const response = await axios.get('/adminTheatres');  //gives whole movie object
+                setTheatres(response.data);
+            } catch (error) {
+                console.error('Error fetching movies:', error);
+            }
+        };
+        fetchTheatres();
+    }, []);
+    
+
     function validateForm() {
         const newErrors = {};
-        if (!movie) newErrors.movie = 'Movie name is required';
-        if (!theatre) newErrors.theatre = 'Theatre name is required';
+        if (!movieid) newErrors.movieid = 'Movie name is required';
+        if (!theatreid) newErrors.theatreid = 'Theatre name is required';
         if (!showdate || showdate === '') newErrors.showdate = 'showDate is required';
         if (!daytime || daytime === '') newErrors.daytime = 'Time is required';
         setErrors(newErrors);
@@ -60,9 +90,10 @@ export default function ShowtimesFormPage() {
         const showtimeData = {
 
             id,
-            movie,
+            movieid,
             movieName,
-            theatre,
+            theatreid,
+            theatreName,
             showdate,
             daytime
 
@@ -96,12 +127,13 @@ export default function ShowtimesFormPage() {
 
             try{
 
-                const response = await axios.get('/adminMovies/' + movie);
-                const { data } = response;
-                console.log(data);
-                setmoviename(data.title); 
-                showtimeData.movieName = data.title; 
+                // const response = await axios.get('/adminMovies/' + movieid);
+                // const { data } = response;
+                // console.log(data);
+                // setmoviename(data.title); 
+                // showtimeData.movieName = data.title; 
                     /* CALL ME DADDY :) */
+//do same for theatre if needed                    
                 await axios.post('/adminShowtimes', showtimeData);
                 setRedirect(true);
                 alert('showtime Successfully added');
@@ -129,6 +161,23 @@ export default function ShowtimesFormPage() {
             }
           }
     }
+
+    const handleMovieSelect = (event) => {
+        const movieId = event.target.value;
+        //console.log(movies);
+        const movie = movies.find(m => m._id === movieId);
+        setSelectedMovie(movie);
+        setmovieid(movieId);
+        setmoviename(movie.title);
+    };
+    const handleTheatreSelect = (event) => {
+        const TheatreId = event.target.value;
+        console.log(theatres);
+        const theatre = theatres.find(m => m._id === TheatreId);
+        setSelectedTheatre(theatre);
+        settheatreid(TheatreId);
+        settheatrename(theatre.theatreName);
+    };
     
     if (redirect) {
         return <Navigate to='/account/adminShowtimes' />;
@@ -145,21 +194,21 @@ export default function ShowtimesFormPage() {
             
 
             <form onSubmit={saveshowtime}>
-
-                <h2 className="text-xl mt-2">movie Name</h2>
+                
+                {/* <h2 className="text-xl mt-2">movie Name</h2>
                 <input 
                     type="text" 
                     // id="showtime-name"
                     // name="name" 
                     placeholder="Name of moviee" 
-                    value={movie} 
-                    onChange={ev => setmovie(ev.target.value)}
+                    value={movieid} 
+                    onChange={ev => setmovieid(ev.target.value)}
                     className={`border ${errors.movie ? 'border-red-500' : 'border-gray-300'} rounded-lg py-2 px-4 w-full`} 
                     // required 
-                    />
-                    {errors.movie && <div className="text-red-500 text-sm mt-1">{errors.movie}</div>}
+                />
+                    {errors.movie && <div className="text-red-500 text-sm mt-1">{errors.movie}</div>} */}
 
-                <h2 className="text-xl mt-2">theatre Name</h2>
+                {/* <h2 className="text-xl mt-2">theatre Name</h2>
                 <input 
                     type="text" 
                     // id="showtime-name"
@@ -170,7 +219,7 @@ export default function ShowtimesFormPage() {
                     className={`border ${errors.theatre ? 'border-red-500' : 'border-gray-300'} rounded-lg py-2 px-4 w-full`} 
                     // required 
                     />
-                    {errors.theatre && <div className="text-red-500 text-sm mt-1">{errors.theatre}</div>}
+                    {errors.theatre && <div className="text-red-500 text-sm mt-1">{errors.theatre}</div>} */}
 
                 <h2 className="text-xl mt-2">showdate</h2>
                 <input 
@@ -196,9 +245,42 @@ export default function ShowtimesFormPage() {
                     className={`border ${errors.daytime ? 'border-red-500' : 'border-gray-300'} rounded-lg py-2 px-4 w-full`}
                     // required 
                     />
-                    {errors.daytime && <div className="text-red-500 text-sm mt-1">{errors.daytime}</div>} 
+                {errors.daytime && <div className="text-red-500 text-sm mt-1">{errors.daytime}</div>} 
                 
                 
+                    <label 
+                    className="text-xl mt-2"
+                    //className={`border ${errors.movieid ? 'border-red-500' : 'border-gray-300'} rounded-lg py-2 px-4 w-full`} 
+                    >Select a Movie</label>
+                    <select onChange={handleMovieSelect}
+                    className={`border ${errors.movieid ? 'border-red-500' : 'border-gray-300'} rounded-lg py-2 px-4 w-full`} 
+                    >
+                        <option>Select a movie</option>
+                        {movies.map(movie => (
+                                <option key={movie._id} value={movie._id}>
+                                    {movie.title}
+                                </option>
+                        ))};
+                    </select>
+                    {errors.movieid && <div className="text-red-500 text-sm mt-1">{errors.movieid}</div>}
+
+                    <label 
+                    className="text-xl mt-2"
+                    >Select a Theatre</label>
+                    <select onChange={handleTheatreSelect}
+                    className={`border ${errors.theatreid ? 'border-red-500' : 'border-gray-300'} rounded-lg py-2 px-4 w-full`} 
+                    >
+                        <option>Select a Theatre</option>
+                        {theatres.map(theatre => (
+                                <option key={theatre._id} value={theatre._id}>
+                                    {theatre.theatreName}
+                                </option>
+                        ))};
+                    </select>
+                    {errors.theatreid && <div className="text-red-500 text-sm mt-1">{errors.theatreid}</div>} 
+
+                
+              
 
                 
 

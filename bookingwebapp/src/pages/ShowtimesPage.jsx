@@ -85,7 +85,7 @@ export default function ShowtimesPage() {
                             <h2 className="text-xl">
 
                                 {it.movieName} <br></br>
-                                {it.theatre}<br></br>
+                                {it.theatreName}<br></br>
                                 {it.showdate}<br></br>
                                 {it.daytime}<br></br>
                                 
