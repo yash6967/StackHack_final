@@ -130,9 +130,6 @@ export default function TheatresFormPage() {
         return <Navigate to='/account/adminTheatres' />;
     }
 
-
-    
-
     return (
 
         <div>

@@ -12,6 +12,7 @@ import TheatrePage from "./pages/TheatrePage";
 import TheatresFormPage from "./pages/TheatresFormPage";
 import ShowtimesPage from "./pages/ShowtimesPage";
 import ShowtimesFormPage from "./pages/ShowtimeFormPage"
+import MoviePage from "./pages/MoviePage";
 
 export default function App() {
 
@@ -34,6 +35,8 @@ export default function App() {
             <Route path = "/account/adminMovies" element = {<MoviesPage />} />
             <Route path = "/account/adminMovies/new" element = {<MoviesFormPage />} />
             <Route path = "/account/adminMovies/:id" element = {<MoviesFormPage />} />
+
+            <Route path = "/movie/:id" element = {<MoviePage />} />
 
             <Route path = "/account/adminTheatres" element = {<TheatrePage />} />
             <Route path = "/account/adminTheatres/new" element = {<TheatresFormPage />} />

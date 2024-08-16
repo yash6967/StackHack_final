@@ -11,41 +11,41 @@ const movieSchema = new Schema({
 
     title: { 
         type: String, 
-        required: true },
+        required: true},
 
     photos: {
         type: [String]},
 
-    // languages: {
-    //     type: [String], 
-    //     required: true},
+    languages: {
+        type: [String], 
+        required: true},
 
-    // length: {
-    //     type: String,
-    //     required: true,
-    //     validate: {
-    //       validator: function(v) {
-    //         return /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/.test(v);},
-    //       message: props => `${props.value} is not a valid time format!`}},
+    length: {
+        type: String,
+        required: true,
+        validate: {
+          validator: function(v) {
+            return /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/.test(v);},
+          message: props => `${props.value} is not a valid time format!`}},
     
-    // genre: { 
-    //     type: String,
-    //     required: true },
+    genre: { 
+        type: [String],
+        required: true },
     
-    // certificate: { 
-    //     type: String,
-    //     required: true },
+    certificate: { 
+        type: String,
+        required: true },
 
-    // director: { 
-    //     type: String},
+    director: { 
+        type: String},
 
-    // releaseDate: { 
-    //     type: Date,
-    //     required: true},
+    releaseDate: { 
+        type: Date,
+        required: true},
 
-    // description: { 
-    //     type: Date,
-    //     required: true},
+    description: { 
+        type: String,
+        required: true},
 
     // cast: { 
     //     type: [String]},

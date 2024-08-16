@@ -212,8 +212,9 @@ app.post('/adminMovies', (req, res) => {
 
     const {
 
-        title, addedPhotos
-        // ,languages, length, genre, certificate, releaseDate, director, description, cast, crew
+        title, addedPhotos,
+        languages, length, genre, certificate, releaseDate, director, description, 
+        // cast, crew
 
     } = req.body;
 
@@ -224,8 +225,9 @@ app.post('/adminMovies', (req, res) => {
         const movieDoc = await Movie.create({
 
             owner: userData.id,
-            title, photos: addedPhotos
-            // ,languages, length, genre, certificate, releaseDate, director, description, cast, crew
+            title, photos: addedPhotos,
+            languages, length, genre, certificate, releaseDate, director, description,
+            // cast, crew
 
         });
 
