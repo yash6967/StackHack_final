@@ -72,15 +72,6 @@ export default function ShowtimesPage() {
                             to = {'/account/adminShowtimes/' + it._id} 
                             className="flex cursor-pointer gap-4 bg-gray-200 p-4">
 
-                            {/* <div className="flex w-32 h-32 bg-gray-300">
-
-                                {it.photos.length > 0 && (
-
-                                    <img src={'http://localhost:4000/uploads/' + it.photos[0]} alt="showtime Poster" />
-
-                                )}
-
-                            </div> */}
 
                             <h2 className="text-xl">
 

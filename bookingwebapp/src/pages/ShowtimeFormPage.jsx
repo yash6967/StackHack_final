@@ -125,15 +125,7 @@ export default function ShowtimesFormPage() {
 
             /* new */
 
-            try{
-
-                // const response = await axios.get('/adminMovies/' + movieid);
-                // const { data } = response;
-                // console.log(data);
-                // setmoviename(data.title); 
-                // showtimeData.movieName = data.title; 
-                    /* CALL ME DADDY :) */
-//do same for theatre if needed                    
+            try{                   
                 await axios.post('/adminShowtimes', showtimeData);
                 setRedirect(true);
                 alert('showtime Successfully added');
@@ -195,32 +187,7 @@ export default function ShowtimesFormPage() {
 
             <form onSubmit={saveshowtime}>
                 
-                {/* <h2 className="text-xl mt-2">movie Name</h2>
-                <input 
-                    type="text" 
-                    // id="showtime-name"
-                    // name="name" 
-                    placeholder="Name of moviee" 
-                    value={movieid} 
-                    onChange={ev => setmovieid(ev.target.value)}
-                    className={`border ${errors.movie ? 'border-red-500' : 'border-gray-300'} rounded-lg py-2 px-4 w-full`} 
-                    // required 
-                />
-                    {errors.movie && <div className="text-red-500 text-sm mt-1">{errors.movie}</div>} */}
-
-                {/* <h2 className="text-xl mt-2">theatre Name</h2>
-                <input 
-                    type="text" 
-                    // id="showtime-name"
-                    // name="name" 
-                    placeholder="Name of showtime" 
-                    value={theatre} 
-                    onChange={ev => settheatre(ev.target.value)}
-                    className={`border ${errors.theatre ? 'border-red-500' : 'border-gray-300'} rounded-lg py-2 px-4 w-full`} 
-                    // required 
-                    />
-                    {errors.theatre && <div className="text-red-500 text-sm mt-1">{errors.theatre}</div>} */}
-
+                
                 <h2 className="text-xl mt-2">showdate</h2>
                 <input 
                     type="date" 

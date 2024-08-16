@@ -54,7 +54,8 @@ export default function TheatrePage() {
 
                             <h2 className="text-xl">
 
-                                {it.theatreName}
+                                Theatre:{it.theatreName} <br></br> 
+                                City:{it.city}
                                 
                             </h2>
 

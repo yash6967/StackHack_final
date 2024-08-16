@@ -8,11 +8,11 @@ export default function TheatresFormPage() {
 
     const {id} = useParams();
     const [theatreName, setName] = useState('');
-    // const [ticketPrice, setTicketPrice] = useState('');
-    // const [rows, setRows] = useState('');
-    // const [cols, setCols] = useState('');
-    // const [city, setCity] = useState('');
-    const [formFillError, setFormFillError] = useState('');
+    const [ticketPrice, setTicketPrice] = useState('');
+    const [rows, setRows] = useState('');
+    const [cols, setCols] = useState('');
+    const [city, setCity] = useState('');
+    const [errors, setErrors] = useState({});
 
 
 
@@ -28,32 +28,44 @@ export default function TheatresFormPage() {
 
             const {data} = response;
             setName(data.theatreName);
-
-            /* AND EXTRA SETS */
+            setTicketPrice(data.ticketPrice);
+            setCity(data.city);
+            setRows(data.rows);
+            setCols(data.cols);
 
         });
 
     }, [id]);
 
+    function validateForm() {
+        const newErrors = {};
+        if (!theatreName) newErrors.theatreName = 'Theatre name is required';
+        if (!ticketPrice) newErrors.ticketPrice = 'TicketPrice name is required';
+        if (!city) newErrors.city = 'City name is required';
+        if (!rows || rows === '') newErrors.rows = 'Rows is required';
+        if (!cols || cols === '') newErrors.cols = 'Cols is required';
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    }
     
 
     async function savetheatre(ev){
 
         ev.preventDefault(); 
 
-        if (!theatreName) {
-
-            setFormFillError('Theatre name is required');
+        if (!validateForm()) {
             return;
+        }
 
-        }else{
-
-            setFormFillError('');
 
             const theatreData = {
 
                 id,
-                theatreName
+                theatreName,
+                city,
+                ticketPrice,
+                rows,
+                cols
 
             };
 
@@ -98,7 +110,7 @@ export default function TheatresFormPage() {
                 }
 
             }
-        }
+        
     }
 
     async function deleteTheatre(){
@@ -130,6 +142,8 @@ export default function TheatresFormPage() {
 
             <form onSubmit={savetheatre}>
 
+                
+
                 <h2 className="text-xl mt-2">Theatre Name</h2>
                 <input 
                     type="text" 
@@ -140,7 +154,58 @@ export default function TheatresFormPage() {
                     onChange={ev => setName(ev.target.value)} 
                     // required 
                 />
-                {formFillError && <div style={{ color: 'red' }}>{formFillError}</div>}
+                {errors.theatreName && <div style={{ color: 'red' }}>{errors.theatreName}</div>}
+                
+                <h2 className="text-xl mt-2">City Name</h2>
+                <input 
+                    type="text" 
+                    // id="theatre-name"
+                    // name="name" 
+                    placeholder="Name of city" 
+                    value={city} 
+                    onChange={ev => setCity(ev.target.value)} 
+                    // required 
+                />
+                {errors.city && <div style={{ color: 'red' }}>{errors.city}</div>}
+
+                <h2 className="text-xl mt-2">Ticket price</h2>
+                <input 
+                    type="number" 
+                    // id="theatre-name"
+                    // name="name" 
+                    placeholder="Price of ticket" 
+                    value={ticketPrice} 
+                    onChange={ev => setTicketPrice(ev.target.value)} 
+                    // required 
+                />
+                {errors.ticketPrice && <div style={{ color: 'red' }}>{errors.ticketPrice}</div>}
+
+                <h2 className="text-xl mt-2">Rows</h2>
+                <input 
+                    type="number" 
+                    // id="theatre-name"
+                    // name="name" 
+                    placeholder="Rows in theatre" 
+                    value={rows} 
+                    onChange={ev => setRows(ev.target.value)} 
+                    // required 
+                />
+                {errors.rows && <div style={{ color: 'red' }}>{errors.rows}</div>}
+
+                <h2 className="text-xl mt-2">Cols</h2>
+                <input 
+                    type="number" 
+                    // id="theatre-name"
+                    // name="name" 
+                    placeholder="Cols in theatre" 
+                    value={cols} 
+                    onChange={ev => setCols(ev.target.value)} 
+                    // required 
+                />
+                {errors.cols && <div style={{ color: 'red' }}>{errors.cols}</div>}
+
+
+
                 
             
                 <div className="flex gap-4 mt-4">

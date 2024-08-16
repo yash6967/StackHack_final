@@ -335,9 +335,12 @@ app.post('/adminTheatres',async (req,res)=>{
     if(!token){
         res.status(401).json({error:'token not found'});
     }
-    const {theatreName
-        //,city, ticketPrice,seats
-        } = req.body;
+    const {theatreName,
+         city,
+         ticketPrice,
+         rows,
+         cols
+            } = req.body;
 
 
 
@@ -347,11 +350,11 @@ app.post('/adminTheatres',async (req,res)=>{
         
             const theatreDocument = await Theatre.create({
                 owner: userData.id,
-                theatreName
-                // city,
-                // ticketPrice,
-                // rows,
-                //cols
+                theatreName,
+                city,
+                ticketPrice,
+                rows,
+                cols
             });
             res.status(200).json({
                 message:"success",
@@ -406,8 +409,11 @@ app.put('/adminTheatres', async (req, res) => {
     const {
 
         id,
-        theatreName
-        //,city, ticketPrice,seats
+        theatreName,
+        city,
+        ticketPrice,
+        rows,
+        cols
     } = req.body;
     
     jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
@@ -420,8 +426,11 @@ app.put('/adminTheatres', async (req, res) => {
 
             theatreDoc.set({
 
-                theatreName
-                // ,languages, length, genre, certificate, releaseDate, director, description, cast, crew
+                theatreName,
+                city,
+                ticketPrice,
+                rows,
+                cols
 
             });
 
@@ -518,7 +527,22 @@ app.get('/adminShowtimes/:id', async (req, res) => {
 //get all showtimes
 app.get('/adminShowtimes', async (req, res) => {
 
-    res.json(await Showtime.find());
+    const {token} = req.cookies;
+
+    if (!token) {
+        return res.status(401).json({ error: 'No token provided' });
+    }
+
+    jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
+
+        if(error) throw error;
+    
+        const {id} = userData;
+
+        res.json(await Showtime.find({owner:id}));
+        
+
+    });
 
 });
 

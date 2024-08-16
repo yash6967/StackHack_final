@@ -10,10 +10,10 @@ const theatreSchema = new mongoose.Schema({
     theatreName: { 
         type: String, required: true 
     },
-    //city: { type: String, required: true },
-    // ticketPrice: { type: Number, required: true }, // Default ticket price
-    // rows: { type: Number, required: true },
-    // cols: { type: Number, required: true },
+    city: { type: String, required: true },
+    ticketPrice: { type: Number, required: true }, // Default ticket price
+    rows: { type: Number, required: true },
+    cols: { type: Number, required: true },
     
   });
   
