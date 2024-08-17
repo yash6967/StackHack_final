@@ -19,6 +19,7 @@ export default function ShowtimesFormPage() {
     const [selectedMovie, setSelectedMovie] = useState([null]);
     const [selectedTheatre, setSelectedTheatre] = useState([null]);
     const [redirect,setRedirect] = useState(false);
+    const [city,settheatreCity] = useState([]);
 
     useEffect(() => {
 
@@ -35,6 +36,7 @@ export default function ShowtimesFormPage() {
             settheatrename(data.theatreName);
             setdate(data.showdate);
             settime(data.daytime);
+            settheatreCity(data.city);
 
             /* AND EXTRA SETS */
 
@@ -73,6 +75,7 @@ export default function ShowtimesFormPage() {
         if (!theatreid) newErrors.theatreid = 'Theatre name is required';
         if (!showdate || showdate === '') newErrors.showdate = 'showDate is required';
         if (!daytime || daytime === '') newErrors.daytime = 'Time is required';
+        if(!city || city == '') newErrors.city = 'city is required';
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     }
@@ -95,7 +98,8 @@ export default function ShowtimesFormPage() {
             theatreid,
             theatreName,
             showdate,
-            daytime
+            daytime,
+            city
 
         };
 
@@ -164,11 +168,12 @@ export default function ShowtimesFormPage() {
     };
     const handleTheatreSelect = (event) => {
         const TheatreId = event.target.value;
-        console.log(theatres);
         const theatre = theatres.find(m => m._id === TheatreId);
         setSelectedTheatre(theatre);
         settheatreid(TheatreId);
         settheatrename(theatre.theatreName);
+        settheatreCity(theatre.city);
+        console.log(theatre.city);
     };
     
     if (redirect) {
@@ -245,7 +250,7 @@ export default function ShowtimesFormPage() {
                         ))};
                     </select>
                     {errors.theatreid && <div className="text-red-500 text-sm mt-1">{errors.theatreid}</div>} 
-
+                    {city && <label className=" text-sm mt-1 mx-2">City:{city}</label>}       
                 
               
 

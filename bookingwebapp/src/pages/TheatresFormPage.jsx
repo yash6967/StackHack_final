@@ -14,8 +14,7 @@ export default function TheatresFormPage() {
     const [city, setCity] = useState('');
     const [errors, setErrors] = useState({});
 
-
-
+    const cities = ['Delhi','Jaipur','Bhopal','Pune','Ahmedabad','Kota','Mumbai']
     const [redirect,setRedirect] = useState(false);
 
     useEffect(() => {
@@ -48,6 +47,9 @@ export default function TheatresFormPage() {
         return Object.keys(newErrors).length === 0;
     }
     
+    const handleCitySelect = (ev)=>{
+        setCity(ev.target.value);
+    };
 
     async function savetheatre(ev){
 
@@ -153,7 +155,7 @@ export default function TheatresFormPage() {
                 />
                 {errors.theatreName && <div style={{ color: 'red' }}>{errors.theatreName}</div>}
                 
-                <h2 className="text-xl mt-2">City Name</h2>
+                {/* <h2 className="text-xl mt-2">City Name</h2>
                 <input 
                     type="text" 
                     // id="theatre-name"
@@ -163,7 +165,24 @@ export default function TheatresFormPage() {
                     onChange={ev => setCity(ev.target.value)} 
                     // required 
                 />
-                {errors.city && <div style={{ color: 'red' }}>{errors.city}</div>}
+                {errors.city && <div style={{ color: 'red' }}>{errors.city}</div>} */}
+
+
+                <label 
+                    className="text-xl mt-2"
+                    >Select a City</label>
+                    <select onChange={handleCitySelect}
+                    className={`border ${errors.city ? 'border-red-500' : 'border-gray-300'} rounded-lg py-2 px-4 w-full`} 
+                    >
+                        <option>Select a city</option>
+                        {cities.map(city => (
+                                <option key={city} value={city}>
+                                    {city}
+                                </option>
+                        ))};
+                    </select>
+                    {errors.city && <div className="text-red-500 text-sm mt-1">{errors.city}</div>}
+
 
                 <h2 className="text-xl mt-2">Ticket price</h2>
                 <input 
