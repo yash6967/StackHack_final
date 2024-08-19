@@ -589,4 +589,31 @@ app.delete('/adminShowtimes/:id',async (req,res)=>{
     res.json(await Showtime.findByIdAndDelete(id));
 })
 
+/* RESERVATION */
+
+app.get('/findShowtimes', async (req, res) => {
+    
+    const {token} = req.cookies;
+
+    if (!token) {
+        return res.status(401).json({ error: 'No token provided' });
+    }
+
+    jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
+
+        if(error) throw error;
+
+        const { movieid, city } = req.query;
+        
+        try {
+            const showtimes = await Showtime.find({ movieid, city });
+            res.json(showtimes);
+          } catch (error) {
+            res.status(500).json({ error: 'Error fetching showtimes' });
+          }
+        
+    });
+
+});
+
 app.listen(4000);

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 
 export default function MoviePage(){
@@ -24,13 +24,28 @@ export default function MoviePage(){
     }
 
     return (
+    
+        <div className="mt-8 bg-back">
 
-        <div className="mt-8">
-
-            <h1 className="text-2xl">
+            <h1 className="text-4xl">
                 {movie.title}
             </h1>
+
+            <img src={'http://localhost:4000/uploads' + movie.photos[0]} alt="" />
         
+            <div>
+                <h2 className="text-2xl">Description</h2>
+                {movie.description}
+            </div>
+
+            <Link
+                className="inline-flex gap-1 items-center bg-gray-100 rounded-l py-2 px-5"
+                to = {'/movie/book/' + id}> 
+
+                Book
+                
+            </Link>
+
         </div>
 
     );
