@@ -119,8 +119,8 @@ app.get('/profile', (req, res) => {
 
             if(error) throw error;
         
-            const {name, email, _id} = await User.findById(userData.id);
-            res.json( {name, email, _id});
+            const {name, email, _id,role} = await User.findById(userData.id);
+            res.json( {name, email, _id,role});
 
         });
 
@@ -131,6 +131,100 @@ app.get('/profile', (req, res) => {
     }
 
 });
+
+
+//route for getting userdata with role
+app.get('/getAllUsers', (req, res) => {
+
+    const {token} = req.cookies;
+
+    if(token){
+
+        jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
+
+            if(error) throw error;
+        
+            const users = await User.find();
+            res.json(users);
+
+        });
+
+    }else{
+
+        res.json(null);
+
+    }
+
+});
+
+
+app.get('/getUser/:id', (req, res) => {
+
+    const {token} = req.cookies;
+    const {id} = req.params;
+
+    if(token){
+
+        jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
+
+            if(error) throw error;
+        
+            const users = await User.findById(id);
+            res.json(users);
+
+        });
+
+    }else{
+
+        res.json(null);
+
+    }
+
+});
+
+//route for updating userdata by id for superadmin
+app.put('/updateUser/:id',(req,res)=>{
+    const {id} = req.params;
+    const {token} = req.cookies;
+
+    if (!token) {
+        return res.status(401).json({ error: 'No token provided' });
+    }
+
+    const {
+
+        name,
+        email,
+        role
+
+    } = req.body;
+    
+    jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
+        
+        if(error) throw error;
+
+        const userDoc = await User.findById(id);
+    
+        {
+
+            userDoc.set({
+
+                name, email, role
+
+            });
+
+            await userDoc.save();
+            res.json('ok');
+
+        }
+
+    });
+    
+})
+
+
+
+
 
 app.post('/logout', (req, res) => {
 
@@ -491,7 +585,7 @@ app.post('/adminShowtimes',async (req,res)=>{
         res.status(401).json({error:'token not found'});
     }
     const {
-        movieid,movieName,theatreid,theatreName,showdate,daytime,city
+        movieid,movieName,theatreid,theatreName,showdate,dayTime,city
         } = req.body;
 
 
@@ -507,7 +601,7 @@ app.post('/adminShowtimes',async (req,res)=>{
                 theatreid,
                 theatreName,
                 showdate,
-                daytime,
+                dayTime,
                 city
             });
 
@@ -562,7 +656,7 @@ app.put('/adminShowtimes', async (req, res) => {
 
 
 
-    const {id,movieid,movieName,theatreid,theatreName,showdate,daytime,city
+    const {id,movieid,movieName,theatreid,theatreName,showdate,dayTime,city
         } = req.body;
     
     jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
@@ -574,7 +668,7 @@ app.put('/adminShowtimes', async (req, res) => {
         if(userData.id === showtimeDoc.owner.toString()){
 
             showtimeDoc.set({
-                movieid,movieName,theatreid,theatreName,showdate,daytime,city
+                movieid,movieName,theatreid,theatreName,showdate,dayTime,city
             });
 
             await showtimeDoc.save();
