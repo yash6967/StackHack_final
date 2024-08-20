@@ -42,7 +42,7 @@ export default function MoviePage(){
                 <div className="ml-10 h-96 w-64 bg-gray-800">
                     <img 
                         src={'http://localhost:4000/uploads' + movie.photos[0]} alt="" 
-                        className="rounded-lg object-cover w-full h-full"/>
+                        className="rounded-lg object-cover w-full h-full drop-shadow-2xl"/>
                
                 </div>
 

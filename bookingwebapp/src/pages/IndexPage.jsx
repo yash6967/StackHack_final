@@ -20,7 +20,7 @@ export default function IndexPage() {
 
     return (
             
-        <div className="mt-8 px-4 gap-x-4 gap-y-8 grid grid-col-2 md:grid-cols-4 lg:grid-cols-5">
+        <div className="mt-8 px-4 gap-x-4 gap-y-8 grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-7 3xl:grid-cols-9">
    
            {movies.length > 0 && movies.map(it => (
 

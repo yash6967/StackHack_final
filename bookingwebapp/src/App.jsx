@@ -4,7 +4,10 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import Layout from "./layout";
 import axios from "axios";
+
 import { UserContextProvider } from "./UserContext";
+import { CityContextProvider } from "./CityContext";
+
 import AccountPage from "./pages/AccountPage";
 import MoviesPage from "./pages/MoviesPage";
 import MoviesFormPage from "./pages/MoviesFormPage";
@@ -24,35 +27,37 @@ export default function App() {
   return (
     
     <UserContextProvider>
+      <CityContextProvider>
 
-      <Router>
-        <Routes>
-          <Route path = "/" element ={<Layout/>}>
-          
-            <Route path = "/" element={<IndexPage />} />
-            <Route path = "/login" element = {<LoginPage />} />
-            <Route path = "/register" element = {<RegisterPage />} />
-            <Route path = "/account" element = {<AccountPage />} />
+        <Router>
+          <Routes>
+            <Route path = "/" element ={<Layout/>}>
+            
+              <Route path = "/" element={<IndexPage />} />
+              <Route path = "/login" element = {<LoginPage />} />
+              <Route path = "/register" element = {<RegisterPage />} />
+              <Route path = "/account" element = {<AccountPage />} />
 
-            <Route path = "/account/adminMovies" element = {<MoviesPage />} />
-            <Route path = "/account/adminMovies/new" element = {<MoviesFormPage />} />
-            <Route path = "/account/adminMovies/:id" element = {<MoviesFormPage />} />
+              <Route path = "/account/adminMovies" element = {<MoviesPage />} />
+              <Route path = "/account/adminMovies/new" element = {<MoviesFormPage />} />
+              <Route path = "/account/adminMovies/:id" element = {<MoviesFormPage />} />
 
-            <Route path = "/movie/:id" element = {<MoviePage />} />
-            <Route path = "/movie/book/:id" element = {<ReservationFormPage />} />
+              <Route path = "/movie/:id" element = {<MoviePage />} />
+              <Route path = "/movie/book/:id" element = {<ReservationFormPage />} />
 
-            <Route path = "/account/adminTheatres" element = {<TheatrePage />} />
-            <Route path = "/account/adminTheatres/new" element = {<TheatresFormPage />} />
-            <Route path = "/account/adminTheatres/:id" element = {<TheatresFormPage />} />
+              <Route path = "/account/adminTheatres" element = {<TheatrePage />} />
+              <Route path = "/account/adminTheatres/new" element = {<TheatresFormPage />} />
+              <Route path = "/account/adminTheatres/:id" element = {<TheatresFormPage />} />
 
-            <Route path = "/account/adminShowtimes" element = {<ShowtimesPage />} />
-            <Route path = "/account/adminShowtimes/new" element = {<ShowtimesFormPage />} />
-            <Route path = "/account/adminShowtimes/:id" element = {<ShowtimesFormPage />} />
-      
-          </Route>
-        </Routes>
-      </Router>
+              <Route path = "/account/adminShowtimes" element = {<ShowtimesPage />} />
+              <Route path = "/account/adminShowtimes/new" element = {<ShowtimesFormPage />} />
+              <Route path = "/account/adminShowtimes/:id" element = {<ShowtimesFormPage />} />
+        
+            </Route>
+          </Routes>
+        </Router>
 
+      </CityContextProvider>
     </UserContextProvider>
     
   );

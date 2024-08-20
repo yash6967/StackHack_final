@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import { CityContext } from '../CityContext';
 
 export default function ReservationFormPage() {
 
     const {id} = useParams();
-    const [city, setCity] = useState('');
+    const { city } = useContext(CityContext);
+
+    const [chooseCity, setChooseCity] = useState('');
     const [movie, setMovie] = useState(null);
     const [showtimes, setShowtimes] = useState([]);
 
@@ -29,18 +32,18 @@ export default function ReservationFormPage() {
 
         ev.preventDefault();
 
-        if (!city) {
+        if (!chooseCity) {
             console.log('City name is required.');
             return;
         }
 
-        console.log('City name:', city);
+        console.log('City name:', chooseCity);
         console.log('Movie ID:', id);
 
         const response = await axios.get('/findShowtimes', {
             params: {
                 movieid: id,
-                city: city
+                city: chooseCity
             }
         });
         
@@ -55,7 +58,7 @@ export default function ReservationFormPage() {
     return(
 
         <div>
-
+            { city }
             <h2>{movie.title}</h2>
 
             <form onSubmit={findMovie}>
@@ -65,8 +68,8 @@ export default function ReservationFormPage() {
                     type="text"
                     name="city"
                     placeholder="Name ofCity"
-                    value={city}
-                    onChange={ev => handleChange(ev, setCity)}
+                    value={chooseCity}
+                    onChange={ev => handleChange(ev, setChooseCity)}
                 />
 
                 <button>
