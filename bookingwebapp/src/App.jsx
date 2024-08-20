@@ -15,6 +15,8 @@ import TheatrePage from "./pages/TheatrePage";
 import TheatresFormPage from "./pages/TheatresFormPage";
 import ShowtimesPage from "./pages/ShowtimesPage";
 import ShowtimesFormPage from "./pages/ShowtimeFormPage"
+import SuperAdminPage from "./pages/SuperAdminPage"
+import SuperAdminFormPage from "./pages/SuperAdminFormPage"
 
 import MoviePage from "./pages/MoviePage";
 import ReservationFormPage from "./pages/ReservationFormPage";
@@ -49,13 +51,16 @@ export default function App() {
               <Route path = "/account/adminTheatres/new" element = {<TheatresFormPage />} />
               <Route path = "/account/adminTheatres/:id" element = {<TheatresFormPage />} />
 
-              <Route path = "/account/adminShowtimes" element = {<ShowtimesPage />} />
-              <Route path = "/account/adminShowtimes/new" element = {<ShowtimesFormPage />} />
-              <Route path = "/account/adminShowtimes/:id" element = {<ShowtimesFormPage />} />
-        
-            </Route>
-          </Routes>
-        </Router>
+            <Route path = "/account/adminShowtimes" element = {<ShowtimesPage />} />
+            <Route path = "/account/adminShowtimes/new" element = {<ShowtimesFormPage />} />
+            <Route path = "/account/adminShowtimes/:id" element = {<ShowtimesFormPage />} />
+
+            <Route path = "/account/superAdmin" element = {<SuperAdminPage />} />
+            <Route path = "/account/superAdmin/:id" element = {<SuperAdminFormPage />} />
+
+          </Route>
+        </Routes>
+      </Router>
 
       </CityContextProvider>
     </UserContextProvider>
