@@ -9,9 +9,13 @@ export default function MoviesFormPage() {
     const [title, setTitle] = useState('');
     const [addedPhotos, setAddedPhotos] = useState([]);
     const [photoLink, setPhotoLink] = useState('');
-    const [languages, setLanguages] = useState('');
+
+    const [languages, setLanguages] = useState([]);
+    const [genre, setGenre] = useState([]);
+    const [inputValueLanguage, setInputValueLanguage] = useState('');
+    const [inputValueGenre, setInputValueGenre] = useState('');
+
     const [length, setLength] = useState('');
-    const [genre, setGenre] = useState('');
     const [certificate, setCertificate] = useState('');
     const [releaseDate, setReleaseDate] = useState('');
     const [director, setDirector] = useState('');
@@ -28,9 +32,9 @@ export default function MoviesFormPage() {
             const { data } = response;
             setTitle(data.title);
             setAddedPhotos(data.photos);
-            setLanguages(data.languages || '');
+            setLanguages(data.languages || []);
             setLength(data.length || '');
-            setGenre(data.genre || '');
+            setGenre(data.genre || []);
             setCertificate(data.certificate || '');
             setReleaseDate(data.releaseDate || '');
             setDirector(data.director || '');
@@ -48,6 +52,43 @@ export default function MoviesFormPage() {
             return false;
         }
     }
+
+    const addLanguage = () => {
+        const trimmedValue = inputValueLanguage.trim();
+        if (trimmedValue && !languages.includes(trimmedValue)) {
+            setLanguages([...languages, trimmedValue]);
+            setInputValueLanguage('');
+            setFormFillError(prevErrors => ({
+                ...prevErrors,
+                languages: ''
+            }));
+        } else {
+            setFormFillError({ languages: 'Language is either empty or already added.' });
+        }
+    };
+
+    const removeLanguage = (index) => {
+        setLanguages(languages.filter((_, i) => i !== index));
+    };
+
+    const addGenre = () => {
+        const trimmedValue = inputValueGenre.trim();
+        if (trimmedValue && !genre.includes(trimmedValue)) {
+            setGenre([...genre, trimmedValue]);
+            setInputValueGenre('');
+            setFormFillError(prevErrors => ({
+                ...prevErrors,
+                genre: ''
+            }));
+        } else {
+            setFormFillError({ genre: 'Genre is either empty or already added.' });
+        }
+    };
+
+    const removeGenre = (index) => {
+        setGenre(genre.filter((_, i) => i !== index));
+    };
+
 
     async function addPhotoByLink(ev) {
 
@@ -96,9 +137,9 @@ export default function MoviesFormPage() {
         const newErrors = {};
 
         if (!title) newErrors.title = 'Title is required';
-        if (!languages) newErrors.languages = 'Language is required';
+        if (!languages.length) newErrors.languages = 'Language is required';
+        if (!genre.length) newErrors.genre = 'Genre is required';
         if (!length) newErrors.length = 'Movie length is required';
-        if (!genre) newErrors.genre = 'Genre is required';
         if (!certificate) newErrors.certificate = 'Certificate is required';
         if (!releaseDate) newErrors.releaseDate = 'Release Date is required';
         if (!director) newErrors.director = 'Director name is required';
@@ -179,7 +220,8 @@ export default function MoviesFormPage() {
 
     function handleChange(event, setter) {
         setter(event.target.value);
-        // Clear the error if the field has value
+        
+        /* For Clearing */
         if (formFillError[event.target.name]) {
             setFormFillError(prevErrors => ({
                 ...prevErrors,
@@ -189,7 +231,7 @@ export default function MoviesFormPage() {
     }
 
     return (
-        <div>
+        <div className="p-4">
             <AccountNavigation />
             <form onSubmit={saveMovie}>
                 <h2 className="text-xl mt-2">Title</h2>
@@ -248,7 +290,7 @@ export default function MoviesFormPage() {
                     </label>
                 </div>
 
-                <h2 className="text-xl mt-2">Languages</h2>
+                {/* <h2 className="text-xl mt-2">Languages</h2>
                 <input
                     type="text"
                     name="languages"
@@ -256,9 +298,45 @@ export default function MoviesFormPage() {
                     value={languages}
                     onChange={ev => handleChange(ev, setLanguages)}
                 />
+                {formFillError.languages && <div style={{ color: 'red' }}>{formFillError.languages}</div>} */}
+
+                <h2 className="text-xl mt-2">Languages</h2>
+                <div className="flex flex-wrap gap-2 mb-4">
+                    {languages.map((language, index) => (
+                        <span key={index} className="bg-gray-200 text-gray-800 rounded-full px-3 py-1 flex items-center">
+                            {language}
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    console.log(`Removing language at index ${index}`);
+                                    removeLanguage(index);
+                                }}
+                                className="ml-2 text-red-500 hover:text-red-700"
+                                aria-label={`Remove ${language}`}
+                            >
+                                &times;
+                            </button>
+                        </span>
+                    ))}
+                </div>
+                <input
+                    type="text"
+                    name="languageInput"
+                    placeholder="Enter language"
+                    value={inputValueLanguage}
+                    onChange={(ev) => handleChange(ev, setInputValueLanguage)}
+                    className="border rounded p-2 mb-2"
+                />
+                <button
+                    type="button"
+                    onClick={addLanguage}
+                    className="bg-blue-500 text-white rounded p-2"
+                >
+                    Add
+                </button>
                 {formFillError.languages && <div style={{ color: 'red' }}>{formFillError.languages}</div>}
 
-                <h2 className="text-xl mt-2">Length</h2>
+
                 <input
                     type="text"
                     name="length"
@@ -268,7 +346,7 @@ export default function MoviesFormPage() {
                 />
                 {formFillError.length && <div style={{ color: 'red' }}>{formFillError.length}</div>}
 
-                <h2 className="text-xl mt-2">Genre</h2>
+                {/* <h2 className="text-xl mt-2">Genre</h2>
                 <input
                     type="text"
                     name="genre"
@@ -276,6 +354,42 @@ export default function MoviesFormPage() {
                     value={genre}
                     onChange={ev => handleChange(ev, setGenre)}
                 />
+                {formFillError.genre && <div style={{ color: 'red' }}>{formFillError.genre}</div>} */}
+
+                <h2 className="text-xl mt-2">Genre</h2>
+                <div className="flex flex-wrap gap-2 mb-4">
+                    {genre.map((genre, index) => (
+                        <span key={index} className="bg-gray-200 text-gray-800 rounded-full px-3 py-1 flex items-center">
+                            {genre}
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    console.log(`Removing genre at index ${index}`);
+                                    removeGenre(index);
+                                }}
+                                className="ml-2 text-red-500 hover:text-red-700"
+                                aria-label={`Remove ${genre}`}
+                            >
+                                &times;
+                            </button>
+                        </span>
+                    ))}
+                </div>
+                <input
+                    type="text"
+                    name="genreInput"
+                    placeholder="Enter genre"
+                    value={inputValueGenre}
+                    onChange={(ev) => handleChange(ev, setInputValueGenre)}
+                    className="border rounded p-2 mb-2"
+                />
+                <button
+                    type="button"
+                    onClick={addGenre}
+                    className="bg-blue-500 text-white rounded p-2"
+                >
+                    Add
+                </button>
                 {formFillError.genre && <div style={{ color: 'red' }}>{formFillError.genre}</div>}
 
                 <h2 className="text-xl mt-2">Certificate</h2>

@@ -287,8 +287,9 @@ app.put('/adminMovies', async (req, res) => {
     const {
 
         id,
-        title, addedPhotos
-        // ,languages, length, genre, certificate, releaseDate, director, description, cast, crew
+        title, addedPhotos,
+        languages, length, genre, certificate, releaseDate, director, description, 
+        // cast, crew
 
     } = req.body;
     
@@ -303,7 +304,8 @@ app.put('/adminMovies', async (req, res) => {
             movieDoc.set({
 
                 title, photos: addedPhotos,
-                // ,languages, length, genre, certificate, releaseDate, director, description, cast, crew
+                languages, length, genre, certificate, releaseDate, director, description,
+                // cast, crew
 
             });
 

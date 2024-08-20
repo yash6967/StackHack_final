@@ -13,7 +13,7 @@ export default function Header(){
 
     return(
 
-        <header className="flex justify-between gap-4">
+        <header className="flex justify-between gap-4 px-4">
 
                 {/* LOGO */}
                 <Link to = {'/'} href="" className="flex gap-1 items-center">
