@@ -16,7 +16,7 @@ const User = require('./models/user.js');
 const Movie = require('./models/movie.js');
 const Theatre = require('./models/theatre.js');
 const Showtime = require('./models/showtime.js');
-
+const AdminRequests = require('./models/adminRequest.js')
 const app = express();
 
 const bcryptSalt = bcrypt.genSaltSync(8);
@@ -685,6 +685,118 @@ app.delete('/adminShowtimes/:id',async (req,res)=>{
     res.json(await Showtime.findByIdAndDelete(id));
 })
 
+//Admin request Admin request Admin request Admin request Admin request Admin request Admin request
+app.post('/createAdminList',async (req,res)=>{
+    res.json(await AdminRequests.create({
+        'requestList' : []
+    }));
+})
+
+app.get('/adminList', async (req,res)=>{
+    const {token} = req.cookies;
+    
+    if (!token) {
+        return res.status(401).json({ error: 'No token provided' });
+    }
+
+    jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
+
+        if (error) {
+            return res.status(403).json({ error: 'Invalid token' });
+        }
+
+        try {
+            const data = await AdminRequests.findOne();
+            if (!data) {
+                return res.status(404).json({ error: 'No admin requests found' });
+            }
+
+            res.json(data);
+        } catch (error) {
+            console.error('Failed to fetch admin requests:', error);
+            return res.status(500).json({ error: 'Failed to fetch admin requests' });
+        }
+
+   });
+
+});
+
+
+//create new request
+app.post('/adminList/:id',async (req,res)=>{
+    
+    const {token} = req.cookies;
+
+    if(!token){
+        return res.status(401).json({error:'token not found'});
+    }
+    const {id} = req.params;
+    // if (!mongoose.Types.ObjectId.isValid(id)) {
+    //     return res.status(400).json({ error: 'Invalid ObjectId' });
+    // }
+
+
+        jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
+
+            if(error){
+                return res.status(403).json({ error: 'Invalid token' });
+            }
+        
+            
+                try{
+                    const adminRequest = await AdminRequests.findOne();
+                    if (!adminRequest) {
+                        return res.status(404).json({ error: 'Admin request not found' });
+                    }
+                    adminRequest.requestList.push(id);
+                    await adminRequest.save();
+                    return res.status(200).json({
+                        message:"success"});
+
+                }catch(error){
+                    console.error('Failed to add user to admin list:', error);
+                    return res.status(500).json({ error: 'Failed to process request' });
+                }
+
+                
+    
+        });
+    
+    
+});
+
+app.delete('/adminList/:userId',async (req,res)=>{
+    const {token} = req.cookies;
+
+    if(!token){
+        return res.status(401).json({error:'token not found'});
+    }
+
+    const {userId} = req.params;
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+        return res.status(400).json({ error: 'Invalid ObjectId' });
+    }
+
+    jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
+
+        if(error) {
+            return res.status(403).json({ error: 'Invalid token' });
+        }
+    
+        try{
+            const adminRequest = await AdminRequests.findOne();
+            adminRequest.requestList = adminRequest.requestList.filter(id => id.toString() !== userId);
+            await adminRequest.save();
+            res.status(200).json({message:"success"});
+        }catch(error){
+            res.status(500).json({ error: 'Failed to remove the user from the request list.' });
+        }
+        
+            
+
+    });
+
+})
 /* RESERVATION */
 
 app.get('/findShowtimes', async (req, res) => {

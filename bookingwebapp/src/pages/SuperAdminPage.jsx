@@ -8,7 +8,10 @@ export default function SuperAdminPage(){
     const [users,setUsers] = useState([]);
     const [customers,setCustomers] = useState([]);
     const [admins,setAdmins] = useState([]);
-
+    const [requests,setRequests] = useState([]);
+    const [name,setName] = useState('');
+    const [role,setRole] = useState('');
+    const [email,setEmail] = useState('');
     useEffect(() => {
         axios.get('/getAllUsers').then(({ data }) => {
             setUsers(data);
@@ -32,12 +35,61 @@ export default function SuperAdminPage(){
             console.error('Error fetching users:', error);
         });
     }, []);
+    useEffect(()=>{
+        axios.get('/adminList').then(({data})=>{
+            setRequests(data.requestList);
+        })
+    },[])
+
+    async function makeAdmin(id){
+        try {
+            // Fetch user data
+            const response = await axios.get('/getUser/' + id);
+            const { data } = response;
+            
+            // Construct userData directly from the response
+            const userData = {
+                name: data.name,
+                email: data.email,
+                role: 'admin'
+            };
     
+            if (id) {
+                // Update user
+                try {
+                    await axios.put('/updateUser/' + id, userData);
+                    console.log('User successfully updated');
+               
+                    alert('User successfully made Admin');
+                } catch (error) {
+                    console.error('Error updating User:', error);
+                    alert('Failed to update this User');
+                }
+            }
+    
+            // Delete from admin request list
+            try {
+                await axios.delete('/adminList/' + id);
+                console.log('Admin request deleted successfully');
+            } catch (error) {
+                console.error('Error deleting admin request:', error);
+                alert('Failed to delete admin request');
+            }
+    
+        } catch (error) {
+            console.error('Error fetching user:', error);
+            alert('Failed to fetch user data');
+        }
 
-   
+    }
+    
+    async function notMakeAdmin(id){
+        await axios.delete('/adminList/'+id);
+        alert('Aenied request to made admin');
+
+    }
 
     
-
 
     return(
         <div>
@@ -76,6 +128,20 @@ export default function SuperAdminPage(){
                         ))}
                 </div>
 
+            </div>
+            <div>
+            <label>Requests</label>
+            {requests.length > 0 && requests.map(it => (
+                            <div
+                                key={it}
+                                className="flex cursor-pointer gap-4 bg-gray-200 p-4">       
+                                <h2 className="text-xl">
+                                    UserId: {it} <br /> 
+                                </h2>
+                                <button onClick={()=>{makeAdmin(it)}}> Accept request</button>
+                                <button onClick={()=>{notMakeAdmin(it)}}> Decline request</button>
+                            </div>
+                        ))}
             </div>
         </div>
     )
