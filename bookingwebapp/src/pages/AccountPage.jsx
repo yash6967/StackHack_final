@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState, useSyncExternalStore } from "react";
 import { UserContext } from "../UserContext";
 import { Link, Navigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
@@ -10,11 +10,26 @@ export default function AccountPage(){
 
     const {ready, user, setUser} = useContext(UserContext);
     const [redirect, setRedirect] = useState(null);
+    const [request,setRequest] = useState('not sent');
 
     let { subpage } = useParams();
 
     if(subpage === undefined){
         subpage = 'profile';
+    }
+
+
+    async function adminRequest(id){
+
+        try{
+            console.log(id);
+            await axios.post('/adminList/'+id);
+            setRequest('sent');
+        }catch(error){
+            console.error({ error: 'Failed to send request' });
+        }
+
+       
     }
 
     async function logout(){
@@ -63,7 +78,10 @@ export default function AccountPage(){
                 <div className="flex flex-col items-center max-w-lg mx-auto dark:text-primary-50">
 
                     <div className="font-light">
-                        Logged in as {user.name} ({user.email})<br/>
+                        Logged in as {user.name} ({user.email}) <br/>
+                    current Role : {user.role}<br></br>
+                    {user.role === 'customer' && request === 'not sent' && (<button onClick={() => adminRequest(user._id)} >change role to Admin</button>)} <br></br>
+                    {request === 'sent' && "Your request to become admin is in process"}<br></br>
                     </div>
 
                     <button 
