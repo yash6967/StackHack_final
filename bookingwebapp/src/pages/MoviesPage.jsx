@@ -1,7 +1,8 @@
-import { Link } from "react-router-dom";
-import AccountNavigation from "./AccountNavigation";
-import { useEffect, useState } from "react";
 import axios from "axios";
+import AccountNavigation from "./AccountNavigation";
+import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { format } from 'date-fns';
 
 export default function MoviesPage() {
 
@@ -17,6 +18,15 @@ export default function MoviesPage() {
         });
 
     }, []);
+
+    const formatReleaseDate = (dateString) => {
+        return format(new Date(dateString), 'dd MMM yyyy');
+    };
+
+    const formatTime = (timeString) => {
+        const [hours, minutes] = timeString.split(':');
+        return `${parseInt(hours, 10)}h ${parseInt(minutes, 10)}m`;
+    };
 
     const toggleDetails = (movieId) => {
         // Toggle the expanded state for the clicked movie
@@ -86,12 +96,15 @@ export default function MoviesPage() {
                             {expandedMovieId === it._id && (
                                 <div className="mt-2 bg-gray-100 p-2 rounded">
                                     <p><strong>Director:</strong> {it.director}</p>
-                                    <p><strong>Release Date:</strong> {it.releaseDate}</p>
-                                    <p><strong>Genre:</strong> {it.genre}</p>
-                                    <p><strong>Duration:</strong> {it.length}</p>
-                                    <p><strong>certification:</strong> {it.certificate}</p>
+                                    <p><strong>Release Date:</strong> {formatReleaseDate(it.releaseDate)} </p>
+                                    <p><strong>Genre:</strong> {it.genre.map((genre, index) => (
+                                        <span>
+                                            {genre}{index < it.genre.length - 1 && ', '}
+                                        </span>
+                                    ))}</p>
+                                    <p><strong>Duration:</strong> {formatTime(it.length)}</p>
+                                    <p><strong>Certification:</strong> {it.certificate}</p>
                                 </div>
-                                // <div>hi</div>
                             )}
                         </div>
                     </div>

@@ -77,14 +77,14 @@ export default function TheatresFormPage() {
 
                 try{
                     
-                    console.log('theatre Successfully updated');
+                    console.log('Theatre successfully updated');
 
                     await axios.put('/adminTheatres', {
                         id, ...theatreData
                     });
                     
                     setRedirect(true);
-                    alert('theatre Successfully updated');
+                    alert('Theatre successfully updated');
         
                 }catch(error){
         

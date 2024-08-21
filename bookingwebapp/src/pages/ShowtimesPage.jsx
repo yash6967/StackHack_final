@@ -1,7 +1,8 @@
-import { Link, useParams } from "react-router-dom";
-import AccountNavigation from "./AccountNavigation";
-import { useEffect, useState } from "react";
 import axios from "axios";
+import AccountNavigation from "./AccountNavigation";
+import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { format } from 'date-fns';
 
 export default function ShowtimesPage() {
     
@@ -35,7 +36,9 @@ export default function ShowtimesPage() {
 
     }, []);
 
-    
+    const formatReleaseDate = (dateString) => {
+        return format(new Date(dateString), 'dd MMM yyyy');
+    };
 
     return (
         <div>
@@ -77,7 +80,7 @@ export default function ShowtimesPage() {
 
                                 {it.movieName} <br></br>
                                 {it.theatreName}<br></br>
-                                {it.showdate}<br></br>
+                                {formatReleaseDate(it.showdate)}<br></br>
                                 {it.daytime}<br></br>
                                 
                             </h2>

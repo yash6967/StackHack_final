@@ -1,7 +1,9 @@
-import { useState, useEffect } from "react";
 import AccountNavigation from "./AccountNavigation";
 import axios from "axios";
+
+import { useState, useEffect } from "react";
 import { Navigate, useParams } from "react-router-dom";
+import { format, parseISO } from 'date-fns';
 
 export default function MoviesFormPage() {
 
@@ -26,24 +28,25 @@ export default function MoviesFormPage() {
     useEffect(() => {
 
         if (!id) return;
-
+    
         axios.get('/adminMovies/' + id).then(response => {
 
             const { data } = response;
             setTitle(data.title);
             setAddedPhotos(data.photos);
             setLanguages(data.languages || []);
-            setLength(data.length || '');
+            const [hours, minutes, seconds] = (data.length || '00:00:00').split(':');
+            setLength({ hours, minutes, seconds });
             setGenre(data.genre || []);
             setCertificate(data.certificate || '');
-            setReleaseDate(data.releaseDate || '');
             setDirector(data.director || '');
+            setReleaseDate(data.releaseDate ? format(parseISO(data.releaseDate), 'yyyy-MM-dd') : '');
             setDescription(data.description || '');
-            
+
         });
 
     }, [id]);
-
+    
     function isValidURL(url) {
         try {
             new URL(url);
@@ -135,19 +138,20 @@ export default function MoviesFormPage() {
     function validateForm() {
 
         const newErrors = {};
-
+    
         if (!title) newErrors.title = 'Title is required';
         if (!languages.length) newErrors.languages = 'Language is required';
         if (!genre.length) newErrors.genre = 'Genre is required';
-        if (!length) newErrors.length = 'Movie length is required';
+        if (!length.hours || !length.minutes || !length.seconds) newErrors.length = 'Movie length is required';
         if (!certificate) newErrors.certificate = 'Certificate is required';
         if (!releaseDate) newErrors.releaseDate = 'Release Date is required';
         if (!director) newErrors.director = 'Director name is required';
         if (!description) newErrors.description = 'Description is required';
-
+    
         setFormFillError(newErrors);
         return Object.keys(newErrors).length === 0;
     }
+    
 
     async function saveMovie(ev) {
         ev.preventDefault();
@@ -157,13 +161,14 @@ export default function MoviesFormPage() {
         }
 
         setFormFillError({});
+        const formattedLength = `${String(length.hours).padStart(2, '0')}:${String(length.minutes).padStart(2, '0')}:${String(length.seconds).padStart(2, '0')}`;
 
         const movieData = {
             id,
             title,
             addedPhotos,
             languages,
-            length,
+            length: formattedLength,
             genre,
             certificate,
             releaseDate,
@@ -342,15 +347,51 @@ export default function MoviesFormPage() {
                 </div>
                 {formFillError.languages && <div style={{ color: 'red' }}>{formFillError.languages}</div>}
 
-                <h2 className="text-xl mt-6 mb-2">Length</h2>
+                {/* <h2 className="text-xl mt-6 mb-2">Length</h2>
                 <input
-                    type="text"
+                    type="time"
                     name="length"
                     placeholder="Length (HH:MM:SS)"
                     value={length}
                     onChange={ev => handleChange(ev, setLength)}
                 />
-                {formFillError.length && <div style={{ color: 'red' }}>{formFillError.length}</div>}
+                {formFillError.length && <div style={{ color: 'red' }}>{formFillError.length}</div>} */}
+                <h2 className="text-xl mt-6 mb-2">Length</h2>
+<div className="flex gap-2">
+    <input
+        type="number"
+        name="hours"
+        placeholder="Hours"
+        value={length.hours || ''}
+        onChange={ev => handleChange(ev, value => setLength(prev => ({ ...prev, hours: ev.target.value })))}
+        className="border rounded p-2 mb-2 w-16"
+        min="0"
+        max="23"
+    />
+    <input
+        type="number"
+        name="minutes"
+        placeholder="Minutes"
+        value={length.minutes || ''}
+        onChange={ev => handleChange(ev, value => setLength(prev => ({ ...prev, minutes: ev.target.value })))}
+        className="border rounded p-2 mb-2 w-16"
+        min="0"
+        max="59"
+    />
+    <input
+        type="number"
+        name="seconds"
+        placeholder="Seconds"
+        value={length.seconds || ''}
+        onChange={ev => handleChange(ev, value => setLength(prev => ({ ...prev, seconds: ev.target.value })))}
+        className="border rounded p-2 mb-2 w-16"
+        min="0"
+        max="59"
+    />
+</div>
+{formFillError.length && <div style={{ color: 'red' }}>{formFillError.length}</div>}
+
+                
 
                 {/* <h2 className="text-xl mt-2">Genre</h2>
                 <input
