@@ -231,10 +231,14 @@ export default function MoviesFormPage() {
     }
 
     return (
-        <div className="p-4">
+        <div className="flex flex-col items-center">
+
             <AccountNavigation />
-            <form onSubmit={saveMovie}>
-                <h2 className="text-xl mt-2">Title</h2>
+
+            <form 
+                className="max-w-[60rem]"
+                onSubmit={saveMovie}>
+                <h2 className="text-xl mt-6 mb-2">Title</h2>
                 <input
                     type="text"
                     name="title"
@@ -244,7 +248,7 @@ export default function MoviesFormPage() {
                 />
                 {formFillError.title && <div style={{ color: 'red' }}>{formFillError.title}</div>}
 
-                <h2 className="text-xl mt-2">Photos</h2>
+                <h2 className="text-xl mt-6 mb-2">Photos</h2>
                 <div className="flex gap-2">
                     <input
                         type="text"
@@ -263,7 +267,7 @@ export default function MoviesFormPage() {
 
                 <div className="mt-2 grid gap-2 grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
                     {addedPhotos.length > 0 && addedPhotos.map(link => (
-                        <div className="flex relative" key={link}>
+                        <div className="flex relative mt-2" key={link}>
                             <img
                                 className="w-full h-full max-w-100 object-cover rounded-2xl"
                                 src={`http://localhost:4000/uploads/${link}`}
@@ -278,7 +282,7 @@ export default function MoviesFormPage() {
                             </button>
                         </div>
                     ))}
-                    <label className="cursor-pointer border bg-transparent rounded-2xl p-8 text-2xl text-gray-600 flex items-center justify-center" style={{ width: '100px', height: '100px' }}>
+                    <label className="mt-2 ml-1 cursor-pointer border bg-transparent rounded-2xl p-8 text-2xl text-gray-600 flex items-center justify-center" style={{ width: '100px', height: '100px' }}>
                         <input
                             type="file"
                             name="photos"
@@ -300,7 +304,7 @@ export default function MoviesFormPage() {
                 />
                 {formFillError.languages && <div style={{ color: 'red' }}>{formFillError.languages}</div>} */}
 
-                <h2 className="text-xl mt-2">Languages</h2>
+                <h2 className="text-xl mt-6 mb-2">Languages</h2>
                 <div className="flex flex-wrap gap-2 mb-4">
                     {languages.map((language, index) => (
                         <span key={index} className="bg-gray-200 text-gray-800 rounded-full px-3 py-1 flex items-center">
@@ -311,7 +315,7 @@ export default function MoviesFormPage() {
                                     console.log(`Removing language at index ${index}`);
                                     removeLanguage(index);
                                 }}
-                                className="ml-2 text-red-500 hover:text-red-700"
+                                className="ml-2 text-red-500 hover:text-red-700 bg-transparent"
                                 aria-label={`Remove ${language}`}
                             >
                                 &times;
@@ -319,24 +323,26 @@ export default function MoviesFormPage() {
                         </span>
                     ))}
                 </div>
-                <input
-                    type="text"
-                    name="languageInput"
-                    placeholder="Enter language"
-                    value={inputValueLanguage}
-                    onChange={(ev) => handleChange(ev, setInputValueLanguage)}
-                    className="border rounded p-2 mb-2"
-                />
-                <button
-                    type="button"
-                    onClick={addLanguage}
-                    className="bg-blue-500 text-white rounded p-2"
-                >
-                    Add
-                </button>
+                
+                <div className="flex gap-2">
+                    <input
+                        type="text"
+                        name="languageInput"
+                        placeholder="Enter language"
+                        value={inputValueLanguage}
+                        onChange={(ev) => handleChange(ev, setInputValueLanguage)}
+                        className="border rounded p-2 mb-2"
+                    />
+                    <button
+                        type="button"
+                        onClick={addLanguage}
+                        className="text-blue-500 bg-transparent">
+                        Add
+                    </button>
+                </div>
                 {formFillError.languages && <div style={{ color: 'red' }}>{formFillError.languages}</div>}
 
-
+                <h2 className="text-xl mt-6 mb-2">Length</h2>
                 <input
                     type="text"
                     name="length"
@@ -356,7 +362,7 @@ export default function MoviesFormPage() {
                 />
                 {formFillError.genre && <div style={{ color: 'red' }}>{formFillError.genre}</div>} */}
 
-                <h2 className="text-xl mt-2">Genre</h2>
+                <h2 className="text-xl mt-6 mb-2">Genre</h2>
                 <div className="flex flex-wrap gap-2 mb-4">
                     {genre.map((genre, index) => (
                         <span key={index} className="bg-gray-200 text-gray-800 rounded-full px-3 py-1 flex items-center">
@@ -367,7 +373,7 @@ export default function MoviesFormPage() {
                                     console.log(`Removing genre at index ${index}`);
                                     removeGenre(index);
                                 }}
-                                className="ml-2 text-red-500 hover:text-red-700"
+                                className="ml-2 text-red-500 hover:text-red-700 bg-transparent"
                                 aria-label={`Remove ${genre}`}
                             >
                                 &times;
@@ -375,24 +381,26 @@ export default function MoviesFormPage() {
                         </span>
                     ))}
                 </div>
-                <input
-                    type="text"
-                    name="genreInput"
-                    placeholder="Enter genre"
-                    value={inputValueGenre}
-                    onChange={(ev) => handleChange(ev, setInputValueGenre)}
-                    className="border rounded p-2 mb-2"
-                />
-                <button
-                    type="button"
-                    onClick={addGenre}
-                    className="bg-blue-500 text-white rounded p-2"
-                >
-                    Add
-                </button>
+
+                <div className="flex gap-2">
+                    <input
+                        type="text"
+                        name="genreInput"
+                        placeholder="Enter genre"
+                        value={inputValueGenre}
+                        onChange={(ev) => handleChange(ev, setInputValueGenre)}
+                        className="border rounded p-2 mb-2"
+                    />
+                    <button
+                        type="button"
+                        onClick={addGenre}
+                        className="text-blue-500 bg-transparent">
+                        Add
+                    </button>
+                </div>
                 {formFillError.genre && <div style={{ color: 'red' }}>{formFillError.genre}</div>}
 
-                <h2 className="text-xl mt-2">Certificate</h2>
+                <h2 className="text-xl mt-6 mb-2">Certificate</h2>
                 <input
                     type="text"
                     name="certificate"
@@ -402,7 +410,7 @@ export default function MoviesFormPage() {
                 />
                 {formFillError.certificate && <div style={{ color: 'red' }}>{formFillError.certificate}</div>}
 
-                <h2 className="text-xl mt-2">Director</h2>
+                <h2 className="text-xl mt-6 mb-2">Director</h2>
                 <input
                     type="text"
                     name="director"
@@ -412,7 +420,7 @@ export default function MoviesFormPage() {
                 />
                 {formFillError.director && <div style={{ color: 'red' }}>{formFillError.director}</div>}
 
-                <h2 className="text-xl mt-2">Release Date</h2>
+                <h2 className="text-xl mt-6 mb-2">Release Date</h2>
                 <input
                     type="date"
                     name="releaseDate"
@@ -422,7 +430,7 @@ export default function MoviesFormPage() {
                 />
                 {formFillError.releaseDate && <div style={{ color: 'red' }}>{formFillError.releaseDate}</div>}
 
-                <h2 className="text-xl mt-2">Description</h2>
+                <h2 className="text-xl mt-6 mb-2">Description</h2>
                 <textarea
                     name="description"
                     placeholder="Description"
@@ -447,6 +455,7 @@ export default function MoviesFormPage() {
                     )}
                 </div>
             </form>
+            
         </div>
     );
 }

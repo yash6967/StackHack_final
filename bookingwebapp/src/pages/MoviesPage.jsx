@@ -24,12 +24,13 @@ export default function MoviesPage() {
     };
 
     return (
-        <div>
+        <div className="px-4 mb-10">
+
             <AccountNavigation />
 
             <div className="text-center">
                 <Link
-                    className="inline-flex gap-1 items-center bg-gray-100 rounded-l py-2 px-5"
+                    className="inline-flex gap-1 items-center bg-gray-100 rounded py-2 px-5"
                     to={'/account/adminMovies/new'}
                 >
                     <svg
@@ -48,51 +49,55 @@ export default function MoviesPage() {
                     </svg>
                     Add New Movie
                 </Link><br />
-
-                <div className="mt-4">
-                    {movies.length > 0 && movies.map(it => (
-                        <div key={it._id} className="flex cursor-pointer gap-4 bg-gray-200 p-4">
-                            <div className="flex w-32 h-40 bg-gray-300 overflow-hidden">
-                                {it.photos.length > 0 && (
-                                    <img
-                                        src={'http://localhost:4000/uploads/' + it.photos[0]}
-                                        alt="Movie Poster"
-                                        className="w-full h-full object-cover"
-                                    />
-                                )}
-                            </div>
-
-                            <div className="flex-1">
-                                <h2 className="text-xl">{it.title}</h2>
-                                <div className="mt-2 flex gap-2">
-                                    <Link to={'/account/adminMovies/' + it._id}>
-                                        <button className="bg-black text-white px-3 py-1 rounded">
-                                            Edit
-                                        </button>
-                                    </Link>
-                                    <button 
-                                        className="bg-black text-white px-3 py-1 rounded"
-                                        onClick={() => toggleDetails(it._id)}
-                                    >
-                                        Details
-                                    </button>
-                                </div>
-
-                                {expandedMovieId === it._id && (
-                                    <div className="mt-2 bg-gray-100 p-2 rounded">
-                                        <p><strong>Director:</strong> {it.director}</p>
-                                        <p><strong>Release Date:</strong> {it.releaseDate}</p>
-                                        <p><strong>Genre:</strong> {it.genre}</p>
-                                        <p><strong>Duration:</strong> {it.length}</p>
-                                        <p><strong>certification:</strong> {it.certificate}</p>
-                                    </div>
-                                    // <div>hi</div>
-                                )}
-                            </div>
-                        </div>
-                    ))}
-                </div>
             </div>
+
+            <h2 className="dark:text-primary-50 my-10 text-xl font-thin"> You are currently listing {movies.length} movies !</h2>
+            
+            <div className="mt-4">
+                
+                {movies.length > 0 && movies.map(it => (
+                    <div key={it._id} className="flex cursor-pointer gap-4 my-4">
+                        <div className="flex w-32 h-40 overflow-hidden">
+                            {it.photos.length > 0 && (
+                                <img
+                                    src={'http://localhost:4000/uploads/' + it.photos[0]}
+                                    alt="Movie Poster"
+                                    className="w-full h-full object-cover rounded-sm"
+                                />
+                            )}
+                        </div>
+
+                        <div className="flex-1">
+                            <h2 className="text-lg">{it.title}</h2>
+                            <div className="mt-2 flex gap-2">
+                                <Link to={'/account/adminMovies/' + it._id}>
+                                    <button className="bg-black text-white px-3 py-1 rounded">
+                                        Edit
+                                    </button>
+                                </Link>
+                                <button 
+                                    className="bg-black text-white px-3 py-1 rounded"
+                                    onClick={() => toggleDetails(it._id)}
+                                >
+                                    Details
+                                </button>
+                            </div>
+
+                            {expandedMovieId === it._id && (
+                                <div className="mt-2 bg-gray-100 p-2 rounded">
+                                    <p><strong>Director:</strong> {it.director}</p>
+                                    <p><strong>Release Date:</strong> {it.releaseDate}</p>
+                                    <p><strong>Genre:</strong> {it.genre}</p>
+                                    <p><strong>Duration:</strong> {it.length}</p>
+                                    <p><strong>certification:</strong> {it.certificate}</p>
+                                </div>
+                                // <div>hi</div>
+                            )}
+                        </div>
+                    </div>
+                ))}
+            </div>
+
         </div>
     );
 

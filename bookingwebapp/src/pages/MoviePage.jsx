@@ -35,7 +35,7 @@ export default function MoviePage(){
 
     return (
     
-        <section className="mt-4 bg-back">
+        <section className="mt-4 mb-10">
 
             <div className="w-full h-[30rem] bg-primary-950 flex items-center">
 
