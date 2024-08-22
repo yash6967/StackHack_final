@@ -2,9 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-input[type = "text"], input[type = "password"], input[type = "email"], input[type = "date"], textarea
+input[type = "text"], input[type = "password"], input[type = "email"], input[type = "date"], input[type = "number"], input[type = "time"], input[type = "option"], textarea
 {
-    @apply w-full border-none dark:bg-gray-800 dark:text-primary-50 rounded-lg p-2 gap-3 items-center overflow-hidden;
+    @apply w-full border-none dark:bg-gray-800 dark:text-gray-300 rounded-lg p-2 gap-3 items-center overflow-hidden;
 }
 
 @media (prefers-color-scheme: dark) {

@@ -78,10 +78,13 @@ export default function AccountPage(){
                 <div className="flex flex-col items-center max-w-lg mx-auto dark:text-primary-50">
 
                     <div className="font-light">
+
                         Logged in as {user.name} ({user.email}) <br/>
-                    current Role : {user.role}<br></br>
-                    {user.role === 'customer' && request === 'not sent' && (<button onClick={() => adminRequest(user._id)} >change role to Admin</button>)} <br></br>
-                    {request === 'sent' && "Your request to become admin is in process"}<br></br>
+                        Current Role : {user.role}<br></br>
+
+                        {user.role === 'customer' && request === 'not sent' && (<button onClick={() => adminRequest(user._id)} >change role to Admin</button>)} <br></br>
+                        {request === 'sent' && "Your request to become admin is in process"}<br></br>
+                        
                     </div>
 
                     <button 

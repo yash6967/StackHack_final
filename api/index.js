@@ -585,7 +585,7 @@ app.post('/adminShowtimes',async (req,res)=>{
         res.status(401).json({error:'token not found'});
     }
     const {
-        movieid,movieName,theatreid,theatreName,showdate,dayTime,city
+        movieid, movieName, theatreid, theatreName, ticketPrice, showdate, daytime, city
         } = req.body;
 
 
@@ -600,8 +600,9 @@ app.post('/adminShowtimes',async (req,res)=>{
                 movieName,
                 theatreid,
                 theatreName,
+                ticketPrice,
                 showdate,
-                dayTime,
+                daytime,
                 city
             });
 
@@ -656,7 +657,7 @@ app.put('/adminShowtimes', async (req, res) => {
 
 
 
-    const {id,movieid,movieName,theatreid,theatreName,showdate,dayTime,city
+    const {id,movieid,movieName,theatreid,theatreName, ticketPrice, showdate,daytime,city
         } = req.body;
     
     jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
@@ -668,7 +669,7 @@ app.put('/adminShowtimes', async (req, res) => {
         if(userData.id === showtimeDoc.owner.toString()){
 
             showtimeDoc.set({
-                movieid,movieName,theatreid,theatreName,showdate,dayTime,city
+                movieid,movieName,theatreid,theatreName,ticketPrice,showdate,daytime,city
             });
 
             await showtimeDoc.save();

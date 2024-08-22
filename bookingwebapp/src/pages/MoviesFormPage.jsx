@@ -224,6 +224,7 @@ export default function MoviesFormPage() {
     }
 
     function handleChange(event, setter) {
+
         setter(event.target.value);
         
         /* For Clearing */
@@ -236,12 +237,12 @@ export default function MoviesFormPage() {
     }
 
     return (
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center mb-10">
 
             <AccountNavigation />
 
             <form 
-                className="max-w-[60rem]"
+                className="min-w-[40rem] max-w-[60rem]"
                 onSubmit={saveMovie}>
                 <h2 className="text-xl mt-6 mb-2">Title</h2>
                 <input
@@ -357,41 +358,39 @@ export default function MoviesFormPage() {
                 />
                 {formFillError.length && <div style={{ color: 'red' }}>{formFillError.length}</div>} */}
                 <h2 className="text-xl mt-6 mb-2">Length</h2>
-<div className="flex gap-2">
-    <input
-        type="number"
-        name="hours"
-        placeholder="Hours"
-        value={length.hours || ''}
-        onChange={ev => handleChange(ev, value => setLength(prev => ({ ...prev, hours: ev.target.value })))}
-        className="border rounded p-2 mb-2 w-16"
-        min="0"
-        max="23"
-    />
-    <input
-        type="number"
-        name="minutes"
-        placeholder="Minutes"
-        value={length.minutes || ''}
-        onChange={ev => handleChange(ev, value => setLength(prev => ({ ...prev, minutes: ev.target.value })))}
-        className="border rounded p-2 mb-2 w-16"
-        min="0"
-        max="59"
-    />
-    <input
-        type="number"
-        name="seconds"
-        placeholder="Seconds"
-        value={length.seconds || ''}
-        onChange={ev => handleChange(ev, value => setLength(prev => ({ ...prev, seconds: ev.target.value })))}
-        className="border rounded p-2 mb-2 w-16"
-        min="0"
-        max="59"
-    />
-</div>
-{formFillError.length && <div style={{ color: 'red' }}>{formFillError.length}</div>}
-
-                
+                <div className="flex gap-2">
+                    <input
+                        type="number"
+                        name="hours"
+                        placeholder="Hours"
+                        value={length.hours || ''}
+                        onChange={ev => handleChange(ev, value => setLength(prev => ({ ...prev, hours: ev.target.value })))}
+                        className="border rounded mb-2 w-14 p-1"
+                        min="0"
+                        max="23"
+                    />
+                    <input
+                        type="number"
+                        name="minutes"
+                        placeholder="Minutes"
+                        value={length.minutes || ''}
+                        onChange={ev => handleChange(ev, value => setLength(prev => ({ ...prev, minutes: ev.target.value })))}
+                        className="border rounded mb-2 w-14 p-1"
+                        min="0"
+                        max="59"
+                    />
+                    <input
+                        type="number"
+                        name="seconds"
+                        placeholder="Seconds"
+                        value={length.seconds || ''}
+                        onChange={ev => handleChange(ev, value => setLength(prev => ({ ...prev, seconds: ev.target.value })))}
+                        className="border rounded mb-2 w-14 p-1"
+                        min="0"
+                        max="59"
+                    />
+                </div>
+                {formFillError.length && <div style={{ color: 'red' }}>{formFillError.length}</div>}
 
                 {/* <h2 className="text-xl mt-2">Genre</h2>
                 <input

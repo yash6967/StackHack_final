@@ -9,9 +9,9 @@ const showtimeSchema = new mongoose.Schema({
     movieName:{type:String, ref:'Movie',required:false},
     theatreid: { type: mongoose.Schema.Types.ObjectId, ref: 'Theatre', required: true },
     theatreName:{type:String, ref:'Movie',required:false},
-    //ticketPrice: { type: Number, required: true },
+    ticketPrice: { type: Number, required: true },
     showdate: { type: Date, required: true },
-    daytime :{type: String , required:true},
+    daytime :{type: [String] , required:true},
     city:{type: String , required:true}
     
   }, { timestamps: true });

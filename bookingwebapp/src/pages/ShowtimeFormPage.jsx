@@ -1,8 +1,9 @@
-import { useState,useEffect } from "react";
 import AccountNavigation from "./AccountNavigation";
 import axios from "axios";
-import {Navigate, useParams} from "react-router-dom";
-import ErrorBoundary from "../components/ErrorBoundary";
+
+import { useState, useEffect } from "react";
+import { Navigate, useParams } from "react-router-dom";
+import { format, parseISO } from 'date-fns';
 
 export default function ShowtimesFormPage() {
 
@@ -11,15 +12,17 @@ export default function ShowtimesFormPage() {
     const [movieName,setmoviename] = useState('');
     const [theatreid,settheatreid] = useState('');
     const [theatreName,settheatrename] = useState('');
-    const [showdate,setdate] = useState([]);
+    const [showdate,setdate] = useState('');
     const [daytime,settime] = useState([]);
-    const [errors, setErrors] = useState({});
+    const [formFillError, setFormFillError] = useState({});
     const [movies, setMovies] = useState([]);
     const [theatres, setTheatres] = useState([]);
     const [selectedMovie, setSelectedMovie] = useState([null]);
     const [selectedTheatre, setSelectedTheatre] = useState([null]);
     const [redirect,setRedirect] = useState(false);
     const [city,settheatreCity] = useState([]);
+    const [ticketPrice, setTicketPrice] = useState('');
+    const [inputValueSlot, setInputValueSlot] = useState('')
 
     useEffect(() => {
 
@@ -34,8 +37,9 @@ export default function ShowtimesFormPage() {
             setmoviename(data.movieName);
             settheatreid(data.theatreid);
             settheatrename(data.theatreName);
-            setdate(data.showdate);
-            settime(data.daytime);
+            setTicketPrice(data.ticketPrice);
+            setdate(data.showdate? format(parseISO(data.showdate), 'yyyy-MM-dd') : '');
+            settime(data.daytime || []);
             settheatreCity(data.city);
 
             /* AND EXTRA SETS */
@@ -68,21 +72,39 @@ export default function ShowtimesFormPage() {
         fetchTheatres();
     }, []);
     
-
-    function validateForm() {
-        const newErrors = {};
-        if (!movieid) newErrors.movieid = 'Movie name is required';
-        if (!theatreid) newErrors.theatreid = 'Theatre name is required';
-        if (!showdate || showdate === '') newErrors.showdate = 'showDate is required';
-        if (!daytime || daytime === '') newErrors.daytime = 'Time is required';
-        if(!city || city == '') newErrors.city = 'city is required';
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
+    const addSlot = () => {
+        const trimmedValue = inputValueSlot.trim();
+        if (trimmedValue && !daytime.includes(trimmedValue)) {
+            settime([...daytime, trimmedValue]);
+            setInputValueSlot('');
+            setFormFillError(prevformFillError => ({
+                ...prevformFillError,
+                daytime: ''
+            }));
+        } else {
+            setFormFillError({ daytime: 'This slot is either empty or already added.' });
+        }
     }
 
-    
+    const removeSlot = (index) => {
+        settime(daytime.filter((_, i) => i !== index));
+    };
 
-    async function saveshowtime(ev){
+    function validateForm() {
+
+        const newformFillError = {};
+        
+        if (!movieid) newformFillError.movieid = 'Movie name is required';
+        if (!theatreid) newformFillError.theatreid = 'Theatre name is required';
+        if (!showdate || showdate === '') newformFillError.showdate = 'Date is required';
+        if (!daytime.length) newformFillError.daytime = 'Slot is required';
+        if (!ticketPrice || ticketPrice < 0) newformFillError.ticketPrice = 'A valid amount is required';
+
+        setFormFillError(newformFillError);
+        return Object.keys(newformFillError).length === 0;
+    }
+    
+    async function saveShowtime(ev){
 
         ev.preventDefault(); 
 
@@ -97,6 +119,7 @@ export default function ShowtimesFormPage() {
             movieName,
             theatreid,
             theatreName,
+            ticketPrice,
             showdate,
             daytime,
             city
@@ -166,6 +189,7 @@ export default function ShowtimesFormPage() {
         setmovieid(movieId);
         setmoviename(movie.title);
     };
+
     const handleTheatreSelect = (event) => {
         const TheatreId = event.target.value;
         const theatre = theatres.find(m => m._id === TheatreId);
@@ -180,81 +204,126 @@ export default function ShowtimesFormPage() {
         return <Navigate to='/account/adminShowtimes' />;
     }
 
-
-    
+    function handleChange(event, setter) {
+        setter(event.target.value);
+        
+        /* For Clearing */
+        if (formFillError[event.target.name]) {
+            setFormFillError(prevformFillError => ({
+                ...prevformFillError,
+                [event.target.name]: ''
+            }));
+        }
+    }
 
     return (
 
-        <div>
+        <div className="flex flex-col items-center mb-10">
 
             <AccountNavigation/>
             
 
-            <form onSubmit={saveshowtime}>
-                
-                
-                <h2 className="text-xl mt-2">showdate</h2>
+            <form 
+                className="min-w-[40rem] max-w-[60rem]" 
+                onSubmit={saveShowtime}>
+
+                {/* Show Date */}
+                <h2 className="text-xl mt-6 mb-2">Show Date</h2>
                 <input 
                     type="date" 
-                    // id="showtime-name"
-                    // name="name" 
-                    placeholder="Name of showtime" 
                     value={showdate} 
-                    onChange={ev => setdate(ev.target.value)}
-                    className={`border ${errors.date ? 'border-red-500' : 'border-gray-300'} rounded-lg py-2 px-4 w-full`} 
-                    // required 
+                    onChange={ev => {
+                        setdate(ev.target.value);
+                        if (formFillError.showdate) {
+                            setFormFillError(prevErrors => ({
+                                ...prevErrors,
+                                showDate: ''
+                            }));
+                        }
+                    }} 
                     />  
-                    {errors.showdate && <div className="text-red-500 text-sm mt-1">{errors.showdate}</div>}
+                    {formFillError.showdate && <div style={{ color: 'red' }}>{formFillError.showdate}</div>}
 
-                <h2 className="text-xl mt-2">time</h2>
-                <input 
-                    type="time" 
-                    // id="showtime-name"
-                    // name="name" 
-                    placeholder="time" 
-                    value={daytime} 
-                    onChange={ev => settime(ev.target.value)} 
-                    className={`border ${errors.daytime ? 'border-red-500' : 'border-gray-300'} rounded-lg py-2 px-4 w-full`}
-                    // required 
-                    />
-                {errors.daytime && <div className="text-red-500 text-sm mt-1">{errors.daytime}</div>} 
+                    {/* Slot */}
+                    <h2 className="text-xl mt-6 mb-2">Slot</h2>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                        {daytime.map((daytime, index) => (
+                            <span key={index} className="bg-gray-200 text-gray-800 rounded-full px-3 py-1 flex items-center">
+                                {daytime}
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        console.log(`Removing slot at index ${index}`);
+                                        removeSlot(index);
+                                    }}
+                                    className="ml-2 text-red-500 hover:text-red-700 bg-transparent"
+                                    aria-label={`Remove ${daytime}`}
+                                >
+                                    &times;
+                                </button>
+                            </span>
+                        ))}
+                    </div>
                 
+                    <div className="flex gap-2">
+                        <input
+                            type="time"
+                            name="slotInput"
+                            placeholder="Enter a slot"
+                            value={inputValueSlot}
+                            onChange={(ev) => handleChange(ev, setInputValueSlot)}
+                            className="border rounded p-2 mb-2"
+                        />
+                        <button
+                            type="button"
+                            onClick={addSlot}
+                            className="text-blue-500 bg-transparent">
+                            Add
+                        </button>
+                    </div>
+                    {formFillError.daytime && <div style={{ color: 'red' }}>{formFillError.daytime}</div>}
                 
-                    <label 
-                    className="text-xl mt-2"
-                    //className={`border ${errors.movieid ? 'border-red-500' : 'border-gray-300'} rounded-lg py-2 px-4 w-full`} 
-                    >Select a Movie</label>
-                    <select onChange={handleMovieSelect}
-                    className={`border ${errors.movieid ? 'border-red-500' : 'border-gray-300'} rounded-lg py-2 px-4 w-full`} 
-                    >
-                        <option>Select a movie</option>
+                    {/* Movie */}
+                    <h2 className="text-xl mt-6 mb-2">Movie</h2>
+                    <select 
+                        value={movieid} 
+                        onChange={handleMovieSelect}
+                        className="w-full p-2 rounded-lg bg-transparent dark:bg-gray-800 dark:text-gray-300 overflow-hidden">
+                        <option value="">Select a movie</option>
                         {movies.map(movie => (
-                                <option key={movie._id} value={movie._id}>
-                                    {movie.title}
-                                </option>
-                        ))};
+                            <option key={movie._id} value={movie._id}>
+                                {movie.title}
+                            </option>
+                        ))}
                     </select>
-                    {errors.movieid && <div className="text-red-500 text-sm mt-1">{errors.movieid}</div>}
+                    {formFillError.movieID && <div style={{ color: 'red' }}>{formFillError.movieID}</div>}
 
-                    <label 
-                    className="text-xl mt-2"
-                    >Select a Theatre</label>
-                    <select onChange={handleTheatreSelect}
-                    className={`border ${errors.theatreid ? 'border-red-500' : 'border-gray-300'} rounded-lg py-2 px-4 w-full`} 
-                    >
-                        <option>Select a Theatre</option>
+                    {/* Theatre */}
+                    <h2 className="text-xl mt-6 mb-2">Theatre</h2>
+                    <select 
+                        value={theatreid}
+                        onChange={handleTheatreSelect}
+                        className="w-full p-2 rounded-lg bg-transparent dark:bg-gray-800 dark:text-gray-300 overflow-hidden">
+                        <option value="">Select a theatre</option>
                         {theatres.map(theatre => (
-                                <option key={theatre._id} value={theatre._id}>
-                                    {theatre.theatreName}
-                                </option>
-                        ))};
+                            <option key={theatre._id} value={theatre._id}>
+                                {theatre.theatreName}
+                            </option>
+                        ))}
                     </select>
-                    {errors.theatreid && <div className="text-red-500 text-sm mt-1">{errors.theatreid}</div>} 
-                    {city && <label className=" text-sm mt-1 mx-2">City:{city}</label>}       
-                
-              
+                    {formFillError.theatreID && <div style={{ color: 'red' }}>{formFillError.theatreID}</div>}
 
-                
+                    {/* Ticket */}
+                    <h2 className="text-xl mt-6 mb-2">Ticket Price (INR)</h2>
+                    <input
+                        type="number"
+                        name="ticket"
+                        value={ticketPrice}
+                        onChange={ev => handleChange(ev, setTicketPrice)}
+                    />
+                    {formFillError.ticketPrice && <div style={{ color: 'red' }}>{formFillError.ticketPrice}</div>}
+
+                    {city && <label className=" text-sm mt-1 mx-2">City:{city}</label>}       
 
                     <div className="flex gap-4 mt-4">
                         <button type="submit" className="bg-gray-100 py-2 px-4 rounded-lg">
@@ -263,18 +332,15 @@ export default function ShowtimesFormPage() {
 
                         {id && (
                             <button
-                            type="button"
-                            onClick={deleteshowtime}
-                            className="bg-red-500 text-white py-2 px-4 rounded-lg"
+                                type="button"
+                                onClick={deleteshowtime}
+                                className="bg-red-500 text-white py-2 px-4 rounded-lg"
                             >
-                            Delete
+                                Delete
                             </button>
                         )}
-                        </div>
-
+                    </div>
             </form>
-
         </div>
     );
-
 }
