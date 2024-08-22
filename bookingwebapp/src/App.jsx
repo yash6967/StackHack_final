@@ -3,6 +3,8 @@ import IndexPage from "./pages/IndexPage"
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import Layout from "./layout";
+import './App.css'
+
 import axios from "axios";
 
 import { UserContextProvider } from "./UserContext";

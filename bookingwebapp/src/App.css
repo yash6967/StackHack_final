@@ -40,3 +40,61 @@
 .read-the-docs {
   color: #888;
 } */
+
+/* Scroller Styles */
+/* .scroller {
+  max-width: 100%;
+} */
+
+/* Scroll animation */
+@keyframes scroll {
+  to {
+      transform: translateX(calc(-50% - 1rem));
+  }
+}
+
+.scroller__inner {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 1rem;
+  width: max-content;
+  /* padding-block: 2rem; */
+  animation: scroll 30s linear infinite; 
+  animation-play-state: running;
+}
+
+.dark .scroller[data-animated="true"] {
+  overflow: hidden;
+  -webkit-mask: linear-gradient(90deg, transparent, white 20%, white 80%, transparent);
+  mask: linear-gradient(90deg, transparent, white 20%, white 80%, transparent);
+}
+
+.scroller:hover .scroller__inner {
+  animation-play-state: paused;
+}
+
+.scroller__inner img {
+  border: 2px solid whitesmoke;
+  transition: border-color 0.3s ease;
+}
+
+.scroller__inner img:hover {
+  border: 3px solid #0D9488;
+}
+
+.link-border-hover {
+  border: 2px solid transparent;
+  transition: border-color 0.3s ease;
+}
+
+.link-border-hover:hover {
+  border: 3px solid #0D9488;
+}
+
+
+
+
+
+
+
+
