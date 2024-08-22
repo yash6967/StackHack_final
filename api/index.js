@@ -8,6 +8,7 @@ const imageDownloader = require('image-downloader');
 const multer = require('multer');
 const fs = require('fs');
 const zod = require('zod');
+const { v4: uuidv4 } = require('uuid'); // For generating unique booking codes
 // const movieModel = require('./models/movie.js');
 require('dotenv').config()
 
@@ -17,6 +18,7 @@ const Movie = require('./models/movie.js');
 const Theatre = require('./models/theatre.js');
 const Showtime = require('./models/showtime.js');
 const AdminRequests = require('./models/adminRequest.js')
+const Tickets = require('./models/tickets.js');
 const app = express();
 
 const bcryptSalt = bcrypt.genSaltSync(8);
@@ -677,6 +679,27 @@ app.get('/adminShowtimes', async (req, res) => {
 
 });
 
+//get all showtimes for customer (all showtimes created by admins)
+// app.get('/customerShowtimes', async (req, res) => {
+
+//     const {token} = req.cookies;
+
+//     if (!token) {
+//         return res.status(401).json({ error: 'No token provided' });
+//     }
+
+//     jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
+
+//         if(error) throw error;
+    
+
+//         res.json(await Showtime.find());
+        
+
+//     });
+
+// });
+
 /* For Update */
 app.put('/adminShowtimes', async (req, res) => {
 
@@ -855,5 +878,70 @@ app.get('/findShowtimes', async (req, res) => {
     });
 
 });
+
+/** tickets */
+
+app.post('/bookTicket', async (req, res) => {
+    const {
+        chooseShowtimeId,
+        chooseTime,
+        selectedSeatIds,
+        ticketPrice
+    } = req.body;
+
+    try {
+        const bookingPromises = selectedSeatIds.map(async (singleSeat) => {
+            const booking_code = uuidv4();
+            // Creating a ticket for each seat
+            return Tickets.create({
+                booking_code:booking_code,
+                showtimeId:chooseShowtimeId,
+                daytime :chooseTime,
+                seatNumber: singleSeat, // Assuming this field stores the seat number
+                ticketPrice:ticketPrice
+            });
+        });
+
+        // Await all booking operations
+        const bookingResults = await Promise.all(bookingPromises);
+
+        // Collect successful bookings and send them in the response
+        const successfulBookings = bookingResults.map((booking, index) => ({
+            seat: selectedSeatIds[index],
+            booking_code: booking.booking_code
+        }));
+
+        res.status(200).json({
+            message: "Tickets successfully created for all selected seats",
+            bookings: successfulBookings
+        });
+    } catch (error) {
+        res.status(500).json({ error: "Failed to create one or more tickets", details: error.message });
+    }
+});
+
+app.get('/bookedSeats', async (req, res) => {
+    const { showtimeId, daytime } = req.query; // Use req.query for GET requests
+
+    if (!showtimeId || !daytime) {
+        return res.status(400).json({ error: "showtimeId and daytime are required" });
+    }
+
+    try {
+        // Find all tickets that match the given showtimeId and daytime
+        const bookedSeats = await Tickets.find({ showtimeId, daytime }, 'seatNumber');
+
+        // Extract the seat numbers into an array
+        const seatNumbers = bookedSeats.map(ticket => ticket.seatNumber);
+
+        res.status(200).json({
+            message: `Successfully retrieved booked seats for showtime ${showtimeId} on ${daytime}`,
+            seats: seatNumbers
+        });
+    } catch (error) {
+        res.status(500).json({ error: "Failed to retrieve booked seats", details: error.message });
+    }
+});
+
 
 app.listen(4000);
