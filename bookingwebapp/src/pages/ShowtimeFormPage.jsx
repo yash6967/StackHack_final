@@ -103,6 +103,29 @@ export default function ShowtimesFormPage() {
         setFormFillError(newformFillError);
         return Object.keys(newformFillError).length === 0;
     }
+
+    async function checkExistingShowtime() {
+
+        try {
+            const response = await axios.get('/adminShowtimes/check', {
+
+                params: {
+                    movieid,
+                    theatreid,
+                    showdate
+                }
+
+            });
+
+            return response.data.exists;
+
+        } catch (error) {
+            
+            console.error('Error checking existing showtime:', error);
+            return false;
+            
+        }
+    }
     
     async function saveShowtime(ev){
 
@@ -110,6 +133,17 @@ export default function ShowtimesFormPage() {
 
         if (!validateForm()) {
             return;
+        }
+
+        if(!id){
+
+            const exists = await checkExistingShowtime();
+
+            if (exists) {
+                alert('Showtime with this movie, theatre, and date already exists.');
+                return;
+            }
+            
         }
 
         const showtimeData = {

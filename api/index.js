@@ -616,6 +616,37 @@ app.post('/adminShowtimes',async (req,res)=>{
     
 });
 
+/* Check Showtimes before adding */
+app.get('/adminShowtimes/check', async (req, res) => {
+
+    const {token} = req.cookies;
+
+    if (!token) {
+        return res.status(401).json({ error: 'No token provided' });
+    }
+
+    jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
+
+        if(error) throw error;
+    
+        const { movieid, theatreid, showdate } = req.query;
+
+        const existingShowtime = await Showtime.findOne({
+            movieid,
+            theatreid,
+            showdate: new Date(showdate)  
+        });
+
+        if (existingShowtime) {
+            return res.json({ exists: true });
+        } else {
+            return res.json({ exists: false });
+        }
+        
+    });
+
+});
+
 app.get('/adminShowtimes/:id', async (req, res) => {
 
     const {id} = req.params;
