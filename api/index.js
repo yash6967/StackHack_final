@@ -778,46 +778,45 @@ app.get('/adminList', async (req,res)=>{
 
 
 //create new request
-app.post('/adminList/:id',async (req,res)=>{
-    
-    const {token} = req.cookies;
+app.post('/adminList/:id', async (req, res) => {
+    const { token } = req.cookies;
 
-    if(!token){
-        return res.status(401).json({error:'token not found'});
+    if (!token) {
+        return res.status(401).json({ error: 'Token not found' });
     }
-    const {id} = req.params;
-    // if (!mongoose.Types.ObjectId.isValid(id)) {
-    //     return res.status(400).json({ error: 'Invalid ObjectId' });
-    // }
 
+    const { id } = req.params;
 
-        jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ error: 'Invalid ObjectId' });
+    }
 
-            if(error){
-                return res.status(403).json({ error: 'Invalid token' });
+    jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
+        if (error) {
+            return res.status(403).json({ error: 'Invalid token' });
+        }
+
+        try {
+            let adminRequest = await AdminRequests.findOne();
+
+            if (!adminRequest) {
+                // Create a new AdminRequest object if none exists
+                adminRequest = new AdminRequests({
+                    requestList: []
+                });
             }
-        
-            
-                try{
-                    const adminRequest = await AdminRequests.findOne();
-                    if (!adminRequest) {
-                        return res.status(404).json({ error: 'Admin request not found' });
-                    }
-                    adminRequest.requestList.push(id);
-                    await adminRequest.save();
-                    return res.status(200).json({
-                        message:"success"});
 
-                }catch(error){
-                    console.error('Failed to add user to admin list:', error);
-                    return res.status(500).json({ error: 'Failed to process request' });
-                }
+            // Add the user ID to the requestList array
+            adminRequest.requestList.push(id);
+            await adminRequest.save();
 
-                
-    
-        });
-    
-    
+            return res.status(200).json({ message: 'Success' });
+        } catch (error) {
+            console.error('Failed to add user to admin list:', error);
+            return res.status(500).json({ error: 'Failed to process request' });
+        }
+    });
 });
 
 app.delete('/adminList/:userId',async (req,res)=>{
