@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { addDays, format } from "date-fns";
 
 const DateSelector = ({ onSelect }) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -6,27 +7,22 @@ const DateSelector = ({ onSelect }) => {
   const containerRef = useRef(null);
 
   useEffect(() => {
-    // Generate an array of dates starting from today
+    // Generate an array of dates starting from today using date-fns
     const startDate = new Date();
-    const datesArray = Array.from({ length: 30 }, (_, i) => {
-      const date = new Date(startDate);
-      date.setDate(startDate.getDate() + i);
-      return date;
-    });
+    const datesArray = Array.from({ length: 30 }, (_, i) => addDays(startDate, i));
     setDates(datesArray);
   }, []);
 
   const handleDateClick = (date) => {
     if (date instanceof Date && !isNaN(date)) {
-        setSelectedDate(date);
-        if (onSelect) {
-            onSelect(date);
-        }
+      setSelectedDate(date);
+      if (onSelect) {
+        onSelect(date);
+      }
     } else {
-        console.error("Invalid date selected:", date);
+      console.error("Invalid date selected:", date);
     }
-};
-
+  };
 
   const scrollLeft = () => {
     containerRef.current.scrollBy({
@@ -43,11 +39,7 @@ const DateSelector = ({ onSelect }) => {
   };
 
   const formatDate = (date) => {
-    return date.toLocaleDateString("en-US", {
-      weekday: "short",
-      day: "numeric",
-      month: "short",
-    });
+    return format(date, "EEE, MMM d"); // Example: "Fri, Aug 25"
   };
 
   return (
