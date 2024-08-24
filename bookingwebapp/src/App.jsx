@@ -19,6 +19,7 @@ import ShowtimesPage from "./pages/ShowtimesPage";
 import ShowtimesFormPage from "./pages/ShowtimeFormPage"
 import SuperAdminPage from "./pages/SuperAdminPage"
 import SuperAdminFormPage from "./pages/SuperAdminFormPage"
+import MyBookings from "./pages/MyBookings";
 
 import MoviePage from "./pages/MoviePage";
 import ReservationFormPage from "./pages/ReservationFormPage";
@@ -59,6 +60,10 @@ export default function App() {
 
             <Route path = "/account/superAdmin" element = {<SuperAdminPage />} />
             <Route path = "/account/superAdmin/:id" element = {<SuperAdminFormPage />} />
+
+            <Route path = "/account/myBookings" element = {<MyBookings />} />
+
+
 
           </Route>
         </Routes>

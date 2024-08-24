@@ -8,7 +8,7 @@ export default function TheatresFormPage() {
 
     const {id} = useParams();
     const [theatreName, setName] = useState('');
-    const [ticketPrice, setTicketPrice] = useState('');
+    // const [ticketPrice, setTicketPrice] = useState('');
     const [rows, setRows] = useState('');
     const [cols, setCols] = useState('');
     const [city, setCity] = useState('');
@@ -27,7 +27,7 @@ export default function TheatresFormPage() {
 
             const {data} = response;
             setName(data.theatreName);
-            setTicketPrice(data.ticketPrice);
+            // setTicketPrice(data.ticketPrice);
             setCity(data.city);
             setRows(data.rows);
             setCols(data.cols);
@@ -39,7 +39,7 @@ export default function TheatresFormPage() {
     function validateForm() {
         const newErrors = {};
         if (!theatreName) newErrors.theatreName = 'Theatre name is required';
-        if (!ticketPrice) newErrors.ticketPrice = 'TicketPrice name is required';
+        // if (!ticketPrice) newErrors.ticketPrice = 'TicketPrice name is required';
         if (!city) newErrors.city = 'City name is required';
         if (!rows || rows === '') newErrors.rows = 'Rows is required';
         if (!cols || cols === '') newErrors.cols = 'Cols is required';
@@ -65,7 +65,7 @@ export default function TheatresFormPage() {
                 id,
                 theatreName,
                 city,
-                ticketPrice,
+                // ticketPrice,
                 rows,
                 cols
 
@@ -184,7 +184,7 @@ export default function TheatresFormPage() {
                     {errors.city && <div className="text-red-500 text-sm mt-1">{errors.city}</div>}
 
 
-                <h2 className="text-xl mt-2">Ticket price</h2>
+                {/* <h2 className="text-xl mt-2">Ticket price</h2>
                 <input 
                     type="number" 
                     // id="theatre-name"
@@ -194,7 +194,7 @@ export default function TheatresFormPage() {
                     onChange={ev => setTicketPrice(ev.target.value)} 
                     // required 
                 />
-                {errors.ticketPrice && <div style={{ color: 'red' }}>{errors.ticketPrice}</div>}
+                {errors.ticketPrice && <div style={{ color: 'red' }}>{errors.ticketPrice}</div>} */}
 
                 <h2 className="text-xl mt-2">Rows</h2>
                 <input 

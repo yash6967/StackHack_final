@@ -3,13 +3,14 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { CityContext } from '../CityContext';
 import SeatSelector from '../components/SeatSelector'
-
+import DateSelector from '../components/DateSelector';
 export default function ReservationFormPage() {
 
     const {id} = useParams();
     const { city } = useContext(CityContext);
 
     const [chooseCity, setChooseCity] = useState('');
+    const [chooseShowDate,setChooseShowDate] = useState('');
     const [movie, setMovie] = useState(null);
     const [showtimes, setShowtimes] = useState([]);
     const cities = ['Delhi','Jaipur','Bhopal','Pune','Ahmedabad','Kota','Mumbai']
@@ -39,29 +40,35 @@ export default function ReservationFormPage() {
         return;
     }
 
-    async function findMovie(ev){
 
+    async function findMovie(ev) {
         ev.preventDefault();
-
-        if (!chooseCity) {
-            console.log('City name is required.');
+    
+        if (!chooseCity && !chooseShowDate) {
+            console.log('City or Date name is required.');
             return;
         }
-
-        console.log('City name:', chooseCity);
-        console.log('Movie ID:', id);
-
-        const response = await axios.get('/findShowtimes', {
-            params: {
-                movieid: id,
-                city: chooseCity
-            }
-        });
-        
-        setShowtimes(response.data);
-        // console.log(response.data);
-
+    
+        const params = {
+            movieid: id,
+        };
+    
+        if (chooseCity) {
+            params.city = chooseCity;
+        }
+    
+        if (chooseShowDate instanceof Date && !isNaN(chooseShowDate)) {
+            params.showdate = chooseShowDate.toISOString().split('T')[0];
+        }
+    
+        try {
+            const response = await axios.get('/findShowtimes', { params });
+            setShowtimes(response.data);
+        } catch (error) {
+            console.error("Error fetching showtimes:", error);
+        }
     }
+    
 
 
     function handleChange(event, setter) {
@@ -81,6 +88,16 @@ export default function ReservationFormPage() {
             console.error("Error fetching theatre details:", error);
         }
     }
+
+   
+      const handleDateSelect = (date) => {
+        console.log("Selected Date:", date);  // Ensure the correct date is being selected
+        const formattedDate = date.toString().split('T')[0]; // Convert to YYYY-MM-DD
+        setChooseShowDate(date);
+        console.log("Formatted Date:", formattedDate);
+      
+        // Use formattedDate for any API calls or further processing
+      };
      
     if (!movie) {
         return <div>Loading movie details...</div>;
@@ -92,21 +109,10 @@ export default function ReservationFormPage() {
         <div>
             { city }
             <h2>{movie.title}</h2>
-
             <form onSubmit={findMovie}>
-
-                {/* <h2>City</h2>
-                <input
-                    type="text"
-                    name="city"
-                    placeholder="Name of City"
-                    value={chooseCity}
-                    onChange={ev => handleChange(ev, setChooseCity)}
-                /> */}
-
                 <label 
                     className="text-xl mt-2"
-                    >Select a City</label>
+                    >Select a City</label><br></br>
                     <select onChange={ev => handleChange(ev, setChooseCity)}>
                         <option>Select a city</option>
                         {cities.map(city => (
@@ -115,6 +121,15 @@ export default function ReservationFormPage() {
                                 </option>
                         ))};
                     </select>
+                    <div className="relative bg-gray-100">
+                    <h1 className="text-xl font-bold text-center my-8">Select a Date</h1><br></br>
+                    <DateSelector onSelect={handleDateSelect}  />
+                    <div className="text-center mt-8">
+                        {/* Additional content of the app */}
+                    </div>
+                    </div>
+
+
                     
                 <button>
                     Submit
@@ -140,6 +155,7 @@ export default function ReservationFormPage() {
                             ticketPrice={ticketPrice}
                             chooseTime={chooseTime}
                             chooseShowtimeId={chooseShowtimeId}
+                            userId={id}
                         />
                     )}
                 </div>

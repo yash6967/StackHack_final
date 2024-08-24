@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
+import DummyPayment from "./DummyPayment"; // Import the DummyPayment component
 
 const SeatSelector = (props) => {
   const [seats, setSeats] = useState([]);
@@ -7,9 +8,9 @@ const SeatSelector = (props) => {
   const [totalAmount, setTotalAmount] = useState(0);
   const [selectedSeatIds, setSelectedSeatIds] = useState([]);
   const [bookedSeats, setBookedSeats] = useState([]); 
+  const [showPayment, setShowPayment] = useState(false); // State to toggle payment form
 
   useEffect(() => {
-    // Function to fetch booked seats from the backend and generate seats
     const fetchBookedSeatsAndGenerateSeats = async () => {
       try {
         const response = await axios.get('/bookedSeats', {
@@ -19,10 +20,9 @@ const SeatSelector = (props) => {
           }
         });
 
-        const bookedSeatNumbers = response.data.seats; // Adjust according to your response structure
+        const bookedSeatNumbers = response.data.seats;
         setBookedSeats(bookedSeatNumbers);
 
-        // Now that we have the booked seats, we can generate the seats correctly
         const generatedSeats = [];
         const rowLabels = Array.from({ length: props.rows }, (_, i) => String.fromCharCode(65 + i));
 
@@ -33,7 +33,7 @@ const SeatSelector = (props) => {
               id: seatId,
               row: rowLabels[row],
               col: col + 1,
-              booked: bookedSeatNumbers.includes(seatId), // Mark as booked if it's in the bookedSeats array
+              booked: bookedSeatNumbers.includes(seatId),
               selected: false,
               price: props.ticketPrice,
             });
@@ -46,7 +46,6 @@ const SeatSelector = (props) => {
       }
     };
 
-    // Fetch booked seats and generate the seat grid when component mounts or when props change
     fetchBookedSeatsAndGenerateSeats();
   }, [props.chooseShowtimeId, props.chooseTime, props.rows, props.cols, props.ticketPrice]);
 
@@ -70,34 +69,54 @@ const SeatSelector = (props) => {
     setSeats(updatedSeats);
   };
 
-  async function bookingHandler(chooseShowtimeId, chooseTime, ticketPrice, selectedSeatIds){ 
+  const bookingHandler = async () => {
     try {
       const response = await axios.post('/bookTicket', {
-        chooseShowtimeId,
-        chooseTime,
+        chooseShowtimeId: props.chooseShowtimeId,
+        userId: props.userId,
+        chooseTime: props.chooseTime,
         selectedSeatIds,
-        ticketPrice
+        ticketPrice: props.ticketPrice
       });
       alert("Ticket successfully booked!");
       console.log(response);
     } catch (error) {
       console.error("Failed to book tickets:", error);
+      alert("Login to book tickets!");
     }
-  }
+  };
+
+  const handleBookNowClick = () => {
+    setShowPayment(true); // Show the payment form when "Book Now" is clicked
+  };
+
+  const handlePaymentSuccess = () => {
+    setShowPayment(false); // Hide payment form after successful payment
+    bookingHandler(); // Proceed to book the ticket
+  };
+
+  const handlePaymentCancel = () => {
+    setShowPayment(false); // Hide payment form if payment is cancelled
+  };
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-r from-purple-300 to-indigo-700 p-6">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-[600px]">
+      <div className="bg-white p-6 rounded-lg shadow-lg overflow-x-auto">
         <div className="bg-gray-200 p-6 rounded-lg flex flex-col items-center">
           <div className="w-full flex flex-col items-center">
             <div className="flex flex-col">
-              {/* Theater screen representation */}
               <div className="w-full h-8 my-4 bg-gray-700 text-white flex items-center justify-center text-sm font-semibold">
                 SCREEN {props.chooseTime}
               </div>
 
-              {/* Seat Grid */}
-              <div className={`grid grid-cols-${props.cols} gap-1 mt-2`}>
+              <div 
+                className="grid gap-1 mt-2 overflow-x-auto"
+                style={{
+                  gridTemplateColumns: `repeat(${props.cols}, minmax(0, 1fr))`,
+                  width: `${Math.min(props.cols * 45, 100)}%`,
+                  maxWidth: '100%',
+                }}
+              >
                 {seats.map((seat, index) => (
                   <label
                     key={seat.id}
@@ -124,22 +143,28 @@ const SeatSelector = (props) => {
             <div className="my-4 text-gray-500 text-sm">Select your seats carefully!</div>
           </div>
         </div>
-        <div className="flex justify-between items-center mt-6">
-          <div className="flex flex-col text-gray-700">
-            <span className="text-xl font-medium">{selectedSeats} Tickets (price: {props.ticketPrice})</span>
-            <div className="flex items-center gap-1">
-              ₹ <span className="text-xl font-medium">{totalAmount}</span>
+
+        {showPayment ? (
+          <DummyPayment
+            onPaymentSuccess={handlePaymentSuccess}
+            onCancel={handlePaymentCancel}
+          />
+        ) : (
+          <div className="flex justify-between items-center mt-6">
+            <div className="flex flex-col text-gray-700">
+              <span className="text-xl font-medium">{selectedSeats} Tickets (price: {props.ticketPrice})</span>
+              <div className="flex items-center gap-1">
+                ₹ <span className="text-xl font-medium">{totalAmount}</span>
+              </div>
+              <div className="text-sm text-gray-500 mt-2">
+                Selected Seats: {selectedSeatIds.join(", ")}
+              </div>
             </div>
-            <div className="text-sm text-gray-500 mt-2">
-              Selected Seats: {selectedSeatIds.join(", ")}
-            </div>
+            <button onClick={handleBookNowClick} className="bg-indigo-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-indigo-500 transition duration-300">
+              Book Now
+            </button>
           </div>
-          <button onClick={() => {
-            bookingHandler(props.chooseShowtimeId, props.chooseTime, props.ticketPrice, selectedSeatIds)
-          }} className="bg-indigo-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-indigo-500 transition duration-300">
-            Book Now
-          </button>
-        </div>
+        )}
       </div>
     </div>
   );

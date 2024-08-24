@@ -40,6 +40,24 @@ app.use(cors({
 // console.log(process.env.MONGO_URL) // remove this after you've confirmed it is working
 mongoose.connect(process.env.MONGO_URL);
 
+// Middleware to check for token
+// app.use((req, res, next) => {
+//     const { token } = req.cookies;
+//     if (!token) {
+//         return res.status(401).json({ error: 'No token provided' });
+//     }
+//     jsonwebtoken.verify(token, jsonwebtokenSecret, (error, userData) => {
+//         if (error) {
+//             return res.status(401).json({ error: 'Invalid token' });
+//         }
+//         req.user = userData;
+//         next();
+//     });
+// });
+
+
+
+
 app.get('/test', (req, res) =>{
     res.json('test ok');
 });
@@ -437,7 +455,7 @@ app.post('/adminTheatres',async (req,res)=>{
     }
     const {theatreName,
          city,
-         ticketPrice,
+        //  ticketPrice,
          rows,
          cols
             } = req.body;
@@ -452,7 +470,7 @@ app.post('/adminTheatres',async (req,res)=>{
                 owner: userData.id,
                 theatreName,
                 city,
-                ticketPrice,
+                // ticketPrice,
                 rows,
                 cols
             });
@@ -511,7 +529,7 @@ app.put('/adminTheatres', async (req, res) => {
         id,
         theatreName,
         city,
-        ticketPrice,
+        // ticketPrice,
         rows,
         cols
     } = req.body;
@@ -528,7 +546,7 @@ app.put('/adminTheatres', async (req, res) => {
 
                 theatreName,
                 city,
-                ticketPrice,
+                // ticketPrice,
                 rows,
                 cols
 
@@ -587,7 +605,9 @@ app.post('/adminShowtimes',async (req,res)=>{
         res.status(401).json({error:'token not found'});
     }
     const {
-        movieid, movieName, theatreid, theatreName, ticketPrice, showdate, daytime, city
+        movieid, movieName, theatreid, theatreName, 
+        ticketPrice, 
+        showdate, daytime, city
         } = req.body;
 
 
@@ -711,7 +731,9 @@ app.put('/adminShowtimes', async (req, res) => {
 
 
 
-    const {id,movieid,movieName,theatreid,theatreName, ticketPrice, showdate,daytime,city
+    const {id,movieid,movieName,theatreid,theatreName, 
+        // ticketPrice, 
+        showdate,daytime,city
         } = req.body;
     
     jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
@@ -723,7 +745,9 @@ app.put('/adminShowtimes', async (req, res) => {
         if(userData.id === showtimeDoc.owner.toString()){
 
             showtimeDoc.set({
-                movieid,movieName,theatreid,theatreName,ticketPrice,showdate,daytime,city
+                movieid,movieName,theatreid,theatreName,
+                // ticketPrice,
+                showdate,daytime,city
             });
 
             await showtimeDoc.save();
@@ -852,71 +876,131 @@ app.delete('/adminList/:userId',async (req,res)=>{
 
 })
 /* RESERVATION */
-
 app.get('/findShowtimes', async (req, res) => {
-    
-    const {token} = req.cookies;
+    const { token } = req.cookies;
 
-    if (!token) {
-        return res.status(401).json({ error: 'No token provided' });
-    }
+    // if (!token) {
+    //     return res.status(401).json({ error: 'No token provided' });
+    // }
 
-    jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
+    // jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
+    //     if (error) {
+    //         return res.status(401).json({ error: 'Invalid token' });
+    //     }
 
-        if(error) throw error;
+        const { movieid, city, showdate } = req.query;
 
-        const { movieid, city } = req.query;
-        
         try {
-            const showtimes = await Showtime.find({ movieid, city });
-            res.json(showtimes);
-          } catch (error) {
-            res.status(500).json({ error: 'Error fetching showtimes' });
-          }
-        
-    });
+            const query = { movieid };
 
-});
+            if (city) {
+                query.city = city;
+            }
+
+            if (showdate) {
+                const parsedDate = new Date(showdate);
+                if (!isNaN(parsedDate)) {
+                    const startOfDay = new Date(parsedDate.setHours(0, 0, 0, 0));
+                    const endOfDay = new Date(parsedDate.setHours(23, 59, 59, 999));
+                    query.showdate = { $gte: startOfDay, $lte: endOfDay };
+                } else {
+                    return res.status(400).json({ error: 'Invalid showdate' });
+                }
+            }
+            
+
+            const showtimes = await Showtime.find(query);
+            res.json(showtimes);
+        } catch (error) {
+            console.error('Error fetching showtimes:', error);
+            res.status(500).json({ error: 'Error fetching showtimes' });
+        }
+    });
+// });
+
+
+
+
+// app.get('/findShowtimes', async (req, res) => {
+    
+//     const {token} = req.cookies;
+
+//     if (!token) {
+//         return res.status(401).json({ error: 'No token provided' });
+//     }
+
+//     jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
+
+//         if(error) throw error;
+
+//         const { movieid, city } = req.query;
+        
+//         try {
+//             const showtimes = await Showtime.find({ movieid, city });
+//             res.json(showtimes);
+//           } catch (error) {
+//             res.status(500).json({ error: 'Error fetching showtimes' });
+//           }
+        
+//     });
+
+// });
 
 /** tickets */
 
 app.post('/bookTicket', async (req, res) => {
-    const {
-        chooseShowtimeId,
-        chooseTime,
-        selectedSeatIds,
-        ticketPrice
-    } = req.body;
+    const {token} = req.cookies;
 
-    try {
-        const bookingPromises = selectedSeatIds.map(async (singleSeat) => {
-            const booking_code = uuidv4();
-            // Creating a ticket for each seat
-            return Tickets.create({
-                booking_code:booking_code,
-                showtimeId:chooseShowtimeId,
-                daytime :chooseTime,
-                seatNumber: singleSeat, // Assuming this field stores the seat number
-                ticketPrice:ticketPrice
-            });
-        });
-
-        // Await all booking operations
-        const bookingResults = await Promise.all(bookingPromises);
-
-        // Collect successful bookings and send them in the response
-        const successfulBookings = bookingResults.map((booking, index) => ({
-            seat: selectedSeatIds[index],
-            booking_code: booking.booking_code
-        }));
-
-        res.status(200).json({
-            message: "Tickets successfully created for all selected seats",
-            bookings: successfulBookings
-        });
-    } catch (error) {
-        res.status(500).json({ error: "Failed to create one or more tickets", details: error.message });
+    if (!token) {
+        return res.status(401).json({ error: 'No token provided please log in first' });
     }
+
+    
+
+    jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
+
+        if(error) throw error;
+        const {
+            chooseShowtimeId,
+            userId,
+            chooseTime,
+            selectedSeatIds,
+            ticketPrice
+        } = req.body;
+        try {
+            const bookingPromises = selectedSeatIds.map(async (singleSeat) => {
+                const booking_code = uuidv4();
+                // Creating a ticket for each seat
+                return Tickets.create({
+                    booking_code:booking_code,
+                    userId:userId,
+                    showtimeId:chooseShowtimeId,
+                    daytime :chooseTime,
+                    seatNumber: singleSeat, // Assuming this field stores the seat number
+                    ticketPrice:ticketPrice
+                });
+            });
+    
+            // Await all booking operations
+            const bookingResults = await Promise.all(bookingPromises);
+    
+            // Collect successful bookings and send them in the response
+            const successfulBookings = bookingResults.map((booking, index) => ({
+                seat: selectedSeatIds[index],
+                booking_code: booking.booking_code
+            }));
+    
+            res.status(200).json({
+                message: "Tickets successfully created for all selected seats",
+                bookings: successfulBookings
+            });
+        } catch (error) {
+            res.status(500).json({ error: "Failed to create one or more tickets", details: error.message });
+        }
+        
+    });
+
+    
 });
 
 app.get('/bookedSeats', async (req, res) => {
@@ -940,6 +1024,141 @@ app.get('/bookedSeats', async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: "Failed to retrieve booked seats", details: error.message });
     }
+});
+
+app.get('/myTickets', async (req, res) => {
+    const {token} = req.cookies;
+
+    if (!token) {
+        return res.status(401).json({ error: 'No token provided please log in first' });
+    }
+
+    if(token){
+
+        jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
+
+            if(error) throw error;
+    
+            try {
+                //const {id} = req.params;
+                const tickets = await Tickets.find(userData._id);
+                res.status(200).json(tickets);
+                
+            } catch (error) {
+                res.status(500).json({ error: "Failed to get tickets for the user", details: error.message });
+            }
+            
+        });
+
+    }else{
+
+        res.json(null);
+
+    }
+
+
+   
+});
+
+app.get('/movies/:movieId', async (req, res) => {
+
+    const {token} = req.cookies;
+
+    if (!token) {
+        return res.status(401).json({ error: 'No token provided' });
+    }
+
+    jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
+
+        if(error) throw error;
+        const {
+            movieId
+        } = req.params;
+        try {
+            const movie = await Movie.findById(movieId); // Await the result
+            if (!movie) {
+                return res.status(404).json({ error: "Movie not found" });
+            }
+            res.status(200).json(movie);
+        } catch (error) {
+            res.status(500).json({ error: "Failed to get the movie from its id", details: error.message });
+        }
+        
+    });
+}); 
+app.get('/Showtimes/:showtimeId', async (req, res) => {
+
+    const {token} = req.cookies;
+
+    if (!token) {
+        return res.status(401).json({ error: 'No token provided' });
+    }
+
+    jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
+
+        if(error) throw error;
+        const {
+            showtimeId
+        } = req.params;
+        try {
+            const showtime = await Showtime.findById(showtimeId); // Await the result
+            if (!showtime) {
+                return res.status(404).json({ error: "Showtime not found" });
+            }
+            res.status(200).json(showtime);
+        } catch (error) {
+            res.status(500).json({ error: "Failed to get the showtime from its id", details: error.message });
+        }
+    });
+});
+app.get('/theatres/:theatreId', async (req, res) => {
+
+    const {token} = req.cookies;
+
+    if (!token) {
+        return res.status(401).json({ error: 'No token provided' });
+    }
+
+    jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
+
+        if(error) throw error;
+        const {
+            theatreId
+        } = req.params;
+        try {
+            const theatre = await Theatre.findById(theatreId); // Await the result
+            if (!theatre) {
+                return res.status(404).json({ error: "Theatre not found" });
+            }
+            res.status(200).json(theatre);
+        } catch (error) {
+            res.status(500).json({ error: "Failed to get the theatre from its id", details: error.message });
+        }
+        
+    });
+});   
+
+// Delete ticket by ID
+app.delete('/tickets/:ticketId', async (req, res) => {
+    const {token} = req.cookies;
+
+    if (!token) {
+        return res.status(401).json({ error: 'No token provided' });
+    } 
+    jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
+
+        if(error) throw error;
+        const { ticketId } = req.params;
+
+    try {
+        await Tickets.findByIdAndDelete(ticketId);
+        res.status(200).json({ message: 'Ticket deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ error: "Failed to delete the ticket", details: error.message });
+    }
+
+        
+    });
 });
 
 
