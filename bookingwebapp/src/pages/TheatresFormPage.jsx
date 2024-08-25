@@ -11,7 +11,7 @@ export default function TheatresFormPage() {
     const [rows, setRows] = useState('');
     const [cols, setCols] = useState('');
     const [city, setCity] = useState('');
-    const [errors, setErrors] = useState({});
+    const [formFillError, setFormFillError] = useState({});
 
     const cities = ['Delhi','Jaipur','Bhopal','Pune','Ahmedabad','Kota','Mumbai']
     const [redirect,setRedirect] = useState(false);
@@ -26,7 +26,6 @@ export default function TheatresFormPage() {
 
             const {data} = response;
             setName(data.theatreName);
-            // setTicketPrice(data.ticketPrice);
             setCity(data.city);
             setRows(data.rows);
             setCols(data.cols);
@@ -36,14 +35,17 @@ export default function TheatresFormPage() {
     }, [id]);
 
     function validateForm() {
-        const newErrors = {};
-        if (!theatreName) newErrors.theatreName = 'Theatre name is required';
-        // if (!ticketPrice) newErrors.ticketPrice = 'TicketPrice name is required';
-        if (!city) newErrors.city = 'City name is required';
-        if (!rows || rows === '') newErrors.rows = 'Rows is required';
-        if (!cols || cols === '') newErrors.cols = 'Cols is required';
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
+
+      const newErrors = {};
+
+      if (!theatreName) newErrors.theatreName = 'Theatre name is required';
+      if (!city) newErrors.city = 'City name is required';
+      if (!rows || rows <= 0) newErrors.rows = 'Enter a valid number of rows';
+      if (!cols || cols <= 0) newErrors.cols = 'Enter a valid number of columns';
+
+      setFormFillError(newErrors);
+      return Object.keys(newErrors).length === 0;
+        
     }
     
     const handleCitySelect = (ev)=>{
@@ -62,7 +64,6 @@ export default function TheatresFormPage() {
                 id,
                 theatreName,
                 city,
-                // ticketPrice,
                 rows,
                 cols
 
@@ -142,12 +143,13 @@ export default function TheatresFormPage() {
           onChange={(ev) => setName(ev.target.value)}
           className="border rounded p-2 mb-2 w-full"
         />
-        {errors.theatreName && <div className="text-red-500">{errors.theatreName}</div>}
+        {formFillError.theatreName && <div className="text-red-500">{formFillError.theatreName}</div>}
 
         <h2 className="text-xl mt-6 mb-2">Select a City</h2>
         <select
+          value={city}
+          className="w-full p-2 rounded-lg bg-transparent dark:bg-gray-800 dark:text-gray-300 overflow-hidden"
           onChange={handleCitySelect}
-          className={`border ${errors.city ? "border-red-500" : "border-gray-300"} rounded-lg py-2 px-4 w-full`}
         >
           <option>Select a city</option>
           {cities.map((city) => (
@@ -156,20 +158,7 @@ export default function TheatresFormPage() {
             </option>
           ))}
         </select>
-        {errors.city && <div className="text-red-500 text-sm mt-1">{errors.city}</div>}
-
-
-                {/* <h2 className="text-xl mt-2">Ticket price</h2>
-                <input 
-                    type="number" 
-                    // id="theatre-name"
-                    // name="name" 
-                    placeholder="Price of ticket" 
-                    value={ticketPrice} 
-                    onChange={ev => setTicketPrice(ev.target.value)} 
-                    // required 
-                />
-                {errors.ticketPrice && <div style={{ color: 'red' }}>{errors.ticketPrice}</div>} */}
+        {formFillError.city && <div style={{ color: 'red' }}>{formFillError.city}</div>}
 
         <h2 className="text-xl mt-6 mb-2">Rows</h2>
         <input
@@ -179,17 +168,17 @@ export default function TheatresFormPage() {
           onChange={(ev) => setRows(ev.target.value)}
           className="border rounded p-2 mb-2 w-full"
         />
-        {errors.rows && <div className="text-red-500">{errors.rows}</div>}
+        {formFillError.rows && <div style={{ color: 'red' }}>{formFillError.rows}</div>}
 
-        <h2 className="text-xl mt-6 mb-2">Cols</h2>
+        <h2 className="text-xl mt-6 mb-2">Column</h2>
         <input
           type="number"
-          placeholder="Cols in theatre"
+          placeholder="Columns in theatre"
           value={cols}
           onChange={(ev) => setCols(ev.target.value)}
           className="border rounded p-2 mb-2 w-full"
         />
-        {errors.cols && <div className="text-red-500">{errors.cols}</div>}
+        {formFillError.cols && <div style={{ color: 'red' }}>{formFillError.cols}</div>}
 
         <div className="flex gap-4 mt-4">
           <button type="submit" className="bg-gray-100 py-2 px-4 rounded-lg">

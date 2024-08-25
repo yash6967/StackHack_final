@@ -92,16 +92,17 @@ export default function ShowtimesFormPage() {
 
     function validateForm() {
 
-        const newformFillError = {};
+        const newErrors = {};
         
-        if (!movieid) newformFillError.movieid = 'Movie name is required';
-        if (!theatreid) newformFillError.theatreid = 'Theatre name is required';
-        if (!showdate || showdate === '') newformFillError.showdate = 'Date is required';
-        if (!daytime.length) newformFillError.daytime = 'Slot is required';
-        if (!ticketPrice || ticketPrice < 0) newformFillError.ticketPrice = 'A valid amount is required';
+        if (!movieid) newErrors.movieid = 'Movie name is required';
+        if (!theatreid) newErrors.theatreid = 'Theatre name is required';
+        if (!showdate || showdate === '') newErrors.showdate = 'Date is required';
+        if (!daytime.length) newformFillErronewErrors.daytime = 'Slot is required';
+        if (!ticketPrice || ticketPrice < 0) newErrors.ticketPrice = 'A valid amount is required';
 
-        setFormFillError(newformFillError);
-        return Object.keys(newformFillError).length === 0;
+        setFormFillError(newErrors);
+        return Object.keys(newErrors).length === 0;
+        
     }
 
     async function checkExistingShowtime() {
@@ -330,7 +331,7 @@ export default function ShowtimesFormPage() {
                             </option>
                         ))}
                     </select>
-                    {formFillError.movieID && <div style={{ color: 'red' }}>{formFillError.movieID}</div>}
+                    {formFillError.movieid && <div style={{ color: 'red' }}>{formFillError.movieid}</div>}
 
                     {/* Theatre */}
                     <h2 className="text-xl mt-6 mb-2">Theatre</h2>
@@ -345,7 +346,7 @@ export default function ShowtimesFormPage() {
                             </option>
                         ))}
                     </select>
-                    {formFillError.theatreID && <div style={{ color: 'red' }}>{formFillError.theatreID}</div>}
+                    {formFillError.theatreid && <div style={{ color: 'red' }}>{formFillError.theatreid}</div>}
 
                     {/* Ticket */}
                     <h2 className="text-xl mt-6 mb-2">Ticket Price (INR)</h2>

@@ -67,13 +67,15 @@ export default function MoviesPage() {
                 
                 {movies.length > 0 && movies.map(it => (
                     <div key={it._id} className="flex cursor-pointer gap-4 my-4">
-                        <div className="flex w-32 h-40 overflow-hidden">
-                            {it.photos.length > 0 && (
+                        <div className="flex w-32 h-40 overflow-hidden items-center justify-center bg-gray-200">
+                            {it.photos.length > 0 ? (
                                 <img
                                     src={'http://localhost:4000/uploads/' + it.photos[0]}
                                     alt="Movie Poster"
                                     className="w-full h-full object-cover rounded-sm"
                                 />
+                            ) : (
+                                <span className="text-gray-500">NO COVER</span>
                             )}
                         </div>
 
