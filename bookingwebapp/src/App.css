@@ -53,12 +53,14 @@
   }
 }
 
+.scroller {
+  overflow-x: hidden; 
+  position: relative;
+  width: 100%; 
+}
+
 .scroller__inner {
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 1rem;
   width: max-content;
-  /* padding-block: 2rem; */
   animation: scroll 30s linear infinite; 
   animation-play-state: running;
 }
