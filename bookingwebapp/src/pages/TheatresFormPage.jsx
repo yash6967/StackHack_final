@@ -4,45 +4,51 @@ import axios from "axios";
 import { Navigate, useParams } from "react-router-dom";
 
 export default function TheatresFormPage() {
-  const { id } = useParams();
-  const [theatreName, setName] = useState("");
-  const [ticketPrice, setTicketPrice] = useState("");
-  const [rows, setRows] = useState("");
-  const [cols, setCols] = useState("");
-  const [city, setCity] = useState("");
-  const [errors, setErrors] = useState({});
-  const cities = ["Delhi", "Jaipur", "Bhopal", "Pune", "Ahmedabad", "Kota", "Mumbai"];
-  const [redirect, setRedirect] = useState(false);
 
-  useEffect(() => {
-    if (!id) {
-      return;
+    const {id} = useParams();
+    const [theatreName, setName] = useState('');
+    // const [ticketPrice, setTicketPrice] = useState('');
+    const [rows, setRows] = useState('');
+    const [cols, setCols] = useState('');
+    const [city, setCity] = useState('');
+    const [errors, setErrors] = useState({});
+
+    const cities = ['Delhi','Jaipur','Bhopal','Pune','Ahmedabad','Kota','Mumbai']
+    const [redirect,setRedirect] = useState(false);
+
+    useEffect(() => {
+
+        if(!id){ 
+            return;
+        }
+        
+        axios.get('/adminTheatres/' + id).then(response => {
+
+            const {data} = response;
+            setName(data.theatreName);
+            // setTicketPrice(data.ticketPrice);
+            setCity(data.city);
+            setRows(data.rows);
+            setCols(data.cols);
+
+        });
+
+    }, [id]);
+
+    function validateForm() {
+        const newErrors = {};
+        if (!theatreName) newErrors.theatreName = 'Theatre name is required';
+        // if (!ticketPrice) newErrors.ticketPrice = 'TicketPrice name is required';
+        if (!city) newErrors.city = 'City name is required';
+        if (!rows || rows === '') newErrors.rows = 'Rows is required';
+        if (!cols || cols === '') newErrors.cols = 'Cols is required';
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
     }
-
-    axios.get("/adminTheatres/" + id).then((response) => {
-      const { data } = response;
-      setName(data.theatreName);
-      setTicketPrice(data.ticketPrice);
-      setCity(data.city);
-      setRows(data.rows);
-      setCols(data.cols);
-    });
-  }, [id]);
-
-  function validateForm() {
-    const newErrors = {};
-    if (!theatreName) newErrors.theatreName = "Theatre name is required";
-    if (!ticketPrice) newErrors.ticketPrice = "Ticket Price is required";
-    if (!city) newErrors.city = "City is required";
-    if (!rows || rows === "") newErrors.rows = "Rows is required";
-    if (!cols || cols === "") newErrors.cols = "Cols is required";
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  }
-
-  const handleCitySelect = (ev) => {
-    setCity(ev.target.value);
-  };
+    
+    const handleCitySelect = (ev)=>{
+        setCity(ev.target.value);
+    };
 
   async function saveTheatre(ev) {
     ev.preventDefault();
@@ -51,40 +57,60 @@ export default function TheatresFormPage() {
       return;
     }
 
-    const theatreData = {
-      id,
-      theatreName,
-      city,
-      ticketPrice,
-      rows,
-      cols,
-    };
+            const theatreData = {
 
-    if (id) {
-      try {
-        await axios.put("/adminTheatres", {
-          id,
-          ...theatreData,
-        });
+                id,
+                theatreName,
+                city,
+                // ticketPrice,
+                rows,
+                cols
 
-        setRedirect(true);
-        alert("Theatre successfully updated");
-      } catch (error) {
-        console.error("Error updating theatre:", error);
-        alert("Failed to update this theatre");
-      }
-    } else {
-      try {
-        await axios.post("/adminTheatres", theatreData);
+            };
 
-        setRedirect(true);
-        alert("Theatre successfully added");
-      } catch (error) {
-        console.error("Error adding new theatre:", error);
-        alert("Failed to add new theatre");
-      }
+            if(id){
+
+                /* update */
+
+                try{
+                    
+                    console.log('Theatre successfully updated');
+
+                    await axios.put('/adminTheatres', {
+                        id, ...theatreData
+                    });
+                    
+                    setRedirect(true);
+                    alert('Theatre successfully updated');
+        
+                }catch(error){
+        
+                    console.error('Error updating theatre:', error);
+                    alert('Failed to upate this theatre');
+        
+                }
+
+            }else{
+
+                /* new */
+
+                try{
+
+                    await axios.post('/adminTheatres', theatreData);
+        
+                    setRedirect(true);
+                    alert('theatre Successfully added');
+        
+                }catch(error){
+        
+                    console.error('Error adding new theatre:', error);
+                    alert('Failed to add new theatre');
+        
+                }
+
+            }
+        
     }
-  }
 
   async function deleteTheatre() {
     if (window.confirm("Are you sure you want to delete this theatre?")) {
@@ -132,15 +158,18 @@ export default function TheatresFormPage() {
         </select>
         {errors.city && <div className="text-red-500 text-sm mt-1">{errors.city}</div>}
 
-        <h2 className="text-xl mt-6 mb-2">Ticket Price</h2>
-        <input
-          type="number"
-          placeholder="Price of ticket"
-          value={ticketPrice}
-          onChange={(ev) => setTicketPrice(ev.target.value)}
-          className="border rounded p-2 mb-2 w-full"
-        />
-        {errors.ticketPrice && <div className="text-red-500">{errors.ticketPrice}</div>}
+
+                {/* <h2 className="text-xl mt-2">Ticket price</h2>
+                <input 
+                    type="number" 
+                    // id="theatre-name"
+                    // name="name" 
+                    placeholder="Price of ticket" 
+                    value={ticketPrice} 
+                    onChange={ev => setTicketPrice(ev.target.value)} 
+                    // required 
+                />
+                {errors.ticketPrice && <div style={{ color: 'red' }}>{errors.ticketPrice}</div>} */}
 
         <h2 className="text-xl mt-6 mb-2">Rows</h2>
         <input

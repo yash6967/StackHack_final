@@ -5,6 +5,7 @@ const { number } = require('zod');
 //tickets schema
 const ticketsSchema = new mongoose.Schema({
     booking_code:{type: String , required:true},
+    userId: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
     showtimeId: {type: mongoose.Schema.Types.ObjectId, ref: 'showtime'},
     daytime :{type: String , required:true},
     seatNumber: {type:String , required:true},

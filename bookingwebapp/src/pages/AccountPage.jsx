@@ -87,10 +87,12 @@ export default function AccountPage(){
                         
                     </div>
 
+                    <Link to={'/account/myBookings'}>
                     <button 
                         // onClick = {logout} 
                         className="min-w-32 bg-orange-400 rounded py-1 px-3 text-primary-50 mt-9">My Bookings</button>
 
+                    </Link>
                     <button 
                         onClick = {logout} 
                         className="min-w-32 bg-orange-400 rounded py-1 px-3 text-primary-50 mt-4">Logout</button>

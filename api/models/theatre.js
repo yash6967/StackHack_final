@@ -11,9 +11,9 @@ const theatreSchema = new mongoose.Schema({
         type: String, required: true 
     },
     city: { type: String, required: true },
-    ticketPrice: { type: Number, required: true }, // Default ticket price
-    rows: { type: Number, required: true },
-    cols: { type: Number, required: true },
+    // ticketPrice: { type: Number, required: true }, // Default ticket price
+    rows: { type: Number, required: true, max: 26},
+    cols: { type: Number, required: true, max: 100 },
     
   });
   
