@@ -46,7 +46,7 @@ export default function AccountNavigation(){
             {userRole==='admin' && (<Link className={linkClasses('adminMovies')} to={'/account/adminMovies'}>My Movies</Link>)}
             {userRole==='admin' && <Link className={linkClasses('adminTheatres')} to={'/account/adminTheatres'}>My Theatres</Link>}
             {userRole==='admin' && <Link className={linkClasses('adminShowtimes')} to={'/account/adminShowtimes'}>My Showtimes</Link>}
-            {userRole==='superAdmin' && <Link className={linkClasses('superAdmin')} to={'/account/superAdmin'}>superAdmin</Link>}
+            {userRole==='superAdmin' && <Link className={linkClasses('superAdmin')} to={'/account/superAdmin'}>Manage Users</Link>}
             {/* {userRole==='superAdmin' && (<Link className={linkClasses('adminMovies')} to={'/account/adminMovies'}>My Movies</Link>)} */}
 
 
