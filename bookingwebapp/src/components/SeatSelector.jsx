@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
+import { Navigate } from 'react-router-dom'; // Import Navigate
 import DummyPayment from "./DummyPayment"; // Import the DummyPayment component
 
 const SeatSelector = (props) => {
@@ -9,6 +10,7 @@ const SeatSelector = (props) => {
   const [selectedSeatIds, setSelectedSeatIds] = useState([]);
   const [bookedSeats, setBookedSeats] = useState([]); 
   const [showPayment, setShowPayment] = useState(false); // State to toggle payment form
+  const [redirect, setRedirect] = useState(false); // State to handle redirection
 
   useEffect(() => {
     const fetchBookedSeatsAndGenerateSeats = async () => {
@@ -71,15 +73,29 @@ const SeatSelector = (props) => {
 
   const bookingHandler = async () => {
     try {
+      console.log('Selected Seat IDs:', selectedSeatIds);
+
       const response = await axios.post('/bookTicket', {
         chooseShowtimeId: props.chooseShowtimeId,
-        userId: props.userId,
         chooseTime: props.chooseTime,
-        selectedSeatIds,
+        selectedSeatIds, // Send the selected seats array
         ticketPrice: props.ticketPrice
       });
+
       alert("Ticket successfully booked!");
       console.log(response);
+
+      // Clear selected seats
+      setSelectedSeats(0);
+      setTotalAmount(0);
+      setSelectedSeatIds([]);
+
+      // Re-fetch booked seats after booking
+      //fetchBookedSeatsAndGenerateSeats();
+
+      // Trigger redirect after successful booking
+      setRedirect(true);
+
     } catch (error) {
       console.error("Failed to book tickets:", error);
       alert("Login to book tickets!");
@@ -98,6 +114,11 @@ const SeatSelector = (props) => {
   const handlePaymentCancel = () => {
     setShowPayment(false); // Hide payment form if payment is cancelled
   };
+
+  // Redirect to My Bookings page if the redirect state is true
+  if (redirect) {
+    return <Navigate to='/account/myBookings' />;
+  }
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-r from-purple-300 to-indigo-700 p-6">

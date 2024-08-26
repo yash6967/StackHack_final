@@ -7,11 +7,10 @@ import DateSelector from '../components/DateSelector';
 import { format } from 'date-fns';
 
 export default function ReservationFormPage() {
-
     const { id } = useParams();
-    const { city } = useContext(CityContext);
+    const { city, setCity } = useContext(CityContext); // Access city and setCity from CityContext
 
-    const [chooseCity, setChooseCity] = useState(city || '');
+    const [chooseCity, setChooseCity] = useState(city || ''); // Initialize with city context
     const [chooseShowDate, setChooseShowDate] = useState(new Date());
     const [movie, setMovie] = useState(null);
     const [showtimes, setShowtimes] = useState([]);
@@ -31,6 +30,10 @@ export default function ReservationFormPage() {
             setMovie(response.data);
         });
     }, [id]);
+
+    useEffect(() => {
+        setChooseCity(city); // Sync chooseCity with city context whenever city changes
+    }, [city]);
 
     if (!movie) {
         return;
@@ -60,6 +63,7 @@ export default function ReservationFormPage() {
 
     function handleChange(event, setter) {
         setter(event.target.value);
+        setCity(event.target.value); // Update city context when selection changes
     }
 
     async function handleSeatSelection(it, time) {
@@ -86,14 +90,12 @@ export default function ReservationFormPage() {
     };
 
     return (
-
         <div>
-            {/* {city} */}
             <h2>{movie.title}</h2>
-            <form 
-                onSubmit={findMovie}>
+            <form onSubmit={findMovie}>
                 <label className="text-xl mt-2">Select a City</label><br />
-                <select 
+                <select
+                    value={chooseCity} // Set default value from city context
                     onChange={ev => handleChange(ev, setChooseCity)} 
                     required
                 >

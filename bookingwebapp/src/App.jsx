@@ -18,7 +18,7 @@ import TheatresFormPage from "./pages/TheatresFormPage";
 import ShowtimesPage from "./pages/ShowtimesPage";
 import ShowtimesFormPage from "./pages/ShowtimeFormPage"
 import SuperAdminPage from "./pages/SuperAdminPage"
-import SuperAdminFormPage from "./pages/SuperAdminFormPage"
+// import SuperAdminFormPage from "./pages/SuperAdminFormPage"
 import MyBookings from "./pages/MyBookings";
 
 import MoviePage from "./pages/MoviePage";
@@ -59,7 +59,7 @@ export default function App() {
             <Route path = "/account/adminShowtimes/:id" element = {<ShowtimesFormPage />} />
 
             <Route path = "/account/superAdmin" element = {<SuperAdminPage />} />
-            <Route path = "/account/superAdmin/:id" element = {<SuperAdminFormPage />} />
+            {/* <Route path = "/account/superAdmin/:id" element = {<SuperAdminFormPage />} /> */}
 
             <Route path = "/account/myBookings" element = {<MyBookings />} />
 

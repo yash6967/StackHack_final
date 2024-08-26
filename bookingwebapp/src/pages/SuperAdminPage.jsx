@@ -8,6 +8,7 @@ export default function SuperAdminPage() {
     const [customers, setCustomers] = useState([]);
     const [admins, setAdmins] = useState([]);
     const [requests, setRequests] = useState([]);
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         axios.get('/getAllUsers').then(({ data }) => {
@@ -41,6 +42,31 @@ export default function SuperAdminPage() {
         });
     }, []);
 
+    const toggleRole = async (user) => {
+        const newRole = user.role === 'admin' ? 'customer' : 'admin';
+        const userData = {
+            name: user.name,
+            email: user.email,
+            role: newRole,
+        };
+
+        try {
+            await axios.put('/updateUser/' + user._id, userData);
+            alert(`User successfully updated to ${newRole}`);
+            // Update the state to reflect the role change
+            const updatedUsers = users.map(it => 
+                it._id === user._id ? { ...it, role: newRole } : it
+            );
+            setUsers(updatedUsers);
+            // Separate updated users into customers and admins
+            setCustomers(updatedUsers.filter(it => it.role === 'customer'));
+            setAdmins(updatedUsers.filter(it => it.role === 'admin'));
+        } catch (error) {
+            console.error('Error updating user:', error);
+            alert('Failed to update the user');
+        }
+    };
+
     async function makeAdmin(id) {
         try {
             const response = await axios.get('/getUser/' + id);
@@ -54,11 +80,9 @@ export default function SuperAdminPage() {
 
             if (id) {
                 await axios.put('/updateUser/' + id, userData);
-                console.log('User successfully updated');
                 alert('User successfully made Admin');
 
                 await axios.delete('/adminList/' + id);
-                console.log('Admin request deleted successfully');
             }
 
         } catch (error) {
@@ -141,32 +165,40 @@ export default function SuperAdminPage() {
                         <div>
                             <h3 className="text-xl font-semibold mb-2">Customers</h3>
                             {customers.length > 0 && customers.map(it => (
-                                <Link
+                                <div
                                     key={it._id}
-                                    to={'/account/superAdmin/' + it._id}
                                     className="block cursor-pointer bg-gray-200 p-4 rounded-lg mb-2">
                                     <h4 className="text-lg font-medium">
                                         Name: {it.name} <br />
                                         Mail: {it.email} <br />
                                         Role: {it.role}
                                     </h4>
-                                </Link>
+                                    <button
+                                        onClick={() => toggleRole(it)}
+                                        className="bg-blue-500 text-white py-1 px-4 rounded-lg mt-2">
+                                        Switch to {it.role === 'admin' ? 'Customer' : 'Admin'}
+                                    </button>
+                                </div>
                             ))}
                         </div>
 
                         <div>
                             <h3 className="text-xl font-semibold mb-2">Admins</h3>
                             {admins.length > 0 && admins.map(it => (
-                                <Link
+                                <div
                                     key={it._id}
-                                    to={'/account/superAdmin/' + it._id}
                                     className="block cursor-pointer bg-gray-200 p-4 rounded-lg mb-2">
                                     <h4 className="text-lg font-medium">
                                         Name: {it.name} <br />
                                         Mail: {it.email} <br />
                                         Role: {it.role}
                                     </h4>
-                                </Link>
+                                    <button
+                                        onClick={() => toggleRole(it)}
+                                        className="bg-blue-500 text-white py-1 px-4 rounded-lg mt-2">
+                                        Switch to {it.role === 'admin' ? 'Customer' : 'Admin'}
+                                    </button>
+                                </div>
                             ))}
                         </div>
                     </div>

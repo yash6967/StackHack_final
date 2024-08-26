@@ -8,7 +8,7 @@ const ticketsSchema = new mongoose.Schema({
     userId: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
     showtimeId: {type: mongoose.Schema.Types.ObjectId, ref: 'showtime'},
     daytime :{type: String , required:true},
-    seatNumber: {type:String , required:true},
+    seatNumbers: [{ type: String, required: true }], // Array of seat numbers
     ticketPrice: Number,
     
   }, { timestamps: true });

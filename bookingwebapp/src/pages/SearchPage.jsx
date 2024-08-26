@@ -1,13 +1,14 @@
 import axios from 'axios';
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function SearchPage() {
-
     const [searchTerm, setSearchTerm] = useState('');
     const [suggestions, setSuggestions] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [focusedSuggestion, setFocusedSuggestion] = useState(-1);
     const dropdownRef = useRef(null);
+    const navigate = useNavigate(); // Initialize useNavigate hook
 
     const handleSearchChange = async (e) => {
         const query = e.target.value;
@@ -29,21 +30,13 @@ export default function SearchPage() {
     };
 
     const handleKeyDown = (e) => {
-
         if (e.key === 'ArrowDown') {
             setFocusedSuggestion((prev) => (prev < suggestions.length - 1 ? prev + 1 : 0));
-
         } else if (e.key === 'ArrowUp') {
             setFocusedSuggestion((prev) => (prev > 0 ? prev - 1 : suggestions.length - 1));
-            
         } else if (e.key === 'Enter' && focusedSuggestion !== -1) {
-
             const selectedMovie = suggestions[focusedSuggestion];
-            console.log('Selected movie:', selectedMovie);
-            setSearchTerm(selectedMovie.title);
-            setShowSuggestions(false);
-            setFocusedSuggestion(-1);
-
+            navigate(`/movie/${selectedMovie._id}`); // Redirect to the selected movie's booking page
         }
     };
 
@@ -67,17 +60,18 @@ export default function SearchPage() {
         };
     }, [showSuggestions, suggestions]);
 
+    const handleMovieClick = (movieId) => {
+        navigate(`/movie/${movieId}`); // Redirect to the clicked movie's booking page
+    };
+
     return (
-
         <div className="flex-grow flex border border-primary-500 dark:bg-primary-950 rounded-full p-2 gap-3 items-center overflow-hidden">
-
             <div className="flex-grow">
-
                 <form action="" className="overflow-hidden">
                     <input 
-                        type="" 
+                        type="text" 
                         placeholder="Search for movies" 
-                        className=" w-full ml-6 border-none focus:outline-none overflow-hidden text-ellipsis bg-transparent text-gray-900 dark:text-stone-300" 
+                        className="w-full ml-6 border-none focus:outline-none overflow-hidden text-ellipsis bg-transparent text-gray-900 dark:text-stone-300" 
                         value={searchTerm}
                         onChange={handleSearchChange}
                     />
@@ -88,10 +82,10 @@ export default function SearchPage() {
                         <ul 
                             ref={dropdownRef} 
                             className="relative bg-white border border-gray-300 rounded-lg mt-1 z-10 shadow-lg mx-3">
-
                             {suggestions.map((movie, index) => (
                                 <li
                                     key={movie._id}
+                                    onClick={() => handleMovieClick(movie._id)} // Handle movie click
                                     className={`p-2 hover:bg-gray-100 cursor-pointer px-3 ${index === focusedSuggestion ? 'bg-gray-200' : ''}`}
                                 >
                                     {movie.title}
@@ -100,7 +94,6 @@ export default function SearchPage() {
                         </ul>
                     </div>
                 )}
-
             </div>
 
             <button className='mr-3 bg-transparent'>
@@ -108,8 +101,6 @@ export default function SearchPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                 </svg>
             </button>
-            
         </div>
-
     );
 }
