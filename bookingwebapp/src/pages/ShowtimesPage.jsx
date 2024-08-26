@@ -2,7 +2,7 @@ import axios from "axios";
 import AccountNavigation from "./AccountNavigation";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { format } from 'date-fns';
+import { format, parse } from 'date-fns';
 
 export default function ShowtimesPage() {
     const [showtimes, setShowtimes] = useState([]);
@@ -26,6 +26,11 @@ export default function ShowtimesPage() {
 
     const formatReleaseDate = (dateString) => {
         return format(new Date(dateString), 'dd MMM yyyy');
+    };
+
+    const formatTimeTo12Hour = (timeString) => {
+        const date = parse(timeString, 'HH:mm', new Date());
+        return format(date, 'hh:mm a');
     };
 
     const sortShowtimes = (showtimes) => {
@@ -91,7 +96,7 @@ export default function ShowtimesPage() {
                                         Time
                                     </th>
                                     <th scope="col" className="px-6 py-3">
-                                        Ticket Price
+                                        Ticket Price (INR)
                                     </th>
                                     <th scope="col" className="px-6 py-3">
                                         <span className="sr-only">Edit</span>
@@ -114,11 +119,17 @@ export default function ShowtimesPage() {
                                             {formatReleaseDate(it.showdate)}
                                         </td>
                                         <td className="px-6 py-4">
-                                        {it.daytime.map((time, index) => (
-                                            <span key={index} className="mr-2">
-                                                {time}
-                                            </span>
-                                        ))}
+                                            {[...it.daytime]
+                                                .sort((a, b) => {
+                                                    const timeA = parse(a, 'HH:mm', new Date());
+                                                    const timeB = parse(b, 'HH:mm', new Date());
+                                                    return timeA - timeB;
+                                                })
+                                                .map((time, index) => (
+                                                    <span key={index} className="mr-2">
+                                                        {formatTimeTo12Hour(time)}
+                                                    </span>
+                                                ))}
                                         </td>
                                         <td className="px-6 py-4">
                                             {it.ticketPrice}

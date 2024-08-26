@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../UserContext";
+import { format } from 'date-fns';
 import axios from "axios";
 import AccountNavigation from "./AccountNavigation";
 
@@ -17,6 +18,7 @@ export default function MyBookings() {
     }, []);
 
     const handleDelete = async (ticketId) => {
+
         const confirmDelete = window.confirm("Are you sure you want to cancel this ticket? This action cannot be undone.");
 
         if (confirmDelete) {
@@ -27,6 +29,11 @@ export default function MyBookings() {
                 console.error("Failed to delete the ticket", error);
             }
         }
+
+    };
+
+    const formatReleaseDate = (dateString) => {
+        return format(new Date(dateString), 'dd MMM yyyy');
     };
 
     return (
@@ -58,14 +65,14 @@ export default function MyBookings() {
                                 <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-primary-50">{ticket.movieName}</td>
                                 <td className="px-6 py-4">{ticket.theatreName}</td>
                                 <td className="px-6 py-4">{ticket.theatreCity}</td>
-                                <td className="px-6 py-4">{new Date(ticket.showdate).toLocaleDateString('en-CA')}</td>
+                                <td className="px-6 py-4">{formatReleaseDate(ticket.showdate)}</td>
                                 <td className="px-6 py-4">{ticket.daytime}</td>
                                 <td className="px-6 py-4">
                                     {ticket.seatNumbers.join(', ')}
                                 </td>
                                 <td className="px-6 py-4">{ticket.ticketPrice}</td>
                                 <td className="px-6 py-4 text-right">
-                                    <button onClick={() => handleDelete(ticket._id)} className="font-medium text-red-600 dark:text-red-500 hover:underline">
+                                    <button onClick={() => handleDelete(ticket._id)} className="font-medium text-red-600 dark:text-red-500 bg-transparent">
                                         CANCEL
                                     </button>
                                 </td>

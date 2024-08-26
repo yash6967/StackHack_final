@@ -63,16 +63,16 @@ export default function MoviesPage() {
 
             <h2 className="dark:text-primary-50 my-10 text-xl font-thin"> You are currently listing {movies.length} movies !</h2>
             
-            <div className="mt-4">
+            <div className="mt-4 px-4 gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 3xl:grid-cols-5">
                 
                 {movies.length > 0 && movies.map(it => (
                     <div key={it._id} className="flex cursor-pointer gap-4 my-4">
-                        <div className="flex w-32 h-40 overflow-hidden items-center justify-center bg-gray-200">
+                        <div className="flex w-32 h-40 overflow-hidden items-center justify-center bg-gray-200 dark:bg-gray-800 rounded-md">
                             {it.photos.length > 0 ? (
                                 <img
                                     src={'http://localhost:4000/uploads/' + it.photos[0]}
                                     alt="Movie Poster"
-                                    className="w-full h-full object-cover rounded-sm"
+                                    className="w-full h-full object-cover rounded-md"
                                 />
                             ) : (
                                 <span className="text-gray-500">NO COVER</span>
@@ -83,12 +83,12 @@ export default function MoviesPage() {
                             <h2 className="text-lg">{it.title}</h2>
                             <div className="mt-2 flex gap-2">
                                 <Link to={'/account/adminMovies/' + it._id}>
-                                    <button className="bg-black text-white px-3 py-1 rounded">
+                                    <button className="bg-primary-900 text-white px-3 py-1 rounded">
                                         Edit
                                     </button>
                                 </Link>
                                 <button 
-                                    className="bg-black text-white px-3 py-1 rounded"
+                                    className="bg-primary-900 text-white px-3 py-1 rounded"
                                     onClick={() => toggleDetails(it._id)}
                                 >
                                     Details
