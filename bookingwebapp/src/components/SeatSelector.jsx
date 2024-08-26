@@ -90,9 +90,6 @@ const SeatSelector = (props) => {
       setTotalAmount(0);
       setSelectedSeatIds([]);
 
-      // Re-fetch booked seats after booking
-      //fetchBookedSeatsAndGenerateSeats();
-
       // Trigger redirect after successful booking
       setRedirect(true);
 
@@ -122,7 +119,7 @@ const SeatSelector = (props) => {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-r from-purple-300 to-indigo-700 p-6">
-      <div className="bg-white p-6 rounded-lg shadow-lg overflow-x-auto">
+      <div className="bg-white p-6 rounded-lg shadow-lg overflow-hidden">
         <div className="bg-gray-200 p-6 rounded-lg flex flex-col items-center">
           <div className="w-full flex flex-col items-center">
             <div className="flex flex-col">
@@ -131,34 +128,42 @@ const SeatSelector = (props) => {
               </div>
 
               <div 
-                className="grid gap-1 mt-2 overflow-x-auto"
-                style={{
-                  gridTemplateColumns: `repeat(${props.cols}, minmax(0, 1fr))`,
-                  width: `${Math.min(props.cols * 45, 100)}%`,
-                  maxWidth: '100%',
+                className="relative w-full h-96 overflow-auto" // Adjust the height as needed
+                style={{ 
+                  maxHeight: '60vh', // Limit the height of the seat grid
+                  overflowY: 'scroll', // Enable vertical scrolling
+                  overflowX: 'auto', // Enable horizontal scrolling
                 }}
               >
-                {seats.map((seat, index) => (
-                  <label
-                    key={seat.id}
-                    className={`w-10 h-10 rounded-md cursor-pointer transition-colors duration-300 ${
-                      seat.booked
-                        ? "bg-gray-400 cursor-not-allowed"
-                        : seat.selected
-                        ? "bg-blue-500 text-white"
-                        : "bg-white border border-gray-400 hover:bg-gray-100"
-                    } flex items-center justify-center text-xs font-semibold relative`}
-                  >
-                    <input
-                      type="checkbox"
-                      className="hidden"
-                      checked={seat.selected}
-                      onChange={() => handleSeatSelection(index)}
-                      disabled={seat.booked}
-                    />
-                    <span className="absolute text-xs text-gray-700">{seat.id}</span>
-                  </label>
-                ))}
+                <div
+                  className="grid gap-1"
+                  style={{
+                    gridTemplateColumns: `repeat(${props.cols}, minmax(0, 1fr))`,
+                    gridAutoRows: 'minmax(40px, auto)', // Set a minimum height for rows
+                  }}
+                >
+                  {seats.map((seat, index) => (
+                    <label
+                      key={seat.id}
+                      className={`w-10 h-10 rounded-md cursor-pointer transition-colors duration-300 ${
+                        seat.booked
+                          ? "bg-gray-400 cursor-not-allowed"
+                          : seat.selected
+                          ? "bg-blue-500 text-white"
+                          : "bg-white border border-gray-400 hover:bg-gray-100"
+                      } flex items-center justify-center text-xs font-semibold relative`}
+                    >
+                      <input
+                        type="checkbox"
+                        className="hidden"
+                        checked={seat.selected}
+                        onChange={() => handleSeatSelection(index)}
+                        disabled={seat.booked}
+                      />
+                      <span className="absolute text-xs text-gray-700">{seat.id}</span>
+                    </label>
+                  ))}
+                </div>
               </div>
             </div>
             <div className="my-4 text-gray-500 text-sm">Select your seats carefully!</div>
@@ -181,7 +186,15 @@ const SeatSelector = (props) => {
                 Selected Seats: {selectedSeatIds.join(", ")}
               </div>
             </div>
-            <button onClick={handleBookNowClick} className="bg-indigo-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-indigo-500 transition duration-300">
+            <button
+              onClick={handleBookNowClick}
+              disabled={selectedSeats === 0} // Disable button if no seats selected
+              className={`px-6 py-3 rounded-lg shadow-md transition duration-300 ${
+                selectedSeats === 0
+                  ? "bg-gray-400 cursor-not-allowed" // Grey out button when disabled
+                  : "bg-indigo-600 text-white hover:bg-indigo-500"
+              }`}
+            >
               Book Now
             </button>
           </div>

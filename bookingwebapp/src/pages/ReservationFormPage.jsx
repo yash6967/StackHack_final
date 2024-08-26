@@ -14,7 +14,6 @@ export default function ReservationFormPage() {
     const [chooseShowDate, setChooseShowDate] = useState(new Date());
     const [movie, setMovie] = useState(null);
     const [showtimes, setShowtimes] = useState([]);
-    const cities = ['Delhi', 'Jaipur', 'Bhopal', 'Pune', 'Ahmedabad', 'Kota', 'Mumbai'];
     const [showSeatSelector, setShowSeatSelector] = useState(false);
     const [rows, setRows] = useState(5);
     const [cols, setCols] = useState(5);
@@ -22,6 +21,8 @@ export default function ReservationFormPage() {
     const [chooseTime, setChooseTime] = useState([]);
     const [chooseShowtimeId, setChooseShowtimeId] = useState([]);
     const [activeShowtime, setActiveShowtime] = useState(null);
+    
+    const cities = ['Delhi', 'Jaipur', 'Bhopal', 'Pune', 'Ahmedabad', 'Kota', 'Mumbai'];
 
     useEffect(() => {
         if (!id) return;
@@ -90,6 +91,10 @@ export default function ReservationFormPage() {
         setChooseShowDate(date || new Date()); // Default to today's date if no date is selected
     };
 
+    const closeModal = () => {
+        setShowSeatSelector(false);
+    };
+
     return (
         <section className='mt-14 mb-10'>
 
@@ -147,16 +152,6 @@ export default function ReservationFormPage() {
                                     <button onClick={() => handleSeatSelection(it, time)} className='hover:bg-black bg-slate-500 ml-2'>
                                         {time}
                                     </button>
-                                    {showSeatSelector && activeShowtime?.id === it._id && activeShowtime?.time === time && (
-                                        <SeatSelector
-                                            rows={rows}
-                                            cols={cols}
-                                            ticketPrice={ticketPrice}
-                                            chooseTime={chooseTime}
-                                            chooseShowtimeId={chooseShowtimeId}
-                                            userId={id}
-                                        />
-                                    )}
                                 </div>
                             ))
                         ) : (
@@ -166,8 +161,28 @@ export default function ReservationFormPage() {
                 ))
             ) : (
                 <div className="text-center text-red-500 font-bold mt-4">Ohoo, no showtimes available.</div>
-)}
+            )}
 
+            {showSeatSelector && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+                    <div className="bg-white p-4 rounded-lg relative">
+                        <button
+                            onClick={closeModal}
+                            className="absolute top-0 right-0 m-2 text-black font-bold text-xl"
+                        >
+                            &times;
+                        </button>
+                        <SeatSelector
+                            rows={rows}
+                            cols={cols}
+                            ticketPrice={ticketPrice}
+                            chooseTime={chooseTime}
+                            chooseShowtimeId={chooseShowtimeId}
+                            userId={id}
+                        />
+                    </div>
+                </div>
+            )}
         </section>
     );
 }

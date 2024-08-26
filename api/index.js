@@ -1074,7 +1074,6 @@ app.get('/myTickets', async (req, res) => {
                     theatreName: showtime.theatreid.theatreName,
                     theatreCity: showtime.theatreid.city,
                     showdate: showtime.showdate,
-                    daytime: showtime.daytime
                 };
             }));
 

@@ -8,7 +8,7 @@ export default function SearchPage() {
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [focusedSuggestion, setFocusedSuggestion] = useState(-1);
     const dropdownRef = useRef(null);
-    const navigate = useNavigate(); // Initialize useNavigate hook
+    const navigate = useNavigate();
 
     const handleSearchChange = async (e) => {
         const query = e.target.value;
@@ -36,7 +36,7 @@ export default function SearchPage() {
             setFocusedSuggestion((prev) => (prev > 0 ? prev - 1 : suggestions.length - 1));
         } else if (e.key === 'Enter' && focusedSuggestion !== -1) {
             const selectedMovie = suggestions[focusedSuggestion];
-            navigate(`/movie/${selectedMovie._id}`); // Redirect to the selected movie's booking page
+            navigate(`/movie/${selectedMovie._id}`);
         }
     };
 
@@ -61,17 +61,17 @@ export default function SearchPage() {
     }, [showSuggestions, suggestions]);
 
     const handleMovieClick = (movieId) => {
-        navigate(`/movie/${movieId}`); // Redirect to the clicked movie's booking page
+        navigate(`/movie/${movieId}`);
     };
 
     return (
-        <div className="flex-grow flex border border-primary-500 dark:bg-primary-950 rounded-full p-2 gap-3 items-center overflow-hidden">
+        <div className="flex-grow flex border border-primary-500 dark:bg-primary-950 rounded-full p-1 gap-3 items-center overflow-hidden">
             <div className="flex-grow">
                 <form action="" className="overflow-hidden">
                     <input 
                         type="text" 
                         placeholder="Search for movies" 
-                        className="w-full ml-6 border-none focus:outline-none overflow-hidden text-ellipsis bg-transparent text-gray-900 dark:text-stone-300" 
+                        className="w-full ml-4 border-none focus:outline-none overflow-hidden text-ellipsis bg-transparent text-gray-900 dark:text-stone-300 h-8" 
                         value={searchTerm}
                         onChange={handleSearchChange}
                     />
@@ -85,7 +85,7 @@ export default function SearchPage() {
                             {suggestions.map((movie, index) => (
                                 <li
                                     key={movie._id}
-                                    onClick={() => handleMovieClick(movie._id)} // Handle movie click
+                                    onClick={() => handleMovieClick(movie._id)}
                                     className={`p-2 hover:bg-gray-100 cursor-pointer px-3 ${index === focusedSuggestion ? 'bg-gray-200' : ''}`}
                                 >
                                     {movie.title}

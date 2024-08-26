@@ -9,6 +9,8 @@ export default function SuperAdminPage() {
     const [admins, setAdmins] = useState([]);
     const [requests, setRequests] = useState([]);
     const [errors, setErrors] = useState({});
+    const [requestDetails, setRequestDetails] = useState([]);
+
 
     useEffect(() => {
         axios.get('/getAllUsers').then(({ data }) => {
@@ -41,6 +43,25 @@ export default function SuperAdminPage() {
             console.error('Error fetching admin requests:', error);
         });
     }, []);
+
+    useEffect(() => {
+        axios.get('/adminList').then(async ({ data }) => {
+            const requestList = data.requestList;
+            const details = await Promise.all(requestList.map(async (id) => {
+                try {
+                    const response = await axios.get(`/getUser/${id}`);
+                    return response.data;
+                } catch (error) {
+                    console.error(`Error fetching user details for ID ${id}:`, error);
+                    return { id, name: 'Unknown', email: 'Unknown' };
+                }
+            }));
+            setRequestDetails(details);
+        }).catch(error => {
+            console.error('Error fetching admin requests:', error);
+        });
+    }, []);
+    
 
     const toggleRole = async (user) => {
         const newRole = user.role === 'admin' ? 'customer' : 'admin';
@@ -108,57 +129,43 @@ export default function SuperAdminPage() {
 
             <div className="text-center mt-4">
 
-                {/* Add New User */}
-                <Link
-                    className="inline-flex gap-1 items-center bg-gray-100 rounded py-2 px-5 mb-4"
-                    to={'/account/superAdmin/new'}>
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="w-5 h-5">
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                    </svg>
-                    Add New User
-                </Link>
+              
                 
                 <div className="mt-8">
 
                     <div className="my-8">
-                        <h2 className="text-xl font-bold mb-4">Requests</h2>
-                        
-                        {requests.length > 0 ? (
-                            requests.map(it => (
-                                <div
-                                    key={it}
-                                    className="flex items-center justify-between bg-gray-200 p-4 rounded-lg mb-2">
-                                    <h4 className="text-lg font-medium">
-                                        UserId: {it}
-                                    </h4>
-                                    <div>
-                                        <button
-                                            onClick={() => makeAdmin(it)}
-                                            className="bg-green-500 text-white py-1 px-4 rounded-lg mr-2">
-                                            Accept
-                                        </button>
-                                        <button
-                                            onClick={() => notMakeAdmin(it)}
-                                            className="bg-red-500 text-white py-1 px-4 rounded-lg">
-                                            Decline
-                                        </button>
+                            <h2 className="text-xl font-bold mb-4">Requests</h2>
+                            
+                            {requestDetails.length > 0 ? (
+                                requestDetails.map((user) => (
+                                    <div
+                                        key={user._id}
+                                        className="flex items-center justify-between bg-gray-200 p-4 rounded-lg mb-2">
+                                        <div>
+                                            <h4 className="text-lg font-medium">
+                                                Name: {user.name} <br />
+                                                Email: {user.email} <br />
+                                                UserId: {user._id}
+                                            </h4>
+                                        </div>
+                                        <div>
+                                            <button
+                                                onClick={() => makeAdmin(user._id)}
+                                                className="bg-green-500 text-white py-1 px-4 rounded-lg mr-2">
+                                                Accept
+                                            </button>
+                                            <button
+                                                onClick={() => notMakeAdmin(user._id)}
+                                                className="bg-red-500 text-white py-1 px-4 rounded-lg">
+                                                Decline
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
-                            ))
-                        ) : (
-                            <span className="font-light">No active requests</span>
-                        )}
-
-                    </div>
+                                ))
+                            ) : (
+                                <span className="font-light">No active requests</span>
+                            )}
+                        </div>
 
                     <h2 className="text-xl font-bold mb-4">Users</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
