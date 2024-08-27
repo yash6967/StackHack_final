@@ -11,7 +11,7 @@ export default function MyBookings() {
     const { user } = useContext(UserContext);
    
     useEffect(() => {
-        axios.get('/myTickets').then(({ data }) => {
+        axios.get('/myTickets/'+user?._id).then(({ data }) => {
             setTickets(data);
         }).catch(error => {
             console.error("Failed to fetch tickets", error);

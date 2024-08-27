@@ -968,6 +968,7 @@ app.post('/bookTicket', async (req, res) => {
         if (error) throw error;
         
         const {
+            userId, // Expect userId from the frontend
             chooseShowtimeId,
             chooseTime,
             selectedSeatIds,
@@ -981,7 +982,7 @@ app.post('/bookTicket', async (req, res) => {
             // Create a single ticket document that includes all selected seats
             const ticket = await Tickets.create({
                 booking_code: booking_code,
-                userId: userData._id,
+                userId: userId,
                 showtimeId: chooseShowtimeId,
                 daytime: chooseTime,
                 seatNumbers: selectedSeatIds, // Store the array of seat numbers
@@ -1096,7 +1097,7 @@ app.get('/bookedSeats', async (req, res) => {
 //         }
 //     });
 // });
-app.get('/myTickets', async (req, res) => {
+app.get('/myTickets/:id', async (req, res) => {
     const { token } = req.cookies;
 
     if (!token) {
@@ -1110,7 +1111,8 @@ app.get('/myTickets', async (req, res) => {
 
         try {
             // Fetch tickets for the authenticated user
-            const tickets = await Tickets.find({ userId: userData._id });
+            const { id } = req.params;
+            const tickets = await Tickets.find({ userId: id });
 
             // Fetch showtimes and related movie and theatre details
             const ticketsWithDetails = await Promise.all(tickets.map(async (ticket) => {
