@@ -2,15 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
-input[type = "text"], input[type = "password"], input[type = "email"], textarea
+input[type = "text"], input[type = "password"], input[type = "email"], input[type = "date"], input[type = "number"], input[type = "time"], input[type = "option"], textarea
 {
-    @apply w-full border my-2 px-3 py-2 rounded-lg;
+    @apply w-full border-none dark:bg-gray-800 dark:text-gray-300 rounded-lg p-2 gap-3 items-center overflow-hidden;
+}
+
+input[type="text"].no-bg {
+    @apply bg-transparent;
+}
+
+@media (prefers-color-scheme: dark) {
+    h2 {
+        @apply dark:text-primary-300;
+    }
 }
 
 button{
     @apply bg-gray-300;
 }
 
-button.primary{
+/* button.primary{
     @apply bg-primary p-2 w-full text-white rounded-lg; 
-}
+} */
