@@ -34,7 +34,7 @@ app.use('/uploads', express.static(__dirname+'/uploads'));
 app.use(cors({
 
     credentials: true,
-    // origin: 'http://localhost:5173',
+    // origin: 'http://localhost:4000',
     origin: 'stack-hack2-0.vercel.app',
 
 }));
@@ -1306,4 +1306,4 @@ app.post('/sendCancellationEmail', async (req, res) => {
 });
 
 
-app.listen(4000);
+app.listen('stack-hack2-0-api.vercel.app');
