@@ -94,6 +94,26 @@
   border-color: #0D9488; /* Green hover border */
 }
 
+/* Scroller */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px; 
+  height: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #4A5568; 
+  border-radius: 9999px;
+}
+
+/* Handle on hover */
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #2D3748; 
+}
+
 
 
 

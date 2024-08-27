@@ -2,15 +2,16 @@ import React, { useState, useEffect } from "react";
 import axios from 'axios';
 import { Navigate } from 'react-router-dom'; // Import Navigate
 import DummyPayment from "./DummyPayment"; // Import the DummyPayment component
+import { format, parse } from 'date-fns';
 
 const SeatSelector = (props) => {
   const [seats, setSeats] = useState([]);
   const [selectedSeats, setSelectedSeats] = useState(0);
   const [totalAmount, setTotalAmount] = useState(0);
   const [selectedSeatIds, setSelectedSeatIds] = useState([]);
-  const [bookedSeats, setBookedSeats] = useState([]); 
-  const [showPayment, setShowPayment] = useState(false); // State to toggle payment form
-  const [redirect, setRedirect] = useState(false); // State to handle redirection
+  const [bookedSeats, setBookedSeats] = useState([]);
+  const [showPayment, setShowPayment] = useState(false);
+  const [redirect, setRedirect] = useState(false); 
 
   useEffect(() => {
     const fetchBookedSeatsAndGenerateSeats = async () => {
@@ -78,19 +79,17 @@ const SeatSelector = (props) => {
       const response = await axios.post('/bookTicket', {
         chooseShowtimeId: props.chooseShowtimeId,
         chooseTime: props.chooseTime,
-        selectedSeatIds, // Send the selected seats array
+        selectedSeatIds,
         ticketPrice: props.ticketPrice
       });
 
       alert("Ticket successfully booked!");
       console.log(response);
 
-      // Clear selected seats
       setSelectedSeats(0);
       setTotalAmount(0);
       setSelectedSeatIds([]);
 
-      // Trigger redirect after successful booking
       setRedirect(true);
 
     } catch (error) {
@@ -100,108 +99,122 @@ const SeatSelector = (props) => {
   };
 
   const handleBookNowClick = () => {
-    setShowPayment(true); // Show the payment form when "Book Now" is clicked
+    setShowPayment(true); 
   };
 
   const handlePaymentSuccess = () => {
-    setShowPayment(false); // Hide payment form after successful payment
-    bookingHandler(); // Proceed to book the ticket
+    setShowPayment(false); 
+    bookingHandler();
   };
 
   const handlePaymentCancel = () => {
-    setShowPayment(false); // Hide payment form if payment is cancelled
+    setShowPayment(false);
   };
 
-  // Redirect to My Bookings page if the redirect state is true
   if (redirect) {
     return <Navigate to='/account/myBookings' />;
   }
 
+  const formatTimeTo12Hour = (timeString) => {
+    const date = parse(timeString, 'HH:mm', new Date());
+    return format(date, 'hh:mm a');
+  };
+
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-r from-purple-300 to-indigo-700 p-6">
-      <div className="bg-white p-6 rounded-lg shadow-lg overflow-hidden">
-        <div className="bg-gray-200 p-6 rounded-lg flex flex-col items-center">
-          <div className="w-full flex flex-col items-center">
-            <div className="flex flex-col">
-              <div className="w-full h-8 my-4 bg-gray-700 text-white flex items-center justify-center text-sm font-semibold">
-                SCREEN {props.chooseTime}
-              </div>
+    <section className="items-center py-4 px-10 dark:bg-gray-950">
 
-              <div 
-                className="relative w-full h-96 overflow-auto" // Adjust the height as needed
-                style={{ 
-                  maxHeight: '60vh', // Limit the height of the seat grid
-                  overflowY: 'scroll', // Enable vertical scrolling
-                  overflowX: 'auto', // Enable horizontal scrolling
-                }}
-              >
-                <div
-                  className="grid gap-1"
-                  style={{
-                    gridTemplateColumns: `repeat(${props.cols}, minmax(0, 1fr))`,
-                    gridAutoRows: 'minmax(40px, auto)', // Set a minimum height for rows
-                  }}
-                >
-                  {seats.map((seat, index) => (
-                    <label
-                      key={seat.id}
-                      className={`w-10 h-10 rounded-md cursor-pointer transition-colors duration-300 ${
-                        seat.booked
-                          ? "bg-gray-400 cursor-not-allowed"
-                          : seat.selected
-                          ? "bg-blue-500 text-white"
-                          : "bg-white border border-gray-400 hover:bg-gray-100"
-                      } flex items-center justify-center text-xs font-semibold relative`}
-                    >
-                      <input
-                        type="checkbox"
-                        className="hidden"
-                        checked={seat.selected}
-                        onChange={() => handleSeatSelection(index)}
-                        disabled={seat.booked}
-                      />
-                      <span className="absolute text-xs text-gray-700">{seat.id}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-            </div>
-            <div className="my-4 text-gray-500 text-sm">Select your seats carefully!</div>
-          </div>
-        </div>
+      <div className="flex flex-col items-center font-bold">
+        <h2>SCREEN</h2>
+        <span className="text-primary-600">{formatTimeTo12Hour(props.chooseTime)}</span>
+      </div>
 
-        {showPayment ? (
-          <DummyPayment
-            onPaymentSuccess={handlePaymentSuccess}
-            onCancel={handlePaymentCancel}
-          />
-        ) : (
-          <div className="flex justify-between items-center mt-6">
-            <div className="flex flex-col text-gray-700">
-              <span className="text-xl font-medium">{selectedSeats} Tickets (price: {props.ticketPrice})</span>
-              <div className="flex items-center gap-1">
-                ₹ <span className="text-xl font-medium">{totalAmount}</span>
-              </div>
-              <div className="text-sm text-gray-500 mt-2">
-                Selected Seats: {selectedSeatIds.join(", ")}
-              </div>
-            </div>
-            <button
-              onClick={handleBookNowClick}
-              disabled={selectedSeats === 0} // Disable button if no seats selected
-              className={`px-6 py-3 rounded-lg shadow-md transition duration-300 ${
-                selectedSeats === 0
-                  ? "bg-gray-400 cursor-not-allowed" // Grey out button when disabled
-                  : "bg-indigo-600 text-white hover:bg-indigo-500"
+      <div
+        className="custom-scrollbar flex flex-col items-center overflow-auto py-16 px-10" 
+        style={{
+          maxWidth: '80vw', 
+          maxHeight: '60vh',
+          minWidth: '30vw'
+        }}
+      >
+
+        <h2 className="font-light text-sm mb-2"> Rs. {props.ticketPrice}</h2>
+        <div
+          className="grid gap-0 w-max border-t" 
+          style={{
+            gridTemplateColumns: `repeat(${props.cols}, minmax(0, 1fr))`,
+          }}
+        >
+          
+          {seats.map((seat, index) => (
+
+            <label
+              key={seat.id}
+              className={`relative flex w-7 h-7 m-2 rounded-md cursor-pointer duration-200 items-center justify-center text-xs font-light  ${
+                seat.booked
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : seat.selected
+                  ? "bg-primary-500 dark:bg-primary-700"
+                  : "bg-primary-50 dark:bg-gray-800 border border-gray-400 dark:border-primary-800 hover:bg-gray-300"
               }`}
             >
-              Book Now
-            </button>
-          </div>
-        )}
+              <input
+                type="checkbox"
+                className="hidden"
+                checked={seat.selected}
+                onChange={() => handleSeatSelection(index)}
+                disabled={seat.booked}
+              />
+
+              <span className="absolute text-xs font-light text-gray-700 dark:text-primary-100">{seat.id}</span>
+
+            </label>
+          ))}
+
+        </div>
+
       </div>
-    </div>
+  
+        <div className="mt-3">
+          {showPayment ? (
+            <DummyPayment
+              onPaymentSuccess={handlePaymentSuccess}
+              onCancel={handlePaymentCancel}
+            />
+          ) : (
+
+            <div className="flex justify-between items-center">
+
+              <div className="font-light dark:text-primary-50">
+                <span><strong>Tickets:</strong> {selectedSeats}</span>
+                <div className="">
+                  <strong>Selected Seats:</strong> {selectedSeats ? selectedSeatIds.join(", ") : 0}
+                </div>
+                <div className="">
+                  <strong>Total: <span className="text-primary-600">₹ {totalAmount}</span></strong>
+                </div>
+              </div>
+
+              <div>
+                <button
+                  onClick={handleBookNowClick}
+                  disabled={selectedSeats === 0}
+                  className={`px-6 py-3 rounded-md shadow-md transition duration-300 font-semibold ${
+                    selectedSeats === 0
+                      ? "bg-gray-400 cursor-not-allowed" 
+                      : "bg-primary-800 text-white hover:bg-orange-400"
+                  }`}
+                >
+                  Book Now
+                </button>
+              </div>
+            </div>
+          )}
+          
+        </div>
+
+    </section>
   );
+  
 };
 
 export default SeatSelector;
