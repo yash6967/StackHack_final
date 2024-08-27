@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from 'axios';
 import { Navigate } from 'react-router-dom'; // Import Navigate
 import DummyPayment from "./DummyPayment"; // Import the DummyPayment component
 import { format, parse } from 'date-fns';
+import { UserContext } from "../UserContext";
 
 const SeatSelector = (props) => {
   const [seats, setSeats] = useState([]);
@@ -12,45 +13,66 @@ const SeatSelector = (props) => {
   const [bookedSeats, setBookedSeats] = useState([]);
   const [showPayment, setShowPayment] = useState(false);
   const [redirect, setRedirect] = useState(false); 
+  const [movieTitle, setMovieTitle] = useState('');
+  const [theatreName, setTheatreName] = useState('');
+  const { user, ready } = useContext(UserContext); // Use UserContext
 
   useEffect(() => {
-    const fetchBookedSeatsAndGenerateSeats = async () => {
+    const fetchDetails = async () => {
       try {
-        const response = await axios.get('/bookedSeats', {
-          params: {
-            showtimeId: props.chooseShowtimeId,
-            daytime: props.chooseTime
-          }
-        });
+        const showtimeResponse = await axios.get(`/Showtimes/${props.chooseShowtimeId}`);
+        const showtime = showtimeResponse.data;
+        
+        const movieResponse = await axios.get(`/movies/${showtime.movieid}`);
+        setMovieTitle(movieResponse.data.title);
 
-        const bookedSeatNumbers = response.data.seats;
-        setBookedSeats(bookedSeatNumbers);
-
-        const generatedSeats = [];
-        const rowLabels = Array.from({ length: props.rows }, (_, i) => String.fromCharCode(65 + i));
-
-        for (let row = 0; row < props.rows; row++) {
-          for (let col = 0; col < props.cols; col++) {
-            const seatId = `${rowLabels[row]}${col + 1}`;
-            generatedSeats.push({
-              id: seatId,
-              row: rowLabels[row],
-              col: col + 1,
-              booked: bookedSeatNumbers.includes(seatId),
-              selected: false,
-              price: props.ticketPrice,
-            });
-          }
-        }
-        setSeats(generatedSeats);
-
+        const theatreResponse = await axios.get(`/theatres/${showtime.theatreid}`);
+        setTheatreName(theatreResponse.data.theatreName);
+        
+        // Fetch booked seats and generate seats after fetching movie and theatre details
+        await fetchBookedSeatsAndGenerateSeats();
       } catch (error) {
-        console.error("Failed to fetch booked seats:", error);
+        console.error("Failed to fetch details:", error);
       }
     };
 
-    fetchBookedSeatsAndGenerateSeats();
+    fetchDetails();
   }, [props.chooseShowtimeId, props.chooseTime, props.rows, props.cols, props.ticketPrice]);
+
+  const fetchBookedSeatsAndGenerateSeats = async () => {
+    try {
+      const response = await axios.get('/bookedSeats', {
+        params: {
+          showtimeId: props.chooseShowtimeId,
+          daytime: props.chooseTime
+        }
+      });
+
+      const bookedSeatNumbers = response.data.seats;
+      setBookedSeats(bookedSeatNumbers);
+
+      const generatedSeats = [];
+      const rowLabels = Array.from({ length: props.rows }, (_, i) => String.fromCharCode(65 + i));
+
+      for (let row = 0; row < props.rows; row++) {
+        for (let col = 0; col < props.cols; col++) {
+          const seatId = `${rowLabels[row]}${col + 1}`;
+          generatedSeats.push({
+            id: seatId,
+            row: rowLabels[row],
+            col: col + 1,
+            booked: bookedSeatNumbers.includes(seatId),
+            selected: false,
+            price: props.ticketPrice,
+          });
+        }
+      }
+      setSeats(generatedSeats);
+
+    } catch (error) {
+      console.error("Failed to fetch booked seats:", error);
+    }
+  };
 
   const handleSeatSelection = (index) => {
     const updatedSeats = [...seats];
@@ -74,8 +96,6 @@ const SeatSelector = (props) => {
 
   const bookingHandler = async () => {
     try {
-      console.log('Selected Seat IDs:', selectedSeatIds);
-
       const response = await axios.post('/bookTicket', {
         chooseShowtimeId: props.chooseShowtimeId,
         chooseTime: props.chooseTime,
@@ -83,18 +103,45 @@ const SeatSelector = (props) => {
         ticketPrice: props.ticketPrice
       });
 
-      alert("Ticket successfully booked!");
-      console.log(response);
+      if (response.status === 200) {
+        const { booking_code, seatNumbers } = response.data;
 
-      setSelectedSeats(0);
-      setTotalAmount(0);
-      setSelectedSeatIds([]);
+        // Email details
+        const emailDetails = {
+          booking_code,
+          seatNumbers,
+          userEmail: user?.email, // Fetch the user email from context
+          userName: user?.name, // Same for the user name
+          movieTitle,
+          theatreName,
+          chooseTime: props.chooseTime
+        };
 
-      setRedirect(true);
+        // Call your email sending function
+        await sendBookingConfirmationEmail(emailDetails);
 
+        alert("Ticket successfully booked and confirmation email sent!");
+        setSelectedSeats(0);
+        setTotalAmount(0);
+        setSelectedSeatIds([]);
+        setRedirect(true);
+      }
     } catch (error) {
       console.error("Failed to book tickets:", error);
-      alert("Login to book tickets!");
+      alert("Failed to book tickets!");
+    }
+  };
+
+  // Function to send the booking confirmation email
+  const sendBookingConfirmationEmail = async (emailDetails) => {
+    try {
+      const response = await axios.post('/sendBookingConfirmationEmail', emailDetails);
+
+      if (response.status === 200) {
+        console.log('Email sent:', response.data.message);
+      }
+    } catch (error) {
+      console.error("Failed to send email:", error);
     }
   };
 
@@ -174,47 +221,43 @@ const SeatSelector = (props) => {
 
       </div>
   
-        <div className="mt-3">
-          {showPayment ? (
-            <DummyPayment
-              onPaymentSuccess={handlePaymentSuccess}
-              onCancel={handlePaymentCancel}
-            />
-          ) : (
-
-            <div className="flex justify-between items-center">
-
-              <div className="font-light dark:text-primary-50">
-                <span><strong>Tickets:</strong> {selectedSeats}</span>
-                <div className="">
-                  <strong>Selected Seats:</strong> {selectedSeats ? selectedSeatIds.join(", ") : 0}
-                </div>
-                <div className="">
-                  <strong>Total: <span className="text-primary-600">₹ {totalAmount}</span></strong>
-                </div>
+      <div className="mt-3">
+        {showPayment ? (
+          <DummyPayment
+            onPaymentSuccess={handlePaymentSuccess}
+            onCancel={handlePaymentCancel}
+          />
+        ) : (
+          <div className="flex justify-between items-center">
+            <div className="font-light dark:text-primary-50">
+              <span><strong>Tickets:</strong> {selectedSeats}</span>
+              <div className="">
+                <strong>Selected Seats:</strong> {selectedSeats ? selectedSeatIds.join(", ") : 0}
               </div>
-
-              <div>
-                <button
-                  onClick={handleBookNowClick}
-                  disabled={selectedSeats === 0}
-                  className={`px-6 py-3 rounded-md shadow-md transition duration-300 font-semibold ${
-                    selectedSeats === 0
-                      ? "bg-gray-400 cursor-not-allowed" 
-                      : "bg-primary-800 text-white hover:bg-orange-400"
-                  }`}
-                >
-                  Book Now
-                </button>
+              <div className="">
+                <strong>Total: <span className="text-primary-600">₹ {totalAmount}</span></strong>
               </div>
             </div>
-          )}
-          
-        </div>
+
+            <div>
+              <button
+                onClick={handleBookNowClick}
+                disabled={selectedSeats === 0}
+                className={`px-6 py-3 rounded-md shadow-md transition duration-300 font-semibold ${
+                  selectedSeats === 0
+                    ? "bg-gray-400 cursor-not-allowed" 
+                    : "bg-primary-800 text-white hover:bg-orange-400"
+                }`}
+              >
+                Book Now
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
 
     </section>
   );
-  
 };
 
 export default SeatSelector;

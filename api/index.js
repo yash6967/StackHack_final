@@ -43,10 +43,10 @@ mongoose.connect(process.env.MONGO_URL);
 
 // Create a transporter object with SMTP server details
 const transporter = nodemailer.createTransport({
-    service: 'gmail', // Use your email service provider
+    service: 'Gmail', // Use your email service provider
     auth: {
         user: process.env.EMAIL, // Your email address
-        pass: process.env.EMAIL_PASS // Your email password or an app password
+        pass: process.env.EMAIL_PASS, // Use the app password generated here
     }
 });
 
@@ -1001,6 +1001,57 @@ app.post('/bookTicket', async (req, res) => {
 });
 
 
+
+app.post('/sendBookingConfirmationEmail', async (req, res) => {
+    const { userEmail, userName, movieTitle, theatreName, chooseTime, seatNumbers, booking_code } = req.body;
+
+    try {
+        // Set up the transporter for sending emails
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.EMAIL, // Replace with your email address
+                pass: process.env.EMAIL_PASS   // Replace with your email password or an app-specific password
+            }
+        });
+
+        // Prepare the email content
+        const mailOptions = {
+            from: process.env.EMAIL, // Sender address
+            to: userEmail, // User's email address
+            subject: `Booking Confirmation - ${movieTitle} at ${theatreName}`,
+            html: `
+                <h2>Dear ${userName},</h2>
+                <p>Thank you for booking with us! Here are your ticket details:</p>
+                <p><strong>Movie:</strong> ${movieTitle}</p>
+                <p><strong>Theatre:</strong> ${theatreName}</p>
+                <p><strong>Showtime:</strong> ${chooseTime}</p>
+                <p><strong>Seats:</strong> ${seatNumbers.join(', ')}</p>
+                <p><strong>Booking Code:</strong> ${booking_code}</p>
+                <p>We hope you enjoy the show!</p>
+                <p>Best regards,<br/>Your Movie Booking Team</p>
+            `
+        };
+
+        // Send the email
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.error("Failed to send email:", error);
+                return res.status(500).json({ error: "Failed to send confirmation email", details: error.message });
+            }
+            console.log('Email sent: ' + info.response);
+            res.status(200).json({ message: 'Confirmation email sent successfully' });
+        });
+
+    } catch (error) {
+        console.error("Error in sending email:", error);
+        res.status(500).json({ error: "Internal server error", details: error.message });
+    }
+});
+
+
+
+
 app.get('/bookedSeats', async (req, res) => {
     const { showtimeId, daytime } = req.query; // Use req.query for GET requests
 
@@ -1190,13 +1241,65 @@ app.delete('/tickets/:ticketId', async (req, res) => {
 
             // Delete the ticket
             await Tickets.findByIdAndDelete(ticketId);
+   
+              
 
-            res.status(200).json({ message: 'Ticket deleted successfully.' });
+            res.status(200).json({ ticket });
         } catch (error) {
             console.error('Failed to delete ticket:', error);
             res.status(500).json({ error: 'Failed to delete the ticket.', details: error.message });
         }
     });
+});
+
+app.post('/sendCancellationEmail', async (req, res) => {
+    const { userEmail, userName, movieTitle, theatreName, chooseTime, seatNumbers, booking_code } = req.body;
+
+    // Default seatNumbers to an empty array if it's undefined
+    const seatNumbersString = Array.isArray(seatNumbers) ? seatNumbers.join(', ') : 'No seats selected';
+
+    try {
+        // Set up the transporter for sending emails
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.EMAIL, // Replace with your email address
+                pass: process.env.EMAIL_PASS   // Replace with your email password or an app-specific password
+            }
+        });
+
+        // Prepare the email content
+        const mailOptions = {
+            from: process.env.EMAIL, // Sender address
+            to: userEmail, // User's email address
+            subject: `Booking Cancellation - ${movieTitle} at ${theatreName}`,
+            html: `
+                <h2>Dear ${userName},</h2>
+                <p>We regret seeing you go! Here are your ticket details which is cancelled:</p>
+                <p><strong>Movie:</strong> ${movieTitle}</p>
+                <p><strong>Theatre:</strong> ${theatreName}</p>
+                <p><strong>Showtime:</strong> ${chooseTime}</p>
+                <p><strong>Seats:</strong> ${seatNumbersString}</p>
+                <p><strong>Booking Code:</strong> ${booking_code}</p>
+                <p>We hope you enjoy the show!</p>
+                <p>Best regards,<br/>Your Movie Booking Team</p>
+            `
+        };
+
+        // Send the email
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.error("Failed to send email:", error);
+                return res.status(500).json({ error: "Failed to send confirmation email", details: error.message });
+            }
+            console.log('Email sent: ' + info.response);
+            res.status(200).json({ message: 'Confirmation email sent successfully' });
+        });
+
+    } catch (error) {
+        console.error("Error in sending email:", error);
+        res.status(500).json({ error: "Internal server error", details: error.message });
+    }
 });
 
 
