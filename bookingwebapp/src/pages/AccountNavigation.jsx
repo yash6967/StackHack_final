@@ -25,14 +25,14 @@ export default function AccountNavigation() {
 
   const linkClasses = (page) => {
     return page === subpage
-      ? 'inline-flex gap-1 bg-primary dark:text-primary-50 rounded-full px-6 py-2'
-      : 'inline-flex gap-1 rounded-full border-2 px-6 py-2 dark:text-primary-50';
+      ? 'px-6 py-2 text-primary-600 dark:text-primary-300'
+      : 'rounded-full border px-6 py-2 text-gray-700 dark:text-gray-300';
   };
 
   return (
-    <nav className="flex items-center justify-between mb-8 mt-12 md:flex-row md:justify-center md:gap-5">
+    <nav className="flex items-center justify-between mb-8 mt-12 md:flex-row md:justify-center md:gap-5 font-medium">
       {/* Links for larger screens */}
-      <div className="hidden md:flex">
+      <div className="hidden md:flex gap-3">
         <Link className={linkClasses('profile')} to={'/account'}>My Account</Link>
         {userRole === 'admin' && (
           <>

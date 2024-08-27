@@ -7,6 +7,10 @@ input[type = "text"], input[type = "password"], input[type = "email"], input[typ
     @apply w-full border-none dark:bg-gray-800 dark:text-gray-300 rounded-lg p-2 gap-3 items-center overflow-hidden;
 }
 
+input[type="text"].no-bg {
+    @apply bg-transparent;
+}
+
 @media (prefers-color-scheme: dark) {
     h2 {
         @apply dark:text-primary-300;

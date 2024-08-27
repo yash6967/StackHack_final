@@ -71,7 +71,7 @@ export default function SearchPage() {
                     <input 
                         type="text" 
                         placeholder="Search for movies" 
-                        className="w-full ml-4 border-none focus:outline-none overflow-hidden text-ellipsis bg-transparent text-gray-900 dark:text-stone-300 h-8" 
+                        className="w-full ml-4 border-none focus:outline-none overflow-hidden text-ellipsis bg-transparent text-gray-900 dark:text-stone-300 h-8 no-bg" 
                         value={searchTerm}
                         onChange={handleSearchChange}
                     />
