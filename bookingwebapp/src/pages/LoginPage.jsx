@@ -15,7 +15,7 @@ export default function LoginPage(){
         ev.preventDefault();
 
         try {
-            const response = await axios.post('/api/login', { email, password });
+            const response = await axios.post('/login', { email, password });
     
             if (response.status === 200) {
 

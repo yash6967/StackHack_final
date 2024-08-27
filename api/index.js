@@ -34,7 +34,8 @@ app.use('/uploads', express.static(__dirname+'/uploads'));
 app.use(cors({
 
     credentials: true,
-    origin: 'http://localhost:5173',
+    // origin: 'http://localhost:5173',
+    origin: 'stack-hack2-0.vercel.app',
 
 }));
 
@@ -102,7 +103,7 @@ app.post('/register', async(req, res) => {
     
 });
 
-app.post('/api/login', async (req, res) => {
+app.post('/login', async (req, res) => {
 
     const { email, password } = req.body;
     const userDocument = await User.findOne({ email });
