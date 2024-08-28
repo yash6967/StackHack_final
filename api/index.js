@@ -119,40 +119,28 @@ app.post('/login', async (req, res) => {
     }
 });
 
-app.get('/profile', async (req, res) => {
-    const { token } = req.cookies;
+app.get('/profile', (req, res) => {
 
-    if (!token) {
-        return res.status(401).json({ error: 'No token provided' });
-    }
+    const {token} = req.cookies;
 
-    try {
-        // Verify the token
-        const userData = await new Promise((resolve, reject) => {
-            jsonwebtoken.verify(token, jsonwebtokenSecret, (error, decoded) => {
-                if (error) {
-                    return reject(error);
-                }
-                resolve(decoded);
-            });
+    if(token){
+
+        jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
+
+            if(error) throw error;
+        
+            const {name, email, _id, role} = await User.findById(userData.id);
+            res.json( {name, email, _id, role});
+
         });
 
-        // Find the user by ID
-        const user = await User.findById(userData.id).select('name email _id role');
+    }else{
 
-        if (!user) {
-            return res.status(404).json({ error: 'User not found' });
-        }
+        res.json(null);
 
-        // Send user data as JSON
-        res.json(user);
-
-    } catch (error) {
-        console.error('Error verifying token or fetching user:', error);
-        res.status(401).json({ error: 'Invalid token or user not found' });
     }
-});
 
+});
 
 
 //route for getting userdata with role
