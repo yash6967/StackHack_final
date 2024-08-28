@@ -7,12 +7,11 @@ const cookieParser = require('cookie-parser');
 const imageDownloader = require('image-downloader');
 const multer = require('multer');
 const fs = require('fs');
-const zod = require('zod');
-const { v4: uuidv4 } = require('uuid'); // For generating unique booking codes
+const { v4: uuidv4 } = require('uuid'); 
 const nodemailer = require('nodemailer');
 // const movieModel = require('./models/movie.js');
-require('dotenv').config()
 
+require('dotenv').config()
 
 const User = require('./models/user.js');
 const Movie = require('./models/movie.js');
@@ -20,11 +19,10 @@ const Theatre = require('./models/theatre.js');
 const Showtime = require('./models/showtime.js');
 const AdminRequests = require('./models/adminRequest.js')
 const Tickets = require('./models/tickets.js');
+
 const app = express();
 
 const bcryptSalt = bcrypt.genSaltSync(8);
-// const jsonwebtokenSecret = 'wewillwinthishackathon';
-// const jsonwebtokenSecret = process.env.JWT_SECRET || 'defaultsecret';
 const jsonwebtokenSecret = process.env.JWT_SECRET;
 
 app.use(express.json());
@@ -33,12 +31,12 @@ app.use('/uploads', express.static(__dirname+'/uploads'));
 
 app.use(cors({
 
-    // origin: 'http://localhost:4000',
-    origin: 'https://stack-hack2-0.vercel.app',
-    methods: ["POST", "GET", "PUT"],
     credentials: true,
+    origin: process.env.FRONTEND_URL,
 
 }));
+
+app.listen(process.env.PORT, () => console.log(`Server running on ${process.env.PORT} PORT`));
 
 mongoose.connect(process.env.MONGO_URL);
 
@@ -48,10 +46,6 @@ const transporter = nodemailer.createTransport({
         user: process.env.EMAIL, 
         pass: process.env.EMAIL_PASS, 
     }
-});
-
-app.get('/', (req, res) => {
-    res.json('Welcome')
 });
 
 app.get('/test', (req, res) =>{
@@ -65,6 +59,7 @@ app.get('/atharva', (req, res) =>{
 app.post('/register', async(req, res) => {
 
     const {name, email, password} = req.body;
+    // res.json({name, email, password});
 
     try{
 
@@ -134,8 +129,8 @@ app.get('/profile', (req, res) => {
 
             if(error) throw error;
         
-            const {name, email, _id,role} = await User.findById(userData.id);
-            res.json( {name, email, _id,role});
+            const {name, email, _id, role} = await User.findById(userData.id);
+            res.json( {name, email, _id, role});
 
         });
 
@@ -953,7 +948,6 @@ app.post('/bookTicket', async (req, res) => {
         if (error) throw error;
         
         const {
-            userId, // Expect userId from the frontend
             chooseShowtimeId,
             chooseTime,
             selectedSeatIds,
@@ -967,7 +961,7 @@ app.post('/bookTicket', async (req, res) => {
             // Create a single ticket document that includes all selected seats
             const ticket = await Tickets.create({
                 booking_code: booking_code,
-                userId: userId,
+                userId: userData._id,
                 showtimeId: chooseShowtimeId,
                 daytime: chooseTime,
                 seatNumbers: selectedSeatIds, // Store the array of seat numbers
@@ -996,14 +990,15 @@ app.post('/sendBookingConfirmationEmail', async (req, res) => {
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                user: process.env.EMAIL,
-                pass: process.env.EMAIL_PASS  
+                user: process.env.EMAIL, // Replace with your email address
+                pass: process.env.EMAIL_PASS   // Replace with your email password or an app-specific password
             }
         });
 
+        // Prepare the email content
         const mailOptions = {
-            from: process.env.EMAIL, 
-            to: userEmail, 
+            from: process.env.EMAIL, // Sender address
+            to: userEmail, // User's email address
             subject: `Booking Confirmation - ${movieTitle} at ${theatreName}`,
             html: `
                 <h2>Dear ${userName},</h2>
@@ -1081,7 +1076,7 @@ app.get('/bookedSeats', async (req, res) => {
 //         }
 //     });
 // });
-app.get('/myTickets/:id', async (req, res) => {
+app.get('/myTickets', async (req, res) => {
     const { token } = req.cookies;
 
     if (!token) {
@@ -1095,8 +1090,7 @@ app.get('/myTickets/:id', async (req, res) => {
 
         try {
             // Fetch tickets for the authenticated user
-            const { id } = req.params;
-            const tickets = await Tickets.find({ userId: id });
+            const tickets = await Tickets.find({ userId: userData._id });
 
             // Fetch showtimes and related movie and theatre details
             const ticketsWithDetails = await Promise.all(tickets.map(async (ticket) => {
@@ -1175,6 +1169,7 @@ app.get('/Showtimes/:showtimeId', async (req, res) => {
         }
     });
 });
+
 app.get('/theatres/:theatreId', async (req, res) => {
 
     const {token} = req.cookies;
@@ -1219,13 +1214,16 @@ app.delete('/tickets/:ticketId', async (req, res) => {
         const { ticketId } = req.params;
 
         try {
-   
+            // Find the ticket by ID
             const ticket = await Tickets.findById(ticketId);
             if (!ticket) {
                 return res.status(404).json({ error: 'Ticket not found.' });
             }
 
-            await Tickets.findByIdAndDelete(ticketId);         
+            // Delete the ticket
+            await Tickets.findByIdAndDelete(ticketId);
+   
+              
 
             res.status(200).json({ ticket });
         } catch (error) {
@@ -1238,21 +1236,23 @@ app.delete('/tickets/:ticketId', async (req, res) => {
 app.post('/sendCancellationEmail', async (req, res) => {
     const { userEmail, userName, movieTitle, theatreName, chooseTime, seatNumbers, booking_code } = req.body;
 
+    // Default seatNumbers to an empty array if it's undefined
     const seatNumbersString = Array.isArray(seatNumbers) ? seatNumbers.join(', ') : 'No seats selected';
 
     try {
-
+        // Set up the transporter for sending emails
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                user: process.env.EMAIL, 
-                pass: process.env.EMAIL_PASS   
+                user: process.env.EMAIL, // Replace with your email address
+                pass: process.env.EMAIL_PASS   // Replace with your email password or an app-specific password
             }
         });
 
+        // Prepare the email content
         const mailOptions = {
-            from: process.env.EMAIL, 
-            to: userEmail, 
+            from: process.env.EMAIL, // Sender address
+            to: userEmail, // User's email address
             subject: `Booking Cancellation - ${movieTitle} at ${theatreName}`,
             html: `
                 <h2>Dear ${userName},</h2>
@@ -1267,6 +1267,7 @@ app.post('/sendCancellationEmail', async (req, res) => {
             `
         };
 
+        // Send the email
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
                 console.error("Failed to send email:", error);
@@ -1281,6 +1282,3 @@ app.post('/sendCancellationEmail', async (req, res) => {
         res.status(500).json({ error: "Internal server error", details: error.message });
     }
 });
-
-
-app.listen(4000);
