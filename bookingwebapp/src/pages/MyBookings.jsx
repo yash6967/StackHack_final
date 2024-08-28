@@ -108,6 +108,7 @@ export default function MyBookings() {
                                             src={`${import.meta.env.VITE_BASE_URL}/uploads/${ticket.moviePoster}`}
                                             alt={ticket.movieName} 
                                             className="w-40 h-64 object-cover" />
+
                                         )}
                                     </td>
                                     <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-primary-50">{ticket.movieName}</td>
