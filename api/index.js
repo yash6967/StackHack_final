@@ -33,41 +33,26 @@ app.use('/uploads', express.static(__dirname+'/uploads'));
 
 app.use(cors({
 
-    credentials: true,
     // origin: 'http://localhost:4000',
-    origin: 'stack-hack2-0.vercel.app',
+    origin: 'https://stack-hack2-0.vercel.app',
+    methods: ["POST", "GET", "PUT"],
+    credentials: true,
 
 }));
 
-// console.log(process.env.MONGO_URL) // remove this after you've confirmed it is working
 mongoose.connect(process.env.MONGO_URL);
 
-// Create a transporter object with SMTP server details
 const transporter = nodemailer.createTransport({
-    service: 'Gmail', // Use your email service provider
+    service: 'Gmail',
     auth: {
-        user: process.env.EMAIL, // Your email address
-        pass: process.env.EMAIL_PASS, // Use the app password generated here
+        user: process.env.EMAIL, 
+        pass: process.env.EMAIL_PASS, 
     }
 });
 
-// Middleware to check for token
-// app.use((req, res, next) => {
-//     const { token } = req.cookies;
-//     if (!token) {
-//         return res.status(401).json({ error: 'No token provided' });
-//     }
-//     jsonwebtoken.verify(token, jsonwebtokenSecret, (error, userData) => {
-//         if (error) {
-//             return res.status(401).json({ error: 'Invalid token' });
-//         }
-//         req.user = userData;
-//         next();
-//     });
-// });
-
-
-
+app.get('/', (req, res) => {
+    res.json('Welcome')
+});
 
 app.get('/test', (req, res) =>{
     res.json('test ok');
@@ -80,7 +65,6 @@ app.get('/atharva', (req, res) =>{
 app.post('/register', async(req, res) => {
 
     const {name, email, password} = req.body;
-    // res.json({name, email, password});
 
     try{
 
@@ -1012,15 +996,14 @@ app.post('/sendBookingConfirmationEmail', async (req, res) => {
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                user: process.env.EMAIL, // Replace with your email address
-                pass: process.env.EMAIL_PASS   // Replace with your email password or an app-specific password
+                user: process.env.EMAIL,
+                pass: process.env.EMAIL_PASS  
             }
         });
 
-        // Prepare the email content
         const mailOptions = {
-            from: process.env.EMAIL, // Sender address
-            to: userEmail, // User's email address
+            from: process.env.EMAIL, 
+            to: userEmail, 
             subject: `Booking Confirmation - ${movieTitle} at ${theatreName}`,
             html: `
                 <h2>Dear ${userName},</h2>
@@ -1236,16 +1219,13 @@ app.delete('/tickets/:ticketId', async (req, res) => {
         const { ticketId } = req.params;
 
         try {
-            // Find the ticket by ID
+   
             const ticket = await Tickets.findById(ticketId);
             if (!ticket) {
                 return res.status(404).json({ error: 'Ticket not found.' });
             }
 
-            // Delete the ticket
-            await Tickets.findByIdAndDelete(ticketId);
-   
-              
+            await Tickets.findByIdAndDelete(ticketId);         
 
             res.status(200).json({ ticket });
         } catch (error) {
@@ -1258,23 +1238,21 @@ app.delete('/tickets/:ticketId', async (req, res) => {
 app.post('/sendCancellationEmail', async (req, res) => {
     const { userEmail, userName, movieTitle, theatreName, chooseTime, seatNumbers, booking_code } = req.body;
 
-    // Default seatNumbers to an empty array if it's undefined
     const seatNumbersString = Array.isArray(seatNumbers) ? seatNumbers.join(', ') : 'No seats selected';
 
     try {
-        // Set up the transporter for sending emails
+
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                user: process.env.EMAIL, // Replace with your email address
-                pass: process.env.EMAIL_PASS   // Replace with your email password or an app-specific password
+                user: process.env.EMAIL, 
+                pass: process.env.EMAIL_PASS   
             }
         });
 
-        // Prepare the email content
         const mailOptions = {
-            from: process.env.EMAIL, // Sender address
-            to: userEmail, // User's email address
+            from: process.env.EMAIL, 
+            to: userEmail, 
             subject: `Booking Cancellation - ${movieTitle} at ${theatreName}`,
             html: `
                 <h2>Dear ${userName},</h2>
@@ -1289,7 +1267,6 @@ app.post('/sendCancellationEmail', async (req, res) => {
             `
         };
 
-        // Send the email
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
                 console.error("Failed to send email:", error);
@@ -1306,4 +1283,4 @@ app.post('/sendCancellationEmail', async (req, res) => {
 });
 
 
-app.listen('stack-hack2-0-api.vercel.app');
+app.listen(4000);
