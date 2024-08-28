@@ -41,7 +41,9 @@ export default function MoviePage(){
 
                 <div className="ml-10 h-96 w-64 bg-gray-800">
                     <img 
-                        src={'http://localhost:4000/uploads' + movie.photos[0]} alt="" 
+                        // src={'http://localhost:4000/uploads' + movie.photos[0]} 
+                        src={`${import.meta.env.VITE_BASE_URL}/uploads${movie.photos[0]}`}
+                        alt={movie.title} 
                         className="rounded-lg object-cover w-full h-full drop-shadow-2xl"/>
                
                 </div>

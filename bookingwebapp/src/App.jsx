@@ -27,7 +27,7 @@ import ReservationFormPage from "./pages/ReservationFormPage";
 export default function App() {
 
   // axios.defaults.baseURL = 'http://localhost:4000';
-  axios.defaults.baseURL = 'stack-hack2-0-api.vercel.app';
+  axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
   axios.defaults.withCredentials = true;
 
   return (
