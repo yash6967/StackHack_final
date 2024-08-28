@@ -42,7 +42,8 @@ export default function IndexPage() {
                     <div className="relative w-full h-full">
                         <img 
                             className="rounded-md object-cover w-full h-full group hover:scale-[1.05] transition-transform duration-300 ease-in-out" 
-                            src={'http://localhost:4000/uploads' + it.photos[0]} 
+                            // src={'http://localhost:4000/uploads' + it.photos[0]} 
+                            src={`${import.meta.env.VITE_BASE_URL}/uploads${it.photos[0]}`}
                             alt={it.title} 
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent rounded-md"></div>

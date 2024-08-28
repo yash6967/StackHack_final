@@ -276,7 +276,8 @@ export default function MoviesFormPage() {
                         <div className="flex relative mt-2" key={link}>
                             <img
                                 className="w-full h-full max-w-100 object-cover rounded-2xl"
-                                src={`http://localhost:4000/uploads/${link}`}
+                                // src={`http://localhost:4000/uploads/${link}`}
+                                src={`${import.meta.env.VITE_BASE_URL}/uploads/${link}`}
                                 alt={`Uploaded ${link}`}
                             />
                             <button

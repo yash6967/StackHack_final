@@ -103,7 +103,11 @@ export default function MyBookings() {
                                 <tr key={ticket._id} className="bg-white border-b dark:bg-gray-800 dark:border-primary-800">
                                     <td className="px-6 py-4">
                                         {ticket.moviePoster && (
-                                            <img src={'http://localhost:4000/uploads/' + ticket.moviePoster} alt={ticket.movieName} className="w-40 h-64 object-cover" />
+                                            <img 
+                                            // src={'http://localhost:4000/uploads/' + ticket.moviePoster} 
+                                            src={`${import.meta.env.VITE_BASE_URL}/uploads/${ticket.moviePoster}`}
+                                            alt={ticket.movieName} 
+                                            className="w-40 h-64 object-cover" />
                                         )}
                                     </td>
                                     <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-primary-50">{ticket.movieName}</td>
