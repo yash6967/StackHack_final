@@ -56,7 +56,8 @@ export default function TrendingMoviesPage() {
 
                                     <img
                                         className="object-cover w-full h-full"
-                                        src={'http://localhost:4000/uploads' + movie.photos[0]}
+                                        // src={'http://localhost:4000/uploads' + movie.photos[0]}
+                                        src={`${import.meta.env.VITE_BASE_URL}/uploads${movie.photos[0]}`}
                                         alt={movie.title}
                                     />
 
