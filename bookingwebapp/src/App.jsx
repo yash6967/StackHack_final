@@ -26,7 +26,8 @@ import ReservationFormPage from "./pages/ReservationFormPage";
 
 export default function App() {
 
-  axios.defaults.baseURL = 'http://localhost:4000';
+  // axios.defaults.baseURL = 'http://localhost:4000';
+  axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
   axios.defaults.withCredentials = true;
 
   return (
