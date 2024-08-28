@@ -13,15 +13,22 @@ export default function AccountNavigation() {
 
   useEffect(() => {
     const fetchUserRole = async () => {
-      try {
-        const response = await axios.get('/profile');
-        setUserRole(response.data.role);
-      } catch (error) {
-        console.error('Error fetching user role:', error);
-      }
+        try {
+            const response = await axios.get('/profile');
+            console.log('Response from /profile:', response.data); // For debugging
+
+            if (response.data && response.data.role) {
+                setUserRole(response.data.role);
+            } else {
+                console.error('User role is not defined in the response data');
+                setUserRole(null); // or a default role if needed
+            }
+        } catch (error) {
+            console.error('Error fetching user role:', error);
+        }
     };
     fetchUserRole();
-  }, []);
+}, []);
 
   const linkClasses = (page) => {
     return page === subpage
