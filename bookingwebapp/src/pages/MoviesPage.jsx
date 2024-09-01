@@ -40,7 +40,7 @@ export default function MoviesPage() {
 
             <div className="text-center">
                 <Link
-                    className="inline-flex gap-1 items-center bg-gray-100 rounded py-2 px-5"
+                    className="addNewButton"
                     to={'/account/adminMovies/new'}
                 >
                     <svg
