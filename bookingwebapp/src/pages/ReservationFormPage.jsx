@@ -119,7 +119,7 @@ export default function ReservationFormPage() {
                 </div>   
 
                 {/* City + Date */}
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center mt-6">
 
                     <div>
                         <select
@@ -130,8 +130,8 @@ export default function ReservationFormPage() {
                         >
                             <option value="">Select a city</option>
                             {cities.map(cityName => (
-                                <option key={cityName} value={cityName}>
-                                    {cityName}
+                                <option key={cityName} value={cityName} className="uppercase">
+                                    {cityName.toUpperCase()}
                                 </option>
                             ))}
                         </select>

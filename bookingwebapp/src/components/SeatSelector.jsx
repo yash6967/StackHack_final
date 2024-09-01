@@ -219,16 +219,14 @@ const SeatSelector = (props) => {
 
         </div>
 
-      </div>
-  
-      <div className="mt-3">
+        <div className="mt-3 w-full">
         {showPayment ? (
           <DummyPayment
             onPaymentSuccess={handlePaymentSuccess}
             onCancel={handlePaymentCancel}
           />
         ) : (
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center gap-6">
             <div className="font-light dark:text-primary-50">
               <span><strong>Tickets:</strong> {selectedSeats}</span>
               <div className="">
@@ -254,6 +252,8 @@ const SeatSelector = (props) => {
             </div>
           </div>
         )}
+      </div>
+
       </div>
 
     </section>

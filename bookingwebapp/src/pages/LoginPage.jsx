@@ -1,7 +1,8 @@
-import { useContext, useState } from "react";
-import {Link, Navigate} from "react-router-dom"
 import axios from "axios";
 import { UserContext } from "../UserContext.jsx";
+import {Link, Navigate} from "react-router-dom"
+import { useContext, useState } from "react";
+import icon from "../assets/icon.png"
 
 export default function LoginPage(){
 
@@ -98,48 +99,13 @@ export default function LoginPage(){
 
     return(
 
-        // <div className="flex grow items-center justify-around bg-yellow-800">
-
-        //     <div className="mb-64">
-
-        //         <h1 className="text-2xl text-center p-3">Login</h1>
-
-        //         <form className="max-w-md mx-auto" 
-
-        //             onSubmit={handleLoginSubmit}>
-
-        //             <input type="email"   
-
-        //                 placeholder="your@email.com"       
-        //                 value={email} 
-        //                 onChange={ev => setEmail(ev.target.value)} />
-
-        //             <input type="password"  
-
-        //                 placeholder="password" 
-        //                 value={password} 
-        //                 onChange={ev => setPassword(ev.target.value)}/>
-
-        //             <button className="primary my-1">Login</button>
-        //             <button className="primary" onClick={handleGuestLogin}>Guest User</button>
-
-        //             <div className="text-right py-2 text-gray-500">
-        //                 Don't have an account yet? <Link className="underline text-black" to={'/register'}>Register</Link>
-        //             </div>
-
-        //         </form>
-
-        //     </div>
-
-        // </div>
-
         <section class="bg-gray-50 dark:bg-gray-900">
 
             <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
 
                 <a href="#" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
-                    <img class="w-8 h-8 mr-2" src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg" alt="logo"/>
-                    StackHack
+                    <img class="w-8 h-8 mr-2" src={icon} alt="logo"/>
+                    Mise-en-Movie
                 </a>
 
                 <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">

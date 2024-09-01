@@ -64,7 +64,7 @@ export default function Footer(){
                     </a>
                 </div>
                 <p class="mt-8 text-base leading-6 text-center text-gray-400">
-                    © 2024 StackHack
+                    © 2024 Mise-en-Movie
                 </p>
             </div>
         </section>
