@@ -20,10 +20,10 @@ import ShowtimesFormPage from "./pages/ShowtimeFormPage"
 import SuperAdminPage from "./pages/SuperAdminPage"
 // import SuperAdminFormPage from "./pages/SuperAdminFormPage"
 import MyBookings from "./pages/MyBookings";
-
 import MoviePage from "./pages/MoviePage";
 import ReservationFormPage from "./pages/ReservationFormPage";
 
+import SupportComponent from "./components/SupportComponent";
 export default function App() {
 
   axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
@@ -67,6 +67,7 @@ export default function App() {
 
           </Route>
         </Routes>
+        <SupportComponent />
       </Router>
 
       </CityContextProvider>

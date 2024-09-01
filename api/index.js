@@ -1282,3 +1282,33 @@ app.post('/sendCancellationEmail', async (req, res) => {
         res.status(500).json({ error: "Internal server error", details: error.message });
     }
 });
+
+app.post("/send-email", (req, res) => {
+  const { query,userEmail,userName } = req.body;
+
+  // Nodemailer setup
+  const transporter = nodemailer.createTransport({
+    service: "gmail", // You can use other email services
+    auth: {
+        user: process.env.EMAIL, // Replace with your email address
+        pass: process.env.EMAIL_PASS   // Replace with your email password or an app-specific password
+    },
+  });
+
+  const mailOptions = {
+    from: userEmail,
+    to: process.env.EMAIL, // Replace with the recipient email
+    subject: "Support Query from "+userName,
+    text: query,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.log(error);
+      res.status(500).send("Failed to send email.");
+    } else {
+      console.log("Email sent: " + info.response);
+      res.status(200).send("Query sent successfully!");
+    }
+  });
+});
