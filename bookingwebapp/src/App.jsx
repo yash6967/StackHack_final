@@ -59,7 +59,6 @@ export default function App() {
             <Route path = "/account/adminShowtimes/:id" element = {<ShowtimesFormPage />} />
 
             <Route path = "/account/superAdmin" element = {<SuperAdminPage />} />
-            {/* <Route path = "/account/superAdmin/:id" element = {<SuperAdminFormPage />} /> */}
 
             <Route path = "/account/myBookings" element = {<MyBookings />} />
 

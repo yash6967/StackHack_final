@@ -9,7 +9,7 @@ const multer = require('multer');
 const fs = require('fs');
 const { v4: uuidv4 } = require('uuid'); 
 const nodemailer = require('nodemailer');
-// const movieModel = require('./models/movie.js');
+
 
 require('dotenv').config()
 
@@ -59,7 +59,7 @@ app.get('/atharva', (req, res) =>{
 app.post('/register', async(req, res) => {
 
     const {name, email, password} = req.body;
-    // res.json({name, email, password});
+    
 
     try{
 
@@ -94,13 +94,13 @@ app.post('/login', async (req, res) => {
             jsonwebtoken.sign({
                 email: userDocument.email, 
                 id: userDocument._id, 
-                // name: userDocument.name
+             
             }, jsonwebtokenSecret, {}, (error, token)=>{
 
                 if (error) {
                     res.status(500).json('Error signing token');
                 } else {
-                    // res.cookie('token', token).json(userDocument);
+                    
                     res.cookie('token', token, { httpOnly: true, secure: true }).json(userDocument);
                 }
 
@@ -318,7 +318,7 @@ app.post('/adminMovies', (req, res) => {
 
         title, addedPhotos,
         languages, length, genre, certificate, releaseDate, director, description, 
-        // cast, crew
+       
 
     } = req.body;
 
@@ -331,7 +331,7 @@ app.post('/adminMovies', (req, res) => {
             owner: userData.id,
             title, photos: addedPhotos,
             languages, length, genre, certificate, releaseDate, director, description,
-            // cast, crew
+          
 
         });
 
@@ -359,16 +359,6 @@ app.get('/adminMovies', async(req, res) => {
 
     });
 
-    // try {
-
-    //     const movies = await Movie.find(); 
-    //     res.json(movies);
-
-    // } catch (error) {
-
-    //     res.status(500).json({ error: 'Internal server error' });
-
-    // }
 
 });
 
@@ -393,7 +383,7 @@ app.put('/adminMovies', async (req, res) => {
         id,
         title, addedPhotos,
         languages, length, genre, certificate, releaseDate, director, description, 
-        // cast, crew
+        
 
     } = req.body;
     
@@ -422,11 +412,7 @@ app.put('/adminMovies', async (req, res) => {
 
 });
 
-// app.get('/adminMovies', async (req, res) => {
 
-//     res.json(await Movie.find());
-
-// });
 
 /*delete movie */
 app.delete('/adminMovies/:id',async (req,res)=>{
@@ -445,7 +431,7 @@ app.post('/adminTheatres',async (req,res)=>{
     }
     const {theatreName,
          city,
-        //  ticketPrice,
+
          rows,
          cols
             } = req.body;
@@ -477,7 +463,7 @@ app.post('/adminTheatres',async (req,res)=>{
 //get all theatres
 app.get('/adminTheatres', async (req, res) => {
 
-    // res.json(await Theatre.find());
+
 
     const {token} = req.cookies;
 
@@ -584,7 +570,7 @@ app.get('/search', async (req, res) => {
     }
     
 });
-//showtime showtime showtime showtime showtime showtime showtime showtime showtime showtime showtime 
+//showtime
 
 //create new showtime
 app.post('/adminShowtimes',async (req,res)=>{
@@ -689,26 +675,7 @@ app.get('/adminShowtimes', async (req, res) => {
 
 });
 
-//get all showtimes for customer (all showtimes created by admins)
-// app.get('/customerShowtimes', async (req, res) => {
 
-//     const {token} = req.cookies;
-
-//     if (!token) {
-//         return res.status(401).json({ error: 'No token provided' });
-//     }
-
-//     jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
-
-//         if(error) throw error;
-    
-
-//         res.json(await Showtime.find());
-        
-
-//     });
-
-// });
 
 /* For Update */
 app.put('/adminShowtimes', async (req, res) => {
@@ -754,7 +721,7 @@ app.delete('/adminShowtimes/:id',async (req,res)=>{
     res.json(await Showtime.findByIdAndDelete(id));
 })
 
-//Admin request Admin request Admin request Admin request Admin request Admin request Admin request
+//Admin request
 app.post('/createAdminList',async (req,res)=>{
     res.json(await AdminRequests.create({
         'requestList' : []
@@ -869,14 +836,7 @@ app.delete('/adminList/:userId',async (req,res)=>{
 app.get('/findShowtimes', async (req, res) => {
     const { token } = req.cookies;
 
-    // if (!token) {
-    //     return res.status(401).json({ error: 'No token provided' });
-    // }
-
-    // jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
-    //     if (error) {
-    //         return res.status(401).json({ error: 'Invalid token' });
-    //     }
+  
 
         const { movieid, city, showdate } = req.query;
 
@@ -911,30 +871,7 @@ app.get('/findShowtimes', async (req, res) => {
 
 
 
-// app.get('/findShowtimes', async (req, res) => {
-    
-//     const {token} = req.cookies;
 
-//     if (!token) {
-//         return res.status(401).json({ error: 'No token provided' });
-//     }
-
-//     jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
-
-//         if(error) throw error;
-
-//         const { movieid, city } = req.query;
-        
-//         try {
-//             const showtimes = await Showtime.find({ movieid, city });
-//             res.json(showtimes);
-//           } catch (error) {
-//             res.status(500).json({ error: 'Error fetching showtimes' });
-//           }
-        
-//     });
-
-// });
 
 /** tickets */
 app.post('/bookTicket', async (req, res) => {
@@ -990,8 +927,8 @@ app.post('/sendBookingConfirmationEmail', async (req, res) => {
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                user: process.env.EMAIL, // Replace with your email address
-                pass: process.env.EMAIL_PASS   // Replace with your email password or an app-specific password
+                user: process.env.EMAIL, 
+                pass: process.env.EMAIL_PASS   
             }
         });
 
@@ -1028,22 +965,15 @@ app.post('/sendBookingConfirmationEmail', async (req, res) => {
         res.status(500).json({ error: "Internal server error", details: error.message });
     }
 });
-
-
-
-
 app.get('/bookedSeats', async (req, res) => {
-    const { showtimeId, daytime } = req.query; // Use req.query for GET requests
+    const { showtimeId, daytime } = req.query;
 
     if (!showtimeId || !daytime) {
         return res.status(400).json({ error: "showtimeId and daytime are required" });
     }
 
     try {
-        // Find all tickets that match the given showtimeId and daytime
         const bookedTickets = await Tickets.find({ showtimeId, daytime }, 'seatNumbers');
-
-        // Extract and flatten the seat numbers into a single array
         const seatNumbers = bookedTickets.flatMap(ticket => ticket.seatNumbers);
 
         res.status(200).json({
@@ -1055,27 +985,6 @@ app.get('/bookedSeats', async (req, res) => {
     }
 });
 
-// app.get('/myTickets', async (req, res) => {
-//     const { token } = req.cookies;
-
-//     if (!token) {
-//         return res.status(401).json({ error: 'No token provided. Please log in first.' });
-//     }
-
-//     jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
-//         if (error) {
-//             return res.status(401).json({ error: 'Invalid token.' });
-//         }
-
-//         try {
-//             // Fetch tickets for the authenticated user
-//             const tickets = await Tickets.find({ userId: userData._id });
-//             res.status(200).json(tickets);
-//         } catch (error) {
-//             res.status(500).json({ error: 'Failed to get tickets for the user.', details: error.message });
-//         }
-//     });
-// });
 app.get('/myTickets', async (req, res) => {
     const { token } = req.cookies;
 
@@ -1089,19 +998,17 @@ app.get('/myTickets', async (req, res) => {
         }
 
         try {
-            // Fetch tickets for the authenticated user
             const tickets = await Tickets.find({ userId: userData._id });
 
-            // Fetch showtimes and related movie and theatre details
             const ticketsWithDetails = await Promise.all(tickets.map(async (ticket) => {
                 const showtime = await Showtime.findById(ticket.showtimeId)
-                    .populate('movieid', 'photos title') // Populate movie details
-                    .populate('theatreid', 'theatreName city'); // Populate theatre details
+                    .populate('movieid', 'photos title')
+                    .populate('theatreid', 'theatreName city');
 
                 return {
                     ...ticket.toObject(),
                     movieName: showtime.movieid.title,
-                    moviePoster: showtime.movieid.photos[0], // Assuming the first photo is the poster
+                    moviePoster: showtime.movieid.photos[0],
                     theatreName: showtime.theatreid.theatreName,
                     theatreCity: showtime.theatreid.city,
                     showdate: showtime.showdate,
@@ -1115,89 +1022,45 @@ app.get('/myTickets', async (req, res) => {
     });
 });
 
-
-
-
 app.get('/movies/:movieId', async (req, res) => {
-
-    // const {token} = req.cookies;
-
-    // if (!token) {
-    //     return res.status(401).json({ error: 'No token provided' });
-    // }
-
-    // jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
-
-        // if(error) throw error;
-        const {
-            movieId
-        } = req.params;
-        try {
-            const movie = await Movie.findById(movieId); // Await the result
-            if (!movie) {
-                return res.status(404).json({ error: "Movie not found" });
-            }
-            res.status(200).json(movie);
-        } catch (error) {
-            res.status(500).json({ error: "Failed to get the movie from its id", details: error.message });
+    const { movieId } = req.params;
+    try {
+        const movie = await Movie.findById(movieId);
+        if (!movie) {
+            return res.status(404).json({ error: "Movie not found" });
         }
-        
-    // });
-}); 
+        res.status(200).json(movie);
+    } catch (error) {
+        res.status(500).json({ error: "Failed to get the movie from its id", details: error.message });
+    }
+});
+
 app.get('/Showtimes/:showtimeId', async (req, res) => {
-
-    // const {token} = req.cookies;
-
-    // if (!token) {
-    //     return res.status(401).json({ error: 'No token provided' });
-    // }
-
-    // jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
-
-        // if(error) throw error;
-        const {
-            showtimeId
-        } = req.params;
-        try {
-            const showtime = await Showtime.findById(showtimeId); // Await the result
-            if (!showtime) {
-                return res.status(404).json({ error: "Showtime not found" });
-            }
-            res.status(200).json(showtime);
-        } catch (error) {
-            res.status(500).json({ error: "Failed to get the showtime from its id", details: error.message });
+    const { showtimeId } = req.params;
+    try {
+        const showtime = await Showtime.findById(showtimeId);
+        if (!showtime) {
+            return res.status(404).json({ error: "Showtime not found" });
         }
-    // });
+        res.status(200).json(showtime);
+    } catch (error) {
+        res.status(500).json({ error: "Failed to get the showtime from its id", details: error.message });
+    }
 });
 
 app.get('/theatres/:theatreId', async (req, res) => {
-
-    // const {token} = req.cookies;
-
-    // if (!token) {
-    //     return res.status(401).json({ error: 'No token provided' });
-    // }
-
-    // jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
-
-        // if(error) throw error;
-        const {
-            theatreId
-        } = req.params;
-        try {
-            const theatre = await Theatre.findById(theatreId); // Await the result
-            if (!theatre) {
-                return res.status(404).json({ error: "Theatre not found" });
-            }
-            res.status(200).json(theatre);
-        } catch (error) {
-            res.status(500).json({ error: "Failed to get the theatre from its id", details: error.message });
+    const { theatreId } = req.params;
+    try {
+        const theatre = await Theatre.findById(theatreId);
+        if (!theatre) {
+            return res.status(404).json({ error: "Theatre not found" });
         }
-        
-    // });
-});   
+        res.status(200).json(theatre);
+    } catch (error) {
+        res.status(500).json({ error: "Failed to get the theatre from its id", details: error.message });
+    }
+});
 
-// Delete ticket by ID
 app.delete('/tickets/:ticketId', async (req, res) => {
     const { token } = req.cookies;
 
@@ -1214,17 +1077,12 @@ app.delete('/tickets/:ticketId', async (req, res) => {
         const { ticketId } = req.params;
 
         try {
-            // Find the ticket by ID
             const ticket = await Tickets.findById(ticketId);
             if (!ticket) {
                 return res.status(404).json({ error: 'Ticket not found.' });
             }
 
-            // Delete the ticket
             await Tickets.findByIdAndDelete(ticketId);
-   
-              
-
             res.status(200).json({ ticket });
         } catch (error) {
             console.error('Failed to delete ticket:', error);
@@ -1235,24 +1093,20 @@ app.delete('/tickets/:ticketId', async (req, res) => {
 
 app.post('/sendCancellationEmail', async (req, res) => {
     const { userEmail, userName, movieTitle, theatreName, chooseTime, seatNumbers, booking_code } = req.body;
-
-    // Default seatNumbers to an empty array if it's undefined
     const seatNumbersString = Array.isArray(seatNumbers) ? seatNumbers.join(', ') : 'No seats selected';
 
     try {
-        // Set up the transporter for sending emails
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                user: process.env.EMAIL, // Replace with your email address
-                pass: process.env.EMAIL_PASS   // Replace with your email password or an app-specific password
+                user: process.env.EMAIL,
+                pass: process.env.EMAIL_PASS
             }
         });
 
-        // Prepare the email content
         const mailOptions = {
-            from: process.env.EMAIL, // Sender address
-            to: userEmail, // User's email address
+            from: process.env.EMAIL,
+            to: userEmail,
             subject: `Booking Cancellation - ${movieTitle} at ${theatreName}`,
             html: `
                 <h2>Dear ${userName},</h2>
@@ -1267,7 +1121,6 @@ app.post('/sendCancellationEmail', async (req, res) => {
             `
         };
 
-        // Send the email
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
                 console.error("Failed to send email:", error);
@@ -1284,31 +1137,30 @@ app.post('/sendCancellationEmail', async (req, res) => {
 });
 
 app.post("/send-email", (req, res) => {
-  const { query,userEmail,userName } = req.body;
+    const { query, userEmail, userName } = req.body;
 
-  // Nodemailer setup
-  const transporter = nodemailer.createTransport({
-    service: "gmail", // You can use other email services
-    auth: {
-        user: process.env.EMAIL, // Replace with your email address
-        pass: process.env.EMAIL_PASS   // Replace with your email password or an app-specific password
-    },
-  });
+    const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+            user: process.env.EMAIL,
+            pass: process.env.EMAIL_PASS
+        },
+    });
 
-  const mailOptions = {
-    from: userEmail,
-    to: process.env.EMAIL, // Replace with the recipient email
-    subject: "Support Query from "+userName,
-    text: query,
-  };
+    const mailOptions = {
+        from: userEmail,
+        to: process.env.EMAIL,
+        subject: "Support Query from " + userName,
+        text: query,
+    };
 
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.log(error);
-      res.status(500).send("Failed to send email.");
-    } else {
-      console.log("Email sent: " + info.response);
-      res.status(200).send("Query sent successfully!");
-    }
-  });
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.log(error);
+            res.status(500).send("Failed to send email.");
+        } else {
+            console.log("Email sent: " + info.response);
+            res.status(200).send("Query sent successfully!");
+        }
+    });
 });

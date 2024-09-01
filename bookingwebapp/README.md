@@ -1,12 +1,8 @@
-Based on the provided information, here's a comprehensive README file for your movie booking website project:
-
----
-
-# StackHack2.0
+# Mise-en-Movie
 
 ## Overview
 
-**StackHack2.0** is a full-stack movie booking website where users can book movies listed by admins. The website supports multiple user roles, including Admin, Super Admin, and Customer, each with different levels of access and control. Admins can list movies, theaters, and create showtimes, while customers can browse available movies and book tickets. Super Admins can manage user roles.
+**Mise-en-Movie** is a full-stack movie booking website where users can book movies listed by admins. The website supports multiple user roles, including Admin, Super Admin, and Customer, each with different levels of access and control. Admins can list movies, theaters, and create showtimes, while customers can browse available movies and book tickets. Super Admins can manage user roles.
 
 ## Features
 
@@ -33,15 +29,11 @@ Based on the provided information, here's a comprehensive README file for your m
 
 - MongoDB
 
-### Other Tools or Services
-
-- Nodemailer for sending emails
-
 ## Roles
 
+- **Customer**: Can browse and book available movies and showtimes.
 - **Admin**: Can perform CRUD operations for movies, theaters, and showtimes.
 - **Super Admin**: Can update any user's role from customer to admin and vice versa.
-- **Customer**: Can browse and book available movies and showtimes.
 
 ## Installation and Setup
 
@@ -131,13 +123,13 @@ VITE_BASE_URL=http://localhost:4000
 - **Book a Showtime**: Select a showtime, choose seats, and proceed to payment.
 - **Dummy Payment**: Enter any value for "Card Number," "Expiry Date," and "CVV" to simulate payment. You must be logged in to book a ticket.
 
-## Contributing
-
-To contribute to this project, please fork the repository and create a pull request with your changes. Ensure to follow the code style and include tests for any new features.
-
-## License
-
-This project is open-source and available under the [MIT License](LICENSE).
+## Testing the  customer Feature:
+Step1:Click on Mise-en-Movie logo on the top left to go to the main page.
+Step2:Click on movie named "Bliss" and on the next page click on book.
+Step3:Choose Date "30 sept" and city "Jaipur".
+Step4:Choose the showtime available that day and you will open a seat selector in which you can select seats and pay for them using dummy payment gateway.
+Step5: Fill any random details in the dummy payment and click "Pay Now" button.
+Step6: Go to "My Bookings" to find your tickets.
 
 ## Additional Information
 

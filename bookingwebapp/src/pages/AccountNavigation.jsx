@@ -12,27 +12,13 @@ export default function AccountNavigation() {
     subpage = 'profile';
   }
 
-  // useEffect(() => {
-  //   const fetchUserRole = async () => {
-  //     try {
-  //       //const response = await axios.get('/profile');
-  //       if(ready){
-  //         setUserRole(user.role);
-  //       }
-
-        
-  //     } catch (error) {
-  //       console.error('Error fetching user role:', error);
-  //     }
-  //   };
-  //   fetchUserRole();
-  // }, [ready]);
+ 
 
   useEffect(() => {
-    if (ready && user) {  // Ensure user is defined
+    if (ready && user) {  
       setUserRole(user.role);
     }
-  }, [ready, user]);  // Add user as a dependency
+  }, [ready, user]); 
 
 
   const linkClasses = (page) => {
@@ -43,7 +29,7 @@ export default function AccountNavigation() {
 
   return (
     <nav className="flex items-center justify-between mb-8 mt-12 md:flex-row md:justify-center md:gap-5 font-medium">
-      {/* Links for larger screens */}
+     
       <div className="hidden md:flex gap-3">
         <Link className={linkClasses('profile')} to={'/account'}>My Account</Link>
         {userRole === 'admin' && (
