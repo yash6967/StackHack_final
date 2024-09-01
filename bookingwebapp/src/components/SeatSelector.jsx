@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from 'axios';
-import { Navigate } from 'react-router-dom'; // Import Navigate
-import DummyPayment from "./DummyPayment"; // Import the DummyPayment component
+import { Navigate } from 'react-router-dom'; 
+import DummyPayment from "./DummyPayment"; 
 import { format, parse } from 'date-fns';
 import { UserContext } from "../UserContext";
 
@@ -29,7 +29,7 @@ const SeatSelector = (props) => {
         const theatreResponse = await axios.get(`/theatres/${showtime.theatreid}`);
         setTheatreName(theatreResponse.data.theatreName);
         
-        // Fetch booked seats and generate seats after fetching movie and theatre details
+       
         await fetchBookedSeatsAndGenerateSeats();
       } catch (error) {
         console.error("Failed to fetch details:", error);
@@ -110,14 +110,14 @@ const SeatSelector = (props) => {
         const emailDetails = {
           booking_code,
           seatNumbers,
-          userEmail: user?.email, // Fetch the user email from context
-          userName: user?.name, // Same for the user name
+          userEmail: user?.email, 
+          userName: user?.name, 
           movieTitle,
           theatreName,
           chooseTime: props.chooseTime
         };
 
-        // Call your email sending function
+       
         await sendBookingConfirmationEmail(emailDetails);
 
         alert("Ticket successfully booked and confirmation email sent!");
@@ -132,7 +132,7 @@ const SeatSelector = (props) => {
     }
   };
 
-  // Function to send the booking confirmation email
+  
   const sendBookingConfirmationEmail = async (emailDetails) => {
     try {
       const response = await axios.post('/sendBookingConfirmationEmail', emailDetails);

@@ -29,7 +29,7 @@ export default function MoviesPage() {
     };
 
     const toggleDetails = (movieId) => {
-        // Toggle the expanded state for the clicked movie
+       
         setExpandedMovieId(expandedMovieId === movieId ? null : movieId);
     };
 
