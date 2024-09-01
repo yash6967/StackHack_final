@@ -9,7 +9,7 @@
 - **User Authentication**: Secure login and signup functionality for different user roles.
 - **Seat Booking**: Customers can select seats and book them for a particular showtime.
 - **Payment Gateway Integration**: Simulated payment gateway for ticket booking.
-- **Admin Dashboard**: Admins can manage movies, theaters, and showtimes (All CRED Operations)
+- **Admin Dashboard**: Admins can manage movies, theaters, and showtimes (All CRUD Operations)
 - **Super Admin Controls**: Manage user roles and approve or decline admin requests.
 - **Movie and Showtime Listings**: Browse available movies and showtimes.
   
