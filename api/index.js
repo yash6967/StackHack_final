@@ -1120,15 +1120,15 @@ app.get('/myTickets', async (req, res) => {
 
 app.get('/movies/:movieId', async (req, res) => {
 
-    const {token} = req.cookies;
+    // const {token} = req.cookies;
 
-    if (!token) {
-        return res.status(401).json({ error: 'No token provided' });
-    }
+    // if (!token) {
+    //     return res.status(401).json({ error: 'No token provided' });
+    // }
 
-    jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
+    // jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
 
-        if(error) throw error;
+        // if(error) throw error;
         const {
             movieId
         } = req.params;
@@ -1142,19 +1142,19 @@ app.get('/movies/:movieId', async (req, res) => {
             res.status(500).json({ error: "Failed to get the movie from its id", details: error.message });
         }
         
-    });
+    // });
 }); 
 app.get('/Showtimes/:showtimeId', async (req, res) => {
 
-    const {token} = req.cookies;
+    // const {token} = req.cookies;
 
-    if (!token) {
-        return res.status(401).json({ error: 'No token provided' });
-    }
+    // if (!token) {
+    //     return res.status(401).json({ error: 'No token provided' });
+    // }
 
-    jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
+    // jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
 
-        if(error) throw error;
+        // if(error) throw error;
         const {
             showtimeId
         } = req.params;
@@ -1167,20 +1167,20 @@ app.get('/Showtimes/:showtimeId', async (req, res) => {
         } catch (error) {
             res.status(500).json({ error: "Failed to get the showtime from its id", details: error.message });
         }
-    });
+    // });
 });
 
 app.get('/theatres/:theatreId', async (req, res) => {
 
-    const {token} = req.cookies;
+    // const {token} = req.cookies;
 
-    if (!token) {
-        return res.status(401).json({ error: 'No token provided' });
-    }
+    // if (!token) {
+    //     return res.status(401).json({ error: 'No token provided' });
+    // }
 
-    jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
+    // jsonwebtoken.verify(token, jsonwebtokenSecret, {}, async (error, userData) => {
 
-        if(error) throw error;
+        // if(error) throw error;
         const {
             theatreId
         } = req.params;
@@ -1194,7 +1194,7 @@ app.get('/theatres/:theatreId', async (req, res) => {
             res.status(500).json({ error: "Failed to get the theatre from its id", details: error.message });
         }
         
-    });
+    // });
 });   
 
 // Delete ticket by ID

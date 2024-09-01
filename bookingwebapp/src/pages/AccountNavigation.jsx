@@ -1,27 +1,39 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
+import { UserContext } from "../UserContext";
 
 export default function AccountNavigation() {
   const [userRole, setUserRole] = useState('');
-
+  const {ready, user, setUser} = useContext(UserContext);
   const { pathname } = useLocation();
   let subpage = pathname.split('/')?.[2];
   if (subpage === undefined) {
     subpage = 'profile';
   }
 
+  // useEffect(() => {
+  //   const fetchUserRole = async () => {
+  //     try {
+  //       //const response = await axios.get('/profile');
+  //       if(ready){
+  //         setUserRole(user.role);
+  //       }
+
+        
+  //     } catch (error) {
+  //       console.error('Error fetching user role:', error);
+  //     }
+  //   };
+  //   fetchUserRole();
+  // }, [ready]);
+
   useEffect(() => {
-    const fetchUserRole = async () => {
-      try {
-        const response = await axios.get('/profile');
-        setUserRole(response.data.role);
-      } catch (error) {
-        console.error('Error fetching user role:', error);
-      }
-    };
-    fetchUserRole();
-  }, []);
+    if (ready && user) {  // Ensure user is defined
+      setUserRole(user.role);
+    }
+  }, [ready, user]);  // Add user as a dependency
+
 
   const linkClasses = (page) => {
     return page === subpage

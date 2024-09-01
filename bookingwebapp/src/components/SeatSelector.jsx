@@ -128,7 +128,7 @@ const SeatSelector = (props) => {
       }
     } catch (error) {
       console.error("Failed to book tickets:", error);
-      alert("Failed to book tickets!");
+      alert("Failed to book tickets! Are you logged out?");
     }
   };
 
