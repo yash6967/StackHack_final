@@ -136,8 +136,3 @@ Step3:Choose Date "30 sept" and city "Jaipur".
 Step4:Choose the showtime available that day and you will open a seat selector in which you can select seats and pay for them using dummy payment gateway.
 Step5: Fill any random details in the dummy payment and click "Pay Now" button.
 Step6: Go to "My Bookings" to find your tickets.
-
-### Screenshots or GIFs
-
-Include screenshots or GIFs of the project here (if available).
-
