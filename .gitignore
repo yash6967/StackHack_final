@@ -8,11 +8,11 @@ pnpm-debug.log*
 lerna-debug.log*
 
 # Node modules
-bookingwebapp/node_modules
-api/node_modules
+bookingwebapp/node_modules/
+api/node_modules/
 
 # Uploads
-api/uploads
+api/uploads/
 
 # Environment variables
 bookingwebapp/.env
