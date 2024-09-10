@@ -13,11 +13,7 @@ api/node_modules/
 
 # Environment variables
 bookingwebapp/.env
-bookingwebapp/.env.local
-bookingwebapp/.env.*.local
 api/.env
-api/.env.local
-api/.env.*.local
 
 # Build output
 bookingwebapp/dist/
