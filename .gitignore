@@ -8,16 +8,19 @@ pnpm-debug.log*
 lerna-debug.log*
 
 # Node modules
-bookingwebapp/node_modules/
-api/node_modules/
+bookingwebapp/node_modules
+api/node_modules
+
+# Uploads
+api/uploads
 
 # Environment variables
 bookingwebapp/.env
 api/.env
 
 # Build output
-bookingwebapp/dist/
-api/dist/
+bookingwebapp/dist
+api/dist
 
 # Editor directories and files
 .vscode/*
