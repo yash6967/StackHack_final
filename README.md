@@ -9,7 +9,7 @@
 - **User Authentication**: Secure login and signup functionality for different user roles.
 - **Seat Booking**: Customers can select seats and book them for a particular showtime.
 - **Payment Gateway Integration**: Simulated payment gateway for ticket booking.
-- **Admin Dashboard**: Admins can manage movies, theaters, and showtimes (All CRED Operations)
+- **Admin Dashboard**: Admins can manage movies, theaters, and showtimes (All CRUD Operations)
 - **Super Admin Controls**: Manage user roles and approve or decline admin requests.
 - **Movie and Showtime Listings**: Browse available movies and showtimes.
   
@@ -136,8 +136,3 @@ Step3:Choose Date "30 sept" and city "Jaipur".
 Step4:Choose the showtime available that day and you will open a seat selector in which you can select seats and pay for them using dummy payment gateway.
 Step5: Fill any random details in the dummy payment and click "Pay Now" button.
 Step6: Go to "My Bookings" to find your tickets.
-
-### Screenshots or GIFs
-
-Include screenshots or GIFs of the project here (if available).
-
